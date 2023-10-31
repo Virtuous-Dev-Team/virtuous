@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "657811297689",
+    "project_id": "virtuetracker",
+    "storage_bucket": "virtuetracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:657811297689:android:b94430f548029d18e5af08",
+        "android_client_info": {
+          "package_name": "com.example.virtuetracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMQRhGfoVHq03hvzFbK7ohRzaOe8YXFBE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
