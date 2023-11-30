@@ -1,6 +1,15 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors, avoid_print
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/firebase_options.dart';
+
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -18,7 +27,38 @@ class MyApp extends StatelessWidget {
   }
 }
 
+void callAuthSignIn(email, password) {
+  final Auth auth = Auth();
+  String emailInput = email.text;
+  String passwordInput = password.text;
+  try {
+    // If fields are filled out, try and create user in firebase authentications
+    if (emailInput.isNotEmpty && passwordInput.isNotEmpty) {
+      auth
+          .signInUser(emailInput, passwordInput)
+          .then((response) => {
+                // user is authenticated in firebase authenctication
+                // send to homepage
+                print("success")
+              })
+          .catchError((error) => {
+                // you can show error in message to user
+                print(error)
+              });
+    }
+    // If fields are empty
+    else {
+      // Show user error and remind them to fill out fields.
+    }
+  } catch (e) {
+    print(e);
+  }
+}
+
 class SignInPage extends StatelessWidget {
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +83,7 @@ class SignInPage extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             TextField(
+              controller: email,
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle:
@@ -52,6 +93,7 @@ class SignInPage extends StatelessWidget {
             ),
             SizedBox(height: 10.0),
             TextField(
+              controller: password,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -74,6 +116,7 @@ class SignInPage extends StatelessWidget {
               ),
               onPressed: () {
                 // Handle Sign In
+                callAuthSignIn(email, password);
               },
             ),
             TextButton(

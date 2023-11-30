@@ -1,6 +1,14 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: avoid_print
 
-void main() {
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/firebase_options.dart';
+
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -18,7 +26,39 @@ class MyApp extends StatelessWidget {
   }
 }
 
+void callAuthCreateAccount(email, password, fullName) {
+  final Auth auth = Auth();
+  String emailInput = email.text;
+  String fullNameInput = fullName.text;
+  String passwordInput = password.text;
+
+  try {
+    if (emailInput.isNotEmpty &&
+        fullNameInput.isNotEmpty &&
+        passwordInput.isNotEmpty) {
+      auth
+          .createAccount(emailInput, passwordInput, fullNameInput)
+          .then((response) => {
+                // user has been created in authentication.
+                print("success")
+              })
+          .catchError((error) => {
+                // you can show error in message to user
+                print(error)
+              });
+    } else {
+      // Show user error and remind them to fill out fields.
+    }
+  } catch (error) {
+    print(error);
+  }
+}
+
 class SignUpPage extends StatelessWidget {
+  TextEditingController email = TextEditingController();
+  TextEditingController fullName = TextEditingController();
+  TextEditingController password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +73,7 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 20.0),
             // Email input field
             TextField(
+              controller: email,
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle:
@@ -43,6 +84,7 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 10.0),
             // Full Name input field
             TextField(
+              controller: fullName,
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 labelStyle:
@@ -53,6 +95,7 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 10.0),
             // Password input field
             TextField(
+              controller: password,
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
@@ -62,16 +105,16 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10.0),
-            // Phone Number input field
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                prefixIcon: Icon(Icons.phone),
-              ),
-              keyboardType: TextInputType.phone,
-            ),
+            // // Phone Number input field
+            // TextField(
+            //   decoration: InputDecoration(
+            //     labelText: 'Phone Number',
+            //     labelStyle:
+            //         TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+            //     prefixIcon: Icon(Icons.phone),
+            //   ),
+            //   keyboardType: TextInputType.phone,
+            // ),
             SizedBox(height: 20.0),
             // Sign Up button
             ElevatedButton(
@@ -86,7 +129,8 @@ class SignUpPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 15.0),
               ),
               onPressed: () {
-                // Handle Sign Up
+                // Redirect to Survey or Verify Email page after calling function
+                callAuthCreateAccount(email, password, fullName);
               },
             ),
             SizedBox(height: 10.0),
@@ -94,7 +138,7 @@ class SignUpPage extends StatelessWidget {
               child: Text('Already have an account? Sign In',
                   style: TextStyle(color: Colors.black)),
               onPressed: () {
-                // Redirect to Sign In page
+                // Redirect to SignIn page
               },
             ),
           ],
