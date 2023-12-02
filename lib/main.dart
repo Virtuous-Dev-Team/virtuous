@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:virtuetracker/screens/mainPage.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/screens/homePage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +24,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SignInPage(),
+      // home: SignInPage(),  // closed for testing
+      home: MainPage(),
     );
   }
 }
