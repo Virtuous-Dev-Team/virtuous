@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
        home: SignInPage(),  // closed for testing
-      //home: NavControllerPage(),
+     // home: SignUpPage(),
     );
   }
 }

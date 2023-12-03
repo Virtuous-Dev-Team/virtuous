@@ -165,6 +165,22 @@ class SignInPage extends StatelessWidget {
                 // Handle Apple Sign In
               },
             ),
+            SizedBox(height: 15.0),
+            OutlinedButton.icon(
+              icon: Image(image: const AssetImage("images/facebookLogo.png"), height: 17,),
+              label: Text('Continue with Facebook',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold)),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Color(0xFF272727),
+                side: BorderSide(color: Colors.black87),
+                padding: EdgeInsets.symmetric(vertical: 30.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              ),
+              onPressed: () {
+                // Handle Facebook Sign In
+              },
+            ),
             SizedBox(height: 20.0),
             TextButton(
               child: Text('Don\'t have an account? Sign Up',
