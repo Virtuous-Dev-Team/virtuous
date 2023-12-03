@@ -69,15 +69,17 @@ class SignInPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            FlutterLogo(size: 100.0), // Placeholder for the logo
-            SizedBox(height: 20.0),
+            // FlutterLogo(size: 100.0), // Placeholder for the logo
+            Image(image: const AssetImage("images/virtuous_circle_outline.png"), height: 100,),
+          //  SizedBox(height: 20.0),
             Text(
               'Reflect, Choose, Grow',
               textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 20.0),
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 25.0),
             ),
+            SizedBox(height: 5.0),
             Text(
-              '\nLog your daily virtues and transform your life',
+              'Log your daily virtues and transform your life',
               textAlign: TextAlign.center,
               style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
             ),
@@ -108,41 +110,45 @@ class SignInPage extends StatelessWidget {
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFFC1D9CD),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                elevation: 0,
+                foregroundColor: Color(0xFF272727),
+                backgroundColor: Color(0xFFC1D9CD),
+                side: BorderSide(color: Colors.black87),
+                padding: EdgeInsets.symmetric(vertical: 30.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Handle Sign In
                 callAuthSignIn(email, password);
               },
             ),
+            SizedBox(height: 5),
             TextButton(
               child: Text('Forgot Password?',
                   style: TextStyle(
+                      decoration: TextDecoration. underline,
                       fontStyle: FontStyle.italic, color: Colors.black)),
               onPressed: () {
                 // Handle Forgot Password
               },
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 30.0),
             OutlinedButton.icon(
-              icon: Icon(Icons.android,
-                  color: Colors.black), // Placeholder icon for Google
+              icon: Image(image: const AssetImage("images/googleLogo.png"), height: 17,),
               label: Text('Continue with Google',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.black),
-                backgroundColor: Color(0xFFFFFDF9),
+                foregroundColor: Color(0xFF272727),
+                side: BorderSide(color: Colors.black87),
+                padding: EdgeInsets.symmetric(vertical: 28.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Handle Google Sign In
               },
             ),
-            SizedBox(height: 5.0),
+            SizedBox(height: 15.0),
             OutlinedButton.icon(
               icon: Icon(Icons.apple,
                   color: Colors.black), // Placeholder icon for Apple
@@ -150,8 +156,10 @@ class SignInPage extends StatelessWidget {
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.black),
-                backgroundColor: Color(0xFFFFFDF9),
+                foregroundColor: Color(0xFF272727),
+                side: BorderSide(color: Colors.black87),
+                padding: EdgeInsets.symmetric(vertical: 25.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Handle Apple Sign In

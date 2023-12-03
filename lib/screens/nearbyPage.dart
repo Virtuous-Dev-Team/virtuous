@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class NavBarPage extends StatelessWidget {
-  const NavBarPage({super.key});
+class NearbyPage extends StatelessWidget {
+  const NearbyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Center(child: Text("Nav Bar Page")),
+      child: Center(child: Text("Nearby")),
     );
   }
 }
