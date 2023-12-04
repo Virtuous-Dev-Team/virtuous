@@ -111,7 +111,6 @@ class SignInPage extends StatelessWidget {
                       color: Colors.black, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
                 elevation: 0,
-                foregroundColor: Color(0xFF272727),
                 backgroundColor: Color(0xFFC1D9CD),
                 side: BorderSide(color: Colors.black87),
                 padding: EdgeInsets.symmetric(vertical: 30.0),
@@ -133,11 +132,7 @@ class SignInPage extends StatelessWidget {
               },
             ),
             SizedBox(height: 30.0),
-            OutlinedButton.icon(
-              icon: Image(image: const AssetImage("images/googleLogo.png"), height: 17,),
-              label: Text('Continue with Google',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
+            OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Color(0xFF272727),
                 side: BorderSide(color: Colors.black87),
@@ -147,39 +142,75 @@ class SignInPage extends StatelessWidget {
               onPressed: () {
                 // Handle Google Sign In
               },
-            ),
-            SizedBox(height: 15.0),
-            OutlinedButton.icon(
-              icon: Icon(Icons.apple,
-                  color: Colors.black), // Placeholder icon for Apple
-              label: Text('Continue with Apple',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Color(0xFF272727),
-                side: BorderSide(color: Colors.black87),
-                padding: EdgeInsets.symmetric(vertical: 25.0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              child: Stack(
+                children: <Widget> [
+                  Align(
+                    alignment: Alignment(-0.5, 0),
+                    child: Image(image: const AssetImage("images/googleLogo.png"), height: 17,),
+                  ),
+                  Align (
+                    alignment: Alignment(-0.05,0),
+                    child: Text('Continue with Google',
+                        textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold)),
+                  )
+                ],
               ),
-              onPressed: () {
-                // Handle Apple Sign In
-              },
             ),
             SizedBox(height: 15.0),
-            OutlinedButton.icon(
-              icon: Image(image: const AssetImage("images/facebookLogo.png"), height: 17,),
-              label: Text('Continue with Facebook',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
+            OutlinedButton(
               style: OutlinedButton.styleFrom(
                 foregroundColor: Color(0xFF272727),
                 side: BorderSide(color: Colors.black87),
-                padding: EdgeInsets.symmetric(vertical: 30.0),
+                padding: EdgeInsets.symmetric(vertical: 28.0),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Handle Facebook Sign In
               },
+              child: Stack(
+                children: <Widget> [
+                  Align(
+                    alignment: Alignment(-0.5, 0),
+                    child: Image(image: const AssetImage("images/appleLogo.png"), height: 17,),
+                  ),
+                  Align (
+                    alignment: Alignment(-0.06,0),
+                    child: Text('Continue with Apple',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold)),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 15.0),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Color(0xFF272727),
+                side: BorderSide(color: Colors.black87),
+                padding: EdgeInsets.symmetric(vertical: 28.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+              ),
+              onPressed: () {
+                // Handle Facebook Sign In
+              },
+              child: Stack(
+                children: <Widget> [
+                  Align(
+                    alignment: Alignment(-0.5, 0),
+                    child: Image(image: const AssetImage("images/facebookLogo.png"), height: 17,),
+                  ),
+                  Align (
+                    alignment: Alignment(0.02,0),
+                    child: Text('Continue with Facebook',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold)),
+                  )
+                ],
+              ),
             ),
             SizedBox(height: 20.0),
             TextButton(

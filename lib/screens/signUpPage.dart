@@ -68,8 +68,13 @@ class SignUpPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            FlutterLogo(size: 100.0), // Placeholder for the logo
+          children: <Widget>[// Placeholder for the logo
+            Image(image: const AssetImage("images/virtuous_circle_outline.png"), height: 100,),
+            Text(
+              'Your journey starts with just one entry',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
+            ),
             SizedBox(height: 20.0),
             // Email input field
             TextField(
@@ -118,15 +123,14 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 20.0),
             // Sign Up button
             ElevatedButton(
-              child: Text('Sign Up',
+              child: Text('Create Account',
                   style: TextStyle(
                       color: Colors.black, fontWeight: FontWeight.bold)),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFFC1D9CD),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                elevation: 0,
+                backgroundColor: Color(0xFFC5B898),
+                padding: EdgeInsets.symmetric(vertical: 30.0),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Redirect to Survey or Verify Email page after calling function
@@ -140,6 +144,11 @@ class SignUpPage extends StatelessWidget {
               onPressed: () {
                 // Redirect to SignIn page
               },
+            ),
+            SizedBox(height: 200),
+            Text('We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 10.0),
             ),
           ],
         ),
