@@ -69,7 +69,17 @@ class SignUpPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            FlutterLogo(size: 100.0), // Placeholder for the logo
+            // Placeholder for the logo
+            Image(
+              image:
+                  const AssetImage("assets/images/virtuous_circle_outline.png"),
+              height: 100,
+            ),
+            Text(
+              'Your journey starts with just one entry',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
+            ),
             SizedBox(height: 20.0),
             // Email input field
             TextField(
@@ -77,8 +87,11 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                prefixIcon: Icon(Icons.email),
+                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                prefixIcon: Icon(
+                  Icons.mail_outline,
+                  color: Colors.black,
+                ),
               ),
             ),
             SizedBox(height: 10.0),
@@ -88,8 +101,11 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                prefixIcon: Icon(Icons.person),
+                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                prefixIcon: Icon(
+                  Icons.person_outline,
+                  color: Colors.black,
+                ),
               ),
             ),
             SizedBox(height: 10.0),
@@ -100,8 +116,11 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle:
-                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                prefixIcon: Icon(Icons.lock),
+                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                prefixIcon: Icon(
+                  Icons.lock_outline,
+                  color: Colors.black,
+                ),
               ),
             ),
             SizedBox(height: 10.0),
@@ -118,15 +137,19 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 20.0),
             // Sign Up button
             ElevatedButton(
-              child: Text('Sign Up',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Create Account',
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0),
+              ),
               style: ElevatedButton.styleFrom(
-                primary: Color(0xFFC1D9CD),
+                elevation: 0,
+                backgroundColor: Color(0xFFC5B898),
+                padding: EdgeInsets.symmetric(vertical: 30.0),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15.0),
+                    borderRadius: BorderRadius.circular(5.0)),
               ),
               onPressed: () {
                 // Redirect to Survey or Verify Email page after calling function
@@ -136,10 +159,20 @@ class SignUpPage extends StatelessWidget {
             SizedBox(height: 10.0),
             TextButton(
               child: Text('Already have an account? Sign In',
-                  style: TextStyle(color: Colors.black)),
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400)),
               onPressed: () {
                 // Redirect to SignIn page
               },
+            ),
+
+            SizedBox(height: 200),
+            Text(
+              'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 10.0),
             ),
           ],
         ),

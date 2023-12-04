@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:virtuetracker/screens/navBarPage.dart';
+import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 
 
-class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+class NavControllerPage extends StatefulWidget {
+  const NavControllerPage({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<NavControllerPage> createState() => _NavControllerPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _NavControllerPageState extends State<NavControllerPage> {
   List pages = [
     HomePage(),
-    NavBarPage(),
     AnalysisPage(),
+    NearbyPage(),
     ResourcePage()
   ];
   int currentIndex = 0; // used to keep track of which page is currently displayed
@@ -33,19 +33,19 @@ class _MainPageState extends State<MainPage> {
         unselectedFontSize: 0,
         selectedFontSize: 0,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.purple,
+        backgroundColor: Color(0xff9C98C5),
         onTap: onTap,
         currentIndex: currentIndex,
         selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey.withOpacity(0.5),
+        unselectedItemColor: Colors.black.withOpacity(0.5),
         showSelectedLabels: false,
         showUnselectedLabels: false,
         elevation: 0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.stacked_bar_chart), label: 'Analysis'),
-          BottomNavigationBarItem(icon: Icon(Icons.arrow_back), label: 'Nearby'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Resources'),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Analysis'),
+          BottomNavigationBarItem(icon: Icon(Icons.near_me), label: 'Nearby'),
+          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Resources'),
         ],
       ),
     );
