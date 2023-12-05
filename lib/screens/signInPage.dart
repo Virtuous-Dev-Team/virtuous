@@ -98,7 +98,7 @@ class SignInPage extends StatelessWidget {
                       labelText: 'Email',
                       labelStyle:
                       TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: Icon(Icons.email_outlined),
                     ),
                   ),
                 ),
@@ -115,27 +115,8 @@ class SignInPage extends StatelessWidget {
                       labelText: 'Password',
                       labelStyle:
                       TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                      prefixIcon: Icon(Icons.lock),
+                      prefixIcon: Icon(Icons.fingerprint_outlined),
                     ),
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                // forgot password?
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                          'Forgot Password?',
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black)
-                      ),
-                    ],
                   ),
                 ),
 
@@ -143,11 +124,13 @@ class SignInPage extends StatelessWidget {
 
                 // sign in button
                 Container(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.symmetric(horizontal: 25),
                   decoration: BoxDecoration(
                     color: Color(0xFFC1D9CD),
                     borderRadius: BorderRadius.circular(8),
+                    boxShadow: [BoxShadow(color: Colors.grey,
+                    blurRadius: 4, offset: Offset(1,2))],
                   ),
                   child: OutlinedButton(
                     onPressed: () {  },
@@ -165,6 +148,25 @@ class SignInPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                // forgot password?
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black)
+                      ),
+                    ],
                   ),
                 ),
                 SizedBox(height: 50),
@@ -197,7 +199,7 @@ class SignInPage extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(height: 40),
+                SizedBox(height: 15),
 
                 // Sign In Buttons
                 Row(
@@ -211,10 +213,10 @@ class SignInPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                       ),
                       child: Image.asset("assets/images/googleLogo.png",
-                        height: 30,),
+                        height: 20,),
                     ),
 
-                    SizedBox(width: 25),
+                    SizedBox(width: 45),
 
                     // Apple Button
                     Container(
@@ -224,10 +226,10 @@ class SignInPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Image.asset("assets/images/appleLogo.png",
-                        height: 30,),
+                        height: 20,),
                     ),
 
-                    SizedBox(width: 25),
+                    SizedBox(width: 45),
 
                     // Facebook Button
                     Container(
@@ -237,13 +239,13 @@ class SignInPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Image.asset("assets/images/facebookLogo.png",
-                        height: 30,),
+                        height: 20,),
                     ),
                   ],
                 ),
 
                 // dont have an account?
-                SizedBox(height: 10.0),
+                SizedBox(height: 30.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
