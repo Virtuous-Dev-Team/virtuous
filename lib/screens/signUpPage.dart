@@ -39,13 +39,13 @@ void callAuthCreateAccount(email, password, fullName) {
       auth
           .createAccount(emailInput, passwordInput, fullNameInput)
           .then((response) => {
-                // user has been created in authentication.
-                print("success")
-              })
+        // user has been created in authentication.
+        print("success")
+      })
           .catchError((error) => {
-                // you can show error in message to user
-                print(error)
-              });
+        // you can show error in message to user
+        print(error)
+      });
     } else {
       // Show user error and remind them to fill out fields.
     }
@@ -72,7 +72,7 @@ class SignUpPage extends StatelessWidget {
             // Placeholder for the logo
             Image(
               image:
-                  const AssetImage("assets/images/virtuous_circle_outline.png"),
+              const AssetImage("assets/images/virtuous_circle_outline.png"),
               height: 100,
             ),
             Text(
@@ -87,7 +87,7 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Email',
                 labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
                 prefixIcon: Icon(
                   Icons.mail_outline,
                   color: Colors.black,
@@ -101,7 +101,7 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Full Name',
                 labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
                 prefixIcon: Icon(
                   Icons.person_outline,
                   color: Colors.black,
@@ -116,7 +116,7 @@ class SignUpPage extends StatelessWidget {
               decoration: InputDecoration(
                 labelText: 'Password',
                 labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
                 prefixIcon: Icon(
                   Icons.lock_outline,
                   color: Colors.black,
