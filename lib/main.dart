@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SignInPage(), // closed for testing
-      // home: SignUpPage(),
+      //home: SignInPage(), // closed for testing
+      home: SignUpPage(),
     );
   }
 }
