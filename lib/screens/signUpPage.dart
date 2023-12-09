@@ -69,7 +69,7 @@ class SignUpPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              // Placeholder for the logo
+              SizedBox(height: 50),
               Image(
                 image:
                 const AssetImage("assets/images/virtuous_circle_outline.png"),
@@ -184,7 +184,7 @@ class SignUpPage extends StatelessWidget {
                 ],
               ),
 
-              SizedBox(height: 150),
+              SizedBox(height: 130),
               Text(
                 'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
                 textAlign: TextAlign.center,

@@ -97,8 +97,10 @@ class SignInPage extends StatelessWidget {
                     decoration: InputDecoration(
                       labelText: 'Email',
                       labelStyle:
-                      TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                      prefixIcon: Icon(Icons.email_outlined),
+                      TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                      prefixIcon: Icon(Icons.email_outlined,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
@@ -114,8 +116,10 @@ class SignInPage extends StatelessWidget {
                     decoration: InputDecoration(
                       labelText: 'Password',
                       labelStyle:
-                      TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                      prefixIcon: Icon(Icons.fingerprint_outlined),
+                      TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                      prefixIcon: Icon(Icons.fingerprint_outlined,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
