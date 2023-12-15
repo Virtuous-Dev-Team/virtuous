@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
@@ -24,8 +25,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SignInPage(), // closed for testing
-      //home: SignUpPage(),
+      home: GridPage(), // closed for testing
+      //home: NavControllerPage(),
     );
   }
 }
