@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Auth {
   final auth = FirebaseAuth.instance;
 
-  Future createAccount(email, password, fullName) async {
+  Future<dynamic> createAccount(email, password, fullName) async {
     try {
       if (email == null) {
         return Future.error({'Error': "Email is null"});
@@ -17,13 +17,13 @@ class Auth {
           email: email, password: password);
       createNewUser(userCredentials.user?.uid, fullName);
       //sendEmailVerification();
-      return userCredentials.user;
+      return {'Success': true, 'response': userCredentials.user};
     } catch (error) {
-      return Future.error(error);
+      return Future.error({'Success': false, 'error': error});
     }
   }
 
-  Future signInUser(String email, String password) async {
+  Future<dynamic> signInUser(String email, String password) async {
     if (email == null) {
       return Future.error({'Error': "Email is null"});
     }
@@ -33,9 +33,9 @@ class Auth {
     try {
       final response = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      return response;
+      return {'Success': true, "response": response};
     } catch (error) {
-      return Future.error(error);
+      return Future.error({'Success': false, 'Error': error});
     }
   }
 

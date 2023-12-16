@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -8,99 +9,110 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primaryColor: appBarColor,
-        scaffoldBackgroundColor: mainBackgroundColor,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MainPage(),
-    );
-  }
-}
-
-class MainPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appBarColor,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-            onPressed: () {
-              // TODO: Implement profile icon functionality.
-            },
-          ),
-          SizedBox(width: 12),
-        ],
-      ),
-      body: Align(
-        alignment: Alignment.topCenter,
-        child: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
-          ),
-          alignment: Alignment.center,
-          child: ElevatedButton(
-            onPressed: () {
-              // TODO: Implement Reflect button functionality.
-            },
-            child: Text(
-              'Reflect',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: iconColor,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Color(0xFFEFE5CC),
+        appBar: AppBar(
+          backgroundColor: appBarColor,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+              onPressed: () {
+                // TODO: Implement profile icon functionality.
+              },
+            ),
+            SizedBox(width: 12),
+          ],
+        ),
+        body: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              color: Color(0xFFFFFDF9),
+              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
               ),
             ),
-            style: ElevatedButton.styleFrom(
-              primary: buttonColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18.0),
-              ),
-              elevation: 4,
-              padding: EdgeInsets.symmetric(horizontal: 64.0, vertical: 32.0),
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    // TODO: Implement Reflect button functionality.
+                  },
+                  child: Text(
+                    'Reflect',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: buttonColor,
+                    shape: CircleBorder(),
+                    elevation: 4,
+                    padding: EdgeInsets.all(70),
+                  ),
+                ),
+                Text(' '),
+                Divider(
+                  thickness: 0.5,
+                  color: Colors.black,
+                  indent: 0,
+                  endIndent: 0,
+                ),
+                SizedBox(height: 15),
+                Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                    ),
+                  ),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 15),
+                            margin: EdgeInsets.symmetric(horizontal: 3),
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF3A3CA),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(' '),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Honesty",
+                            textAlign: TextAlign.right,
+                            style: GoogleFonts.tinos(
+                              textStyle: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Text(' '),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: bottomNavBarColor,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, color: iconColor),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics, color: iconColor),
-            label: 'Analyze',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.location_on, color: iconColor),
-            label: 'Nearby',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books, color: iconColor),
-            label: 'Resources',
-          ),
-        ],
-        selectedItemColor: textColor,
-        unselectedItemColor: textColor,
-        showUnselectedLabels: true,
       ),
     );
   }

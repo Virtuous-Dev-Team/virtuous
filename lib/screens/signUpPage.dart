@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/firebase_options.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:virtuetracker/screens/signInPage.dart';
 
 Future<void> main() async {
   await Firebase.initializeApp(
@@ -26,7 +28,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void callAuthCreateAccount(email, password, fullName) {
+void callAuthCreateAccount(email, password, fullName, context) async {
   final Auth auth = Auth();
   String emailInput = email.text;
   String fullNameInput = fullName.text;
@@ -36,16 +38,18 @@ void callAuthCreateAccount(email, password, fullName) {
     if (emailInput.isNotEmpty &&
         fullNameInput.isNotEmpty &&
         passwordInput.isNotEmpty) {
-      auth
-          .createAccount(emailInput, passwordInput, fullNameInput)
-          .then((response) => {
-        // user has been created in authentication.
-        print("success")
-      })
-          .catchError((error) => {
-        // you can show error in message to user
-        print(error)
-      });
+      dynamic result =
+          await auth.createAccount(emailInput, passwordInput, fullNameInput);
+      if (result['Success']) {
+        // user is authenticated in firebase authenctication
+        // send to SignInPage
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => SignInPage()),
+        );
+      } else {
+        print(result["Error"]);
+      }
     } else {
       // Show user error and remind them to fill out fields.
     }
@@ -69,10 +73,10 @@ class SignUpPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              // Placeholder for the logo
+              SizedBox(height: 50),
               Image(
-                image:
-                const AssetImage("assets/images/virtuous_circle_outline.png"),
+                image: const AssetImage(
+                    "assets/images/virtuous_circle_outline.png"),
                 height: 100,
               ),
               Text(
@@ -88,8 +92,8 @@ class SignUpPage extends StatelessWidget {
                   controller: email,
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.black),
                     prefixIcon: Icon(
                       Icons.mail_outline,
                       color: Colors.black,
@@ -105,8 +109,8 @@ class SignUpPage extends StatelessWidget {
                   controller: fullName,
                   decoration: InputDecoration(
                     labelText: 'Full Name',
-                    labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.black),
                     prefixIcon: Icon(
                       Icons.person_outline,
                       color: Colors.black,
@@ -123,8 +127,8 @@ class SignUpPage extends StatelessWidget {
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.black),
+                    labelStyle: TextStyle(
+                        fontStyle: FontStyle.italic, color: Colors.black),
                     prefixIcon: Icon(
                       Icons.fingerprint_outlined,
                       color: Colors.black,
@@ -165,7 +169,7 @@ class SignUpPage extends StatelessWidget {
                   ),
                   onPressed: () {
                     // Redirect to Survey or Verify Email page after calling function
-                    callAuthCreateAccount(email, password, fullName);
+                    callAuthCreateAccount(email, password, fullName, context);
                   },
                 ),
               ),
@@ -173,18 +177,30 @@ class SignUpPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Already have an account?', style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black, fontWeight: FontWeight.w400) ),
+                  Text('Already have an account?',
+                      style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400)),
                   TextButton(
                     child: const Text('Sign In',
-                        style: TextStyle(decoration: TextDecoration.underline, fontStyle: FontStyle.italic, color: Colors.black, fontWeight: FontWeight.w400)),
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w400)),
                     onPressed: () {
-                      // Redirect to Sign Up page
+                      // Redirect to Sign In page
+                      Navigator.pushReplacement(
+                        context,
+                        CupertinoPageRoute(builder: (context) => SignInPage()),
+                      );
                     },
                   ),
                 ],
               ),
 
-              SizedBox(height: 150),
+              SizedBox(height: 130),
               Text(
                 'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
                 textAlign: TextAlign.center,
