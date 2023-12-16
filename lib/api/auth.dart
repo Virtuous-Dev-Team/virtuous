@@ -4,8 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Auth {
   final auth = FirebaseAuth.instance;
 
-  Future createAccount(email, password, fullName) async {
-    print("called");
+  Future<dynamic> createAccount(email, password, fullName) async {
     try {
       if (email == null) {
         return Future.error({'Error': "Email is null"});
@@ -16,14 +15,15 @@ class Auth {
 
       final userCredentials = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      createNewUser(userCredentials.user?.uid, fullName);
       //sendEmailVerification();
-      return userCredentials.user;
+      return {'Success': true, 'response': userCredentials.user};
     } catch (error) {
-      return Future.error(error);
+      return Future.error({'Success': false, 'error': error});
     }
   }
 
-  Future signInUser(String email, String password) async {
+  Future<dynamic> signInUser(String email, String password) async {
     if (email == null) {
       return Future.error({'Error': "Email is null"});
     }
@@ -33,9 +33,9 @@ class Auth {
     try {
       final response = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      return response;
+      return {'Success': true, "response": response};
     } catch (error) {
-      return Future.error(error);
+      return Future.error({'Success': false, 'Error': error});
     }
   }
 
@@ -52,16 +52,38 @@ class Auth {
     }
   }
 
-  // Working on, need to call this after user creates account in authentication.
   // This function creates user in the Users collection
-  Future createNewUser(uid, fullName, displayName, email) async {
+  // Haven't incorporated email verification
+  Future createNewUser(
+    uid,
+    fullName,
+  ) async {
     User? user = FirebaseAuth.instance.currentUser;
+    final userCollectionRef = FirebaseFirestore.instance.collection('Users');
 
-    if (user != null && user.emailVerified) {
-      final userCollectionRef = FirebaseFirestore.instance.collection('Users');
+    if (user != null) {
       try {
-        final userObject = {"name": "linoln"};
-        final newUser = await userCollectionRef.doc(uid).set(userObject);
+        final userObject = {
+          "name": fullName,
+          "currentCommunity": null,
+          "userLocation": null,
+          "reasons": [],
+          "shareEntries": null,
+        };
+
+        final careerInfo = {"careerLength": null, "currentPosition": null};
+
+        final notificationPreferences = {
+          "allowNotifications": null,
+          "notificationsTimes": [],
+          "fcmToken": null
+        };
+
+        userObject["careerInfo"] = careerInfo;
+        userObject["notificationPreferences"] = notificationPreferences;
+        await userCollectionRef.doc(uid).set(userObject);
+
+        await userCollectionRef.doc(uid).collection("totalData").add({});
       } catch (error) {
         return Future.error(error);
       }
