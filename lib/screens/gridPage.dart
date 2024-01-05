@@ -132,7 +132,7 @@ class GridPage extends StatelessWidget {
                                   'Compassion',
                                   style: GoogleFonts.tinos(
                                     textStyle: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
                                       color: Colors.black,
                                     ),
                                   ),

@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/screens/gridPage.dart';
+import 'package:virtuetracker/screens/signInPage.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -44,6 +47,10 @@ class HomePage extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     // TODO: Implement Reflect button functionality.
+                    Navigator.pushReplacement(
+                      context,
+                      CupertinoPageRoute(builder: (context) => GridPage()),
+                    );
                   },
                   child: Text(
                     'Reflect',
