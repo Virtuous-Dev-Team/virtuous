@@ -186,27 +186,8 @@ class GridPage extends StatelessWidget {
 
                             SizedBox(width: 20),
 
-                            // Integrity Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Compassion',
-                                  style: GoogleFonts.tinos(textStyle: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.black,),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFFADAB4),
-                                  padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20,),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
+                            // Integrity Button Rectangle(quadrantName: 'Integrity', quadrantColor: '0xFFFADAB4')
+                            ListView.builder(itemCount: 1, itemBuilder: (BuildContext context, int index){return Container(child:Rectangle(quadrantName: 'Integrity', quadrantColor: 0xFFFADAB4) ,);})
                           ],
                         ),
 
@@ -292,6 +273,43 @@ class GridPage extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Rectangle extends StatelessWidget {
+  const Rectangle({super.key, required this.quadrantName, required this.quadrantColor});
+
+  final String quadrantName;
+  final int quadrantColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 90,
+      height: 90,
+      child: Center(
+        child: Expanded(
+          child: ElevatedButton(
+            child: Text(
+              quadrantName,
+              style: GoogleFonts.tinos(textStyle: TextStyle(
+                fontSize: 13,
+                color: Colors.black,),
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              elevation: 4,
+              backgroundColor: Color(quadrantColor),
+              padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 20,),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+              shadowColor: Colors.black,
+            ),
+            onPressed: () {},
           ),
         ),
       ),
