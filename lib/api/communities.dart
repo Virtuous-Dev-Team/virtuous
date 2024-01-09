@@ -25,8 +25,9 @@ class Communities {
           };
         }).toList();
         print(gridPageList);
+        return {'Success': true, "response": gridPageList};
       } else {
-        return Future.error({'Error': "Query is empty"});
+        return Future.error({'Success': false, 'Error': "Query is empty"});
       }
     } catch (e) {
       return Future.error(e);

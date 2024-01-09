@@ -79,8 +79,11 @@ class Auth {
           "fcmToken": null
         };
 
+        final quadrantUsedData = {};
+
         userObject["careerInfo"] = careerInfo;
         userObject["notificationPreferences"] = notificationPreferences;
+        userObject["quadrantUsedData"] = quadrantUsedData;
         await userCollectionRef.doc(uid).set(userObject);
 
         await userCollectionRef.doc(uid).collection("totalData").add({});

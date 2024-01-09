@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'firebase_options.dart';
@@ -21,7 +22,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Communities c = Communities();
-    c.getQuadrantList();
+    final Users u = Users();
+    u.addVirtueEntry("legal", "honesty", "quadrantColor", [
+      "Answer 1",
+      "Answer 2",
+      "Answer 3sss",
+      "Anserssssss"
+    ]).catchError((result) => {print(result)});
+    // u.getMostRecentEntries("legal");
+    // c.getQuadrantList();
     return MaterialApp(
       title: 'Virtue Tracker',
       theme: ThemeData(
