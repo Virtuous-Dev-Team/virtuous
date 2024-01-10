@@ -42,8 +42,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: GridPage(), // closed for testing
+      home: GridPage2(), // closed for testing
       //home: NavControllerPage(),
+      //home: SignUpPage(),
     );
   }
 }

@@ -63,6 +63,15 @@ class SignUpPage extends StatelessWidget {
   TextEditingController fullName = TextEditingController();
   TextEditingController password = TextEditingController();
 
+  String? validateEmail(String? email) {
+    RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
+    final isEmailValid = emailRegex.hasMatch(email ?? '');
+    if (!isEmailValid) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +97,7 @@ class SignUpPage extends StatelessWidget {
               // Email input field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: email,
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -99,13 +108,16 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validateEmail,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               SizedBox(height: 10.0),
               // Full Name input field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: fullName,
                   decoration: InputDecoration(
                     labelText: 'Full Name',
@@ -116,6 +128,10 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                  validator: (fullName) => fullName!.length < 3
+                      ? 'Name should be at least 3 characters'
+                      : null,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               SizedBox(height: 10.0),
