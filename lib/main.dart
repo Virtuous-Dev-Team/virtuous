@@ -10,6 +10,7 @@ import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
+import 'package:geolocator/geolocator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,32 +18,53 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MyApp());
+
+  // await Geolocator.openAppSettings();
+  // await Geolocator.openLocationSettings();
+  testingApi();
+}
+
+Future testingApi() async {
+// Testing api
+
+  final Communities c = Communities();
+  final Users u = Users();
+
+  // Finished Testing addVirtue api
+  // u
+  //     .addVirtueEntry(
+  //         userObject["currentCommunity"],
+  //         "honesty",
+  //         "quadrantColor",
+  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"])
+  //     .then((value) => {print(value["Success"])})
+  //     .catchError((error) => {print(error)});
+
+  // Finished Testing surveyInfo api
+  // u.surveyInfo("best attorney ever in the world", "2 years", "legal",
+  //     "I need to a", true, false);
+
+  // u.getUpdatedLocation();
+  // u.addSharedVirtueEntry("", "");
+  // u.getUserLocation();
+  // u.getMostRecentEntries("legal");
+  dynamic userObject = await u.getUserInfo();
+  // print(userObject);
+
+  u.updateQuadrantsUsed();
+  // Testing api ending
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Testing api
-    final Communities c = Communities();
-    final Users u = Users();
-    u.addVirtueEntry("legal", "honesty", "quadrantColor", [
-      "Answer 1",
-      "Answer 2",
-      "Answer 3sss",
-      "Anserssssss"
-    ]).catchError((result) => {print(result)});
-    // u.getMostRecentEntries("legal");
-    // c.getQuadrantList();
-
-    // Testing api ending
-
     return MaterialApp(
       title: 'Virtue Tracker',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: GridPage(), // closed for testing
+      home: HomePage(), // closed for testing
       //home: NavControllerPage(),
     );
   }

@@ -15,9 +15,12 @@ class Auth {
 
       final userCredentials = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      createNewUser(userCredentials.user?.uid, fullName);
-      //sendEmailVerification();
-      return {'Success': true, 'response': userCredentials.user};
+      dynamic result = await createNewUser(userCredentials.user?.uid, fullName);
+      if (result['Success']) {
+        print("Account created successfully");
+        //sendEmailVerification();
+        return {'Success': true, 'response': userCredentials.user};
+      }
     } catch (error) {
       return Future.error({'Success': false, 'error': error});
     }
@@ -54,7 +57,7 @@ class Auth {
 
   // This function creates user in the Users collection
   // Haven't incorporated email verification
-  Future createNewUser(
+  Future<dynamic> createNewUser(
     uid,
     fullName,
   ) async {
@@ -69,6 +72,7 @@ class Auth {
           "userLocation": null,
           "reasons": [],
           "shareEntries": null,
+          "shareLocation": false
         };
 
         final careerInfo = {"careerLength": null, "currentPosition": null};
@@ -86,9 +90,11 @@ class Auth {
         userObject["quadrantUsedData"] = quadrantUsedData;
         await userCollectionRef.doc(uid).set(userObject);
 
+        // After creating the userObject in Users collection, we can add sub collection totalData
         await userCollectionRef.doc(uid).collection("totalData").add({});
+        return {'Success': true};
       } catch (error) {
-        return Future.error(error);
+        return Future.error({'Success': false, 'Error': error});
       }
     }
   }

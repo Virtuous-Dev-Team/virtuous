@@ -46,16 +46,17 @@ void callAuthSignIn(email, password, context) async {
           context,
           CupertinoPageRoute(builder: (context) => HomePage()),
         );
-      } else {
-        print(result['Error']);
       }
     }
     // If fields are empty
     else {
       // Show user error and remind them to fill out fields.
     }
-  } catch (e) {
-    print(e);
+  } catch (error) {
+    // Error message is inside of error.
+    // Message: The supplied auth credential is incorrect
+
+    print(error);
   }
 }
 

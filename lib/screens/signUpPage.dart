@@ -47,13 +47,13 @@ void callAuthCreateAccount(email, password, fullName, context) async {
           context,
           CupertinoPageRoute(builder: (context) => SignInPage()),
         );
-      } else {
-        print(result["Error"]);
       }
     } else {
       // Show user error and remind them to fill out fields.
     }
   } catch (error) {
+    // Error message is inside of e.
+    // Error message: The email address is already in use by another account.
     print(error);
   }
 }

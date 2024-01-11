@@ -7,9 +7,19 @@ class Communities {
   Future getQuadrantList() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) print('No user found');
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': "User not found"});
+      }
       final communityCollectionRef =
           FirebaseFirestore.instance.collection('Communities');
+      final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
+
+      DocumentSnapshot documentSnapshot =
+          await usersCollectionRef.doc(user.uid).get();
+      if (documentSnapshot.exists) {
+        final usersCurrentCommunity = documentSnapshot["currentCommunity"];
+      }
+
       // Query all documents in the community collection and search for specific community
       QuerySnapshot querySnapshot = await communityCollectionRef
           .where("communityName", isEqualTo: "legal")
@@ -24,7 +34,7 @@ class Communities {
             'quadrantColor': doc['quadrantColor'] ?? 'Error'
           };
         }).toList();
-        print(gridPageList);
+        // print(gridPageList);
         return {'Success': true, "response": gridPageList};
       } else {
         return Future.error({'Success': false, 'Error': "Query is empty"});
