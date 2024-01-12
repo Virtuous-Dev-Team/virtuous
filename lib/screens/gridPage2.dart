@@ -88,7 +88,7 @@ class GridPage2 extends StatelessWidget {
                     crossAxisSpacing: 5,
                     crossAxisCount: 3,
                     children: [
-                      Rectangle(quadrantName: 'Honesty', quadrantColor: 0xFFF3A3CA),
+                      Rectangle(quadrantame: 'Honesty', quadrantColor: 0xFFF3A3CA),
                       Rectangle(quadrantName: 'Courage', quadrantColor: 0XFFCBF1D1),
                       Rectangle(quadrantName: 'Compassion', quadrantColor: 0XFFB0E5F6),
                       Rectangle(quadrantName: 'Generosity', quadrantColor: 0XFFF6EEA2),
