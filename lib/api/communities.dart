@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class Communities {
-  Future getQuadrantList() async {
+  Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -12,17 +12,10 @@ class Communities {
       }
       final communityCollectionRef =
           FirebaseFirestore.instance.collection('Communities');
-      final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
-
-      DocumentSnapshot documentSnapshot =
-          await usersCollectionRef.doc(user.uid).get();
-      if (documentSnapshot.exists) {
-        final usersCurrentCommunity = documentSnapshot["currentCommunity"];
-      }
 
       // Query all documents in the community collection and search for specific community
       QuerySnapshot querySnapshot = await communityCollectionRef
-          .where("communityName", isEqualTo: "legal")
+          .where("communityName", isEqualTo: communityName)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {

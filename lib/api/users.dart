@@ -2,48 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:virtuetracker/api/communityShared.dart';
 
 class Users {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
 
   // Add different communities quadrant list, and write getter function per commmunity.
-  final legalQuadrantList = {
-    {
-      "Honesty": 0,
-      "Courage": 0,
-      "Compassion": 0,
-      "Generosity": 0,
-      "Fidelity": 0,
-      "Integrity": 0,
-      "Fairness": 0,
-      "Self-control": 0,
-      "Prudence": 0
-    }
-  };
 
   final quadrantLists = {
     "legal": {
-      "Honesty": 0,
-      "Courage": 0,
-      "Compassion": 0,
-      "Generosity": 0,
-      "Fidelity": 0,
-      "Integrity": 0,
-      "Fairness": 0,
-      "Self-control": 0,
-      "Prudence": 0
+      "legal": {
+        "Honesty": 0,
+        "Courage": 0,
+        "Compassion": 0,
+        "Generosity": 0,
+        "Fidelity": 0,
+        "Integrity": 0,
+        "Fairness": 0,
+        "Self-control": 0,
+        "Prudence": 0
+      }
     },
     "other": {}
   };
 
-  // Need to add to quadrantUsed
-  Future<dynamic> addVirtueEntry(
-      currentCommunity, quadrantUsed, quadrantColor, quadrantAnswers) async {
+  // Done,
+  Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
+      quadrantAnswers, shareLocation) async {
     try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        return Future.error({'Success': false, 'Error': 'User not found'});
-      }
+      // User? user = FirebaseAuth.instance.currentUser;
+      // if (user == null) {
+      //   return Future.error({'Success': false, 'Error': 'User not found'});
+      // }
       final totalDataObject = {
         "communityName": currentCommunity,
         "quadrantUsed": quadrantUsed,
@@ -51,67 +41,55 @@ class Users {
         "dateEntried": FieldValue.serverTimestamp(),
         "quadrantAnswers": quadrantAnswers
       };
+      // Add virtue entry to totalData subcollection
       await usersCollectionRef
-          .doc(user.uid)
+          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
           .collection("totalData")
           .add(totalDataObject);
 
-      DocumentSnapshot documentSnapshot = await usersCollectionRef.doc().get();
+      // Maybe add a check to see if it completed
+      await updateQuadrantsUsed(currentCommunity, quadrantUsed);
 
-      if (documentSnapshot.exists) {
-        Map<String, dynamic> documentData =
-            documentSnapshot.data() as Map<String, dynamic>;
+      if (shareLocation) {
+        final CommunityShared communitySharedApi = CommunityShared();
+        await communitySharedApi
+            .addSharedVirtueEntry(
+                quadrantUsed, quadrantColor, shareLocation, currentCommunity)
+            .catchError((e) => print(e));
       }
-
       return {'Success': true, "response": "Entry added"};
     } catch (e) {
       return Future.error({'Success': false, 'Error': e});
     }
   }
 
-  Future<dynamic> updateQuadrantsUsed() async {
-    // Get the current document data
-    DocumentSnapshot userDocSnapshot =
-        await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").get();
-    Map<String, dynamic> userData =
-        userDocSnapshot.data() as Map<String, dynamic>;
-
-    print(userData);
-    // Check if the nested field exists and is a list
-    if (userData.containsKey('quadrantUsedData')) {
-      // Cast the list to a List<dynamic>
-      dynamic list = userData['quadrantUsedData'];
-
-      // Find the object in the list based on searchField and searchValue
-      int index = list.indexWhere((obj) =>
-          obj is Map<String, dynamic> && obj["communityName"] == "legal");
-
-      // If the object is found, increment the specified field
-      print(index);
-      // if (index != -1) {
-      //   list[index][fieldToIncrement] =
-      //       (list[index][fieldToIncrement] ?? 0) + 1;
-
-      //   // Update the document with the modified data
-      //   await userDocRef.update({
-      //     'nestedObject': list,
-      //   });
-
-      //   print(
-      //       'Incremented nestedObject.$fieldToIncrement by 1 for user with ID $userId');
-      // } else {
-      //   print('Object not found in the list');
+  // Tested and is working as intended
+  Future<dynamic> updateQuadrantsUsed(communityName, quadrantUsed) async {
+    try {
+      // User? user = FirebaseAuth.instance.currentUser;
+      // if (user == null) {
+      //   return Future.error({'Success': false, 'Error': 'User not found'});
       // }
-    } else {
-      print('Nested structure not found or is not of the expected type');
+
+      // Increment whichever quadrant was used
+      await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").update({
+        'quadrantUsedData.${communityName}.${quadrantUsed}':
+            FieldValue.increment(1),
+      });
+    } catch (error) {
+      return Future.error({'Success': false, 'Error': error});
     }
   }
 
-  // In review
+  // Done
   Future<dynamic> getMostRecentEntries(communityName) async {
     try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': 'User not found'});
+      }
       QuerySnapshot querySnapshot = await usersCollectionRef
-          .doc("aUhwKnnDDyfDE9YkIKxt2ep9zQE3")
+          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
           .collection("totalData")
           .where("communityName", isEqualTo: communityName)
           .orderBy('dateEntried', descending: true)
@@ -140,18 +118,18 @@ class Users {
     }
   }
 
-  // Done but still need to review function used
+  // Done but still need to review function used, and check for users
   Future<dynamic> surveyInfo(currentPosition, careerLength, currentCommunity,
       reasons, shareEntries, shareLocation) async {
     final careerInfo = {
       "currentPosition": currentPosition,
       "careerLength": careerLength
     };
-    final quadrantUsedData = {
-      "communityName": currentCommunity,
-      "quadrantsUsed": quadrantLists[currentCommunity]
-    };
+
     User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return Future.error({'Success': false, 'Error': 'User not found'});
+    }
     final userObject = {
       "currentCommunity": currentCommunity,
       "userLocation": shareLocation == true ? await addUserLocation() : null,
@@ -166,14 +144,15 @@ class Users {
     };
     userObject["careerInfo"] = careerInfo;
     userObject["notificationPreferences"] = notificationPreferences;
-    userObject["quadrantUsedData"] = quadrantUsedData;
+    userObject["quadrantUsedData"] = quadrantLists[currentCommunity];
 
     await usersCollectionRef
         .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
         .set(userObject, SetOptions(merge: true));
   }
 
-  // Update user's location in Firestore, needs review
+  // Used whenever we need to to ask for user permissions for location
+  // Done and tested
   Future<dynamic> addUserLocation() async {
     try {
       bool serviceEnabled;
@@ -217,14 +196,9 @@ class Users {
     }
   }
 
-  // Needs review
+  // Done and tested
   Future<dynamic> getUpdatedLocation(shareLocation) async {
     try {
-      // DocumentSnapshot documentSnapshot =
-      //     await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").get();
-      // if (documentSnapshot.exists) {
-      //   final shareLocation = documentSnapshot["shareLocation"];
-      //   print(shareLocation);
       if (shareLocation) {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
@@ -240,25 +214,6 @@ class Users {
       print(error);
       return Future.error({'Success': false, 'Error': error});
     }
-  }
-
-  // Not finished
-  Future<dynamic> addSharedVirtueEntry(
-      quadrantUsed, quadrantColor, shareLocation) async {
-    dynamic updatedLocation = await getUpdatedLocation(shareLocation)
-        .catchError((e) => {print("no snsoa")});
-
-    if (updatedLocation is GeoPoint) {
-      print("true");
-    } else {
-      return (print("Not a GeoPoint"));
-    }
-    final sharedEntry = {
-      "dateEntried": FieldValue.serverTimestamp(),
-      "quadrantUsed": quadrantUsed,
-      "quadrantColor": quadrantColor,
-      "userLocation": ""
-    };
   }
 
   // Done
@@ -279,5 +234,18 @@ class Users {
     } catch (error) {
       return Future.error({'Success': false, 'Error': error});
     }
+  }
+
+  Future<dynamic> findUsersNear() async {
+    // Target location
+    GeoPoint targetLocation = GeoPoint(37.7749, -122.4194);
+
+// Query documents within a certain radius
+    double radiusInKm = 10.0;
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('locations')
+        .where('location', isLessThanOrEqualTo: targetLocation)
+        .where('location', isGreaterThanOrEqualTo: targetLocation)
+        .get();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/gridPage2.dart';
@@ -29,14 +30,12 @@ Future testingApi() async {
 
   final Communities c = Communities();
   final Users u = Users();
+  final CommunityShared shared = CommunityShared();
 
   // Finished Testing addVirtue api
   // u
-  //     .addVirtueEntry(
-  //         userObject["currentCommunity"],
-  //         "honesty",
-  //         "quadrantColor",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"])
+  //     .addVirtueEntry("legal", "Integrity", "quadrantColor",
+  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
   //     .then((value) => {print(value["Success"])})
   //     .catchError((error) => {print(error)});
 
@@ -44,14 +43,20 @@ Future testingApi() async {
   // u.surveyInfo("best attorney ever in the world", "2 years", "legal",
   //     "I need to a", true, false);
 
-  // u.getUpdatedLocation();
-  // u.addSharedVirtueEntry("", "");
+  // await u
+  //     .getUpdatedLocation(true)
+  //     .then((value) => print(value))
+  //     .catchError((e) => print(e));
+  // u.addUserLocation().then((value) => print(value));
+  shared
+      .addSharedVirtueEntry("a", "a", true, "legal")
+      .catchError((e) => print(e));
   // u.getUserLocation();
   // u.getMostRecentEntries("legal");
   dynamic userObject = await u.getUserInfo();
   // print(userObject);
 
-  u.updateQuadrantsUsed();
+  // u.updateQuadrantsUsed("legal", "Compassion");
   // Testing api ending
 }
 
