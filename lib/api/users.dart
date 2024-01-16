@@ -84,10 +84,10 @@ class Users {
   // Done
   Future<dynamic> getMostRecentEntries(communityName) async {
     try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        return Future.error({'Success': false, 'Error': 'User not found'});
-      }
+      // User? user = FirebaseAuth.instance.currentUser;
+      // if (user == null) {
+      //   return Future.error({'Success': false, 'Error': 'User not found'});
+      // }
       QuerySnapshot querySnapshot = await usersCollectionRef
           .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
           .collection("totalData")
@@ -101,9 +101,11 @@ class Users {
         dynamic recentEntriesList = querySnapshot.docs.map((document) {
           Timestamp timestamp = document['dateEntried'] as Timestamp;
           return {
+            "communityName": document["communityName"],
             "quadrantUsed": document["quadrantUsed"] ?? "Error",
             "quadrantColor": document["quadrantColor"],
             "dateEntried": timestamp.toDate().toString(),
+            "quadrantAnswers": document["quadrantAnswers"]
           };
         }).toList();
 
@@ -118,21 +120,32 @@ class Users {
     }
   }
 
-  // Done but still need to review function used, and check for users
+  // Working, need to add phone number verification
   Future<dynamic> surveyInfo(currentPosition, careerLength, currentCommunity,
       reasons, shareEntries, shareLocation) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    // if (user == null) {
+    //   return Future.error({'Success': false, 'Error': 'User not found'});
+    // }
     final careerInfo = {
       "currentPosition": currentPosition,
       "careerLength": careerLength
     };
 
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      return Future.error({'Success': false, 'Error': 'User not found'});
+    dynamic userLocation;
+    if (shareLocation) {
+      dynamic res = await addUserLocation();
+      if (res["Success"]) {
+        print("User location acquired ${res["response"]}");
+        userLocation = res["response"];
+      } else {
+        print("User location couldn't be acquired try again later");
+      }
     }
+
     final userObject = {
       "currentCommunity": currentCommunity,
-      "userLocation": shareLocation == true ? await addUserLocation() : null,
+      "userLocation": userLocation,
       "reasons": reasons,
       "shareEntries": shareEntries,
       "shareLocation": shareLocation
@@ -190,7 +203,10 @@ class Users {
           desiredAccuracy: LocationAccuracy.high);
       print(
           "latitude: ${position.latitude} and longitude: ${position.longitude}");
-      return GeoPoint(position.latitude, position.longitude);
+      return {
+        "Success": true,
+        "response": GeoPoint(position.latitude, position.longitude)
+      };
     } catch (e) {
       print('Error updating location: $e');
     }
