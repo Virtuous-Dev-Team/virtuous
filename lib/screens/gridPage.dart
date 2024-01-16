@@ -239,15 +239,15 @@ class GridPage extends StatelessWidget {
                             SizedBox(width: 20),
 
                             // Integrity Button Rectangle(quadrantName: 'Integrity', quadrantColor: '0xFFFADAB4')
-                            ListView.builder(
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    child: Rectangle(
-                                        quadrantName: 'Integrity',
-                                        quadrantColor: 0xFFFADAB4),
-                                  );
-                                })
+                            // ListView.builder(
+                            //     itemCount: 1,
+                            //     itemBuilder: (BuildContext context, int index) {
+                            //       return Container(
+                            //         child: Rectangle(
+                            //             quadrantName: 'Integrity',
+                            //             quadrantColor: 0xFFFADAB4),
+                            //       );
+                            //     })
                           ],
                         ),
 

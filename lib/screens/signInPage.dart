@@ -62,6 +62,7 @@ void callAuthSignIn(email, password, context) async {
 class SignInPage extends StatelessWidget {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -218,45 +219,54 @@ class SignInPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Google Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/googleLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () => Auth().signInWithGoogle(),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/googleLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
 
                   SizedBox(width: 45),
 
                   // Apple Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/appleLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/appleLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
 
                   SizedBox(width: 45),
 
                   // Facebook Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/facebookLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/facebookLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
                 ],
