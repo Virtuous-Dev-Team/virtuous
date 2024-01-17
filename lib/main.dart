@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/stats.dart';
 import 'package:virtuetracker/api/users.dart';
+import 'package:virtuetracker/app_router/app_router.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/gridPage2.dart';
 import 'package:virtuetracker/screens/navController.dart';
@@ -73,8 +74,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: HomePage(), // closed for testing
-      //home: NavControllerPage(),
+      // routerConfig: AppRouter.router,
+      // home: HomePage(), // closed for testing
+      home: SignInPage(),
     );
   }
 }

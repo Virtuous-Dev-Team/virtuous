@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
+import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 
 // Color palette
@@ -120,6 +121,10 @@ class HomePage extends StatelessWidget {
             ),
           ),
         ),
+        // bottomNavigationBar: BottomNavBar(
+        //   currentIndex: 0,
+        //   onTap: (index) {},
+        // ),
       ),
     );
   }

@@ -14,20 +14,22 @@ const Color textColor = Colors.white;
 Future<dynamic> callGetQuadrantList() async {
   final Communities communities = Communities();
 
-  // try {
-  //   dynamic result = await communities.getQuadrantList();
-  //   if (result['Success']) {
-  //     // user is authenticated in firebase authenctication
-  //     // send to homepage
-  //   } else {
-  //     print(result['Error']);
-  //   }
-  // } catch (e) {
-  //   print(e);
-  // }
+  try {
+    dynamic result = await communities.getQuadrantList("");
+    if (result['Success']) {
+      // user is authenticated in firebase authenctication
+      // send to homepage
+    } else {
+      print(result['Error']);
+    }
+  } catch (e) {
+    print(e);
+  }
 }
 
 class GridPage2 extends StatelessWidget {
+  const GridPage2({super.key});
+
   @override
   Widget build(BuildContext context) {
     final quadrantList = callGetQuadrantList();
