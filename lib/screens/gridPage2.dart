@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/communities.dart';
+import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -28,8 +29,8 @@ Future<dynamic> callGetQuadrantList() async {
 }
 
 class GridPage2 extends StatelessWidget {
-  const GridPage2({super.key});
-
+  const GridPage2({super.key, required this.appBarChoice});
+  final String appBarChoice;
   @override
   Widget build(BuildContext context) {
     final quadrantList = callGetQuadrantList();
@@ -37,19 +38,20 @@ class GridPage2 extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
-        appBar: AppBar(
-          backgroundColor: appBarColor,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-              onPressed: () {
-                // TODO: Implement profile icon functionality.
-              },
-            ),
-            SizedBox(width: 12),
-          ],
-        ),
+        // appBar: AppBar(
+        //   backgroundColor: appBarColor,
+        //   elevation: 0,
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+        //       onPressed: () {
+        //         // TODO: Implement profile icon functionality.
+        //       },
+        //     ),
+        //     SizedBox(width: 12),
+        //   ],
+        // ),
+        appBar: AppBarWidget(appBarChoice),
         body: Stack(
           children: <Widget>[
             Positioned(

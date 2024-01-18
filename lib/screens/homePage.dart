@@ -1,9 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -14,24 +16,15 @@ const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
-        appBar: AppBar(
-          backgroundColor: appBarColor,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-              onPressed: () {
-                // TODO: Implement profile icon functionality.
-              },
-            ),
-            SizedBox(width: 12),
-          ],
-        ),
+
+        appBar: AppBarWidget('regular'),
         body: Center(
           child: Container(
             decoration: BoxDecoration(
@@ -46,12 +39,13 @@ class HomePage extends StatelessWidget {
               children: [
                 SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () => {
                     // TODO: Implement Reflect button functionality.
-                    Navigator.pushReplacement(
-                      context,
-                      CupertinoPageRoute(builder: (context) => GridPage()),
-                    );
+                    // Navigator.pushReplacement(
+                    //   context,
+                    //   CupertinoPageRoute(builder: (context) => GridPage()),
+                    // )
+                    GoRouter.of(context).go('/home/gridPage')
                   },
                   child: Text(
                     'Reflect',

@@ -4,33 +4,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 
-Future<void> main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: SignInPage(),
-    );
-  }
-}
-
-void callAuthSignIn(email, password, context) async {
+void callAuthSignIn(email, password, context, ref) async {
   final Auth auth = Auth();
   String emailInput = email.text;
   String passwordInput = password.text;
@@ -42,10 +23,12 @@ void callAuthSignIn(email, password, context) async {
       if (result['Success']) {
         // user is authenticated in firebase authenctication
         // send to homepage
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (context) => HomePage()),
-        );
+        // Navigator.pushReplacement(
+        //   context,
+        //   CupertinoPageRoute(builder: (context) => HomePage()),
+        // );
+        final authService = context.read(authRepositoryProvider);
+        ref.read(AppNavigation.router).go('/home');
       }
     }
     // If fields are empty
@@ -60,12 +43,12 @@ void callAuthSignIn(email, password, context) async {
   }
 }
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends ConsumerWidget {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -147,7 +130,9 @@ class SignInPage extends StatelessWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () {
-                    callAuthSignIn(email, password, context);
+                    callAuthSignIn(email, password, context, ref);
+                    email.clear();
+                    password.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFC1D9CD),
@@ -219,45 +204,54 @@ class SignInPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Google Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/googleLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () => Auth().signInWithGoogle(),
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/googleLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
 
                   SizedBox(width: 45),
 
                   // Apple Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/appleLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/appleLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
 
                   SizedBox(width: 45),
 
                   // Facebook Button
-                  Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Image.asset(
-                      "assets/images/facebookLogo.png",
-                      height: 20,
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Image.asset(
+                        "assets/images/facebookLogo.png",
+                        height: 20,
+                      ),
                     ),
                   ),
                 ],

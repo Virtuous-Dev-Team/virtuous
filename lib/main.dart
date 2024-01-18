@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/stats.dart';
 import 'package:virtuetracker/api/users.dart';
-import 'package:virtuetracker/app_router/app_router.dart';
+import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/gridPage2.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
@@ -20,7 +23,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 
   // await Geolocator.openAppSettings();
   // await Geolocator.openLocationSettings();
@@ -34,6 +37,7 @@ Future testingApi() async {
   final Users u = Users();
   final CommunityShared shared = CommunityShared();
   final Stats stats = Stats();
+  final Auth auth = Auth();
   // Finished Testing addVirtue api
   // u
   //     .addVirtueEntry("legal", "Courage", "quadrantColor",
@@ -55,16 +59,18 @@ Future testingApi() async {
   //     .catchError((e) => print(e));
   // u.getUserLocation();
   // u.getMostRecentEntries("legal");
-  dynamic userObject = await u.getUserInfo();
+  // dynamic userObject = await u.getUserInfo();
+  auth.signInWithGoogle();
   // print(userObject);
 
   // Tested and working
   // u.updateQuadrantsUsed("legal", "Compassion");
-
+  // auth.signOutUser();
   stats.getQuadrantsUsedList("legal");
   // Testing api ending
 }
 
+// Test screens and widgets with this
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -74,9 +80,30 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+
       // routerConfig: AppRouter.router,
       // home: HomePage(), // closed for testing
       home: SignInPage(),
     );
   }
 }
+
+
+// This widget has the navigation with routes
+// class MyApp extends ConsumerWidget {
+//   const MyApp({super.key});
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     // final goRouter = ref.watch(goRouterProvider);
+//     final goRouter = ref.watch(AppNavigation.router);
+
+//     return MaterialApp.router(
+//       routerConfig: goRouter,
+//       title: 'Virtue Tacker',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//         visualDensity: VisualDensity.adaptivePlatformDensity,
+//       ),
+//     );
+//   }
+// }

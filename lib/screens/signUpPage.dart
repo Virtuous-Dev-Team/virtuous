@@ -7,27 +7,6 @@ import 'package:virtuetracker/firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 
-Future<void> main() async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: SignUpPage(),
-    );
-  }
-}
-
 void callAuthCreateAccount(email, password, fullName, context) async {
   final Auth auth = Auth();
   String emailInput = email.text;
