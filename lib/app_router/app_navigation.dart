@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
@@ -14,13 +16,26 @@ import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 
 String initial(ref) {
-  final user = ref.watch(authStateChangesProvider).value;
-  print('User initial location function : $user');
-  if (user != null) {
-    // User is signed in, redirect to the home page
-    return '/home';
-  } else {
-    // User is not signed in, redirect to the sign-in page
+  try {
+    final user = ref.watch(authStateChangesProvider).value;
+    Auth auth = Auth();
+
+    final creationTime = user.metadata.creationTime;
+    final lastSignInTime = user.metadata.lastSignInTime;
+    print('use ${user} and meta');
+    print(lastSignInTime);
+
+    if (user != null) {
+      if (creationTime == lastSignInTime) {
+        print('welcome new user, first time creating account');
+        return '/signIn';
+      }
+      return '/home';
+    } else {
+      // User is not signed in, redirect to the sign-in page
+      return '/signIn';
+    }
+  } catch (e) {
     return '/signIn';
   }
 }
@@ -42,105 +57,114 @@ class AppNavigation {
 
   // Call the navigation function after the build is complete
   // WidgetsBinding.instance?.addPostFrameCallback((_) => navigate());
-  static final router = Provider<GoRouter>((ref) => GoRouter(
-        initialLocation: initial(ref),
-        debugLogDiagnostics: true,
-        navigatorKey: _rootNavigatorKey,
-        routes: [
-          GoRoute(
-            path: '/',
-            name: 'LandingPage',
-            builder: (context, state) => LandingPage(),
-          ),
-          GoRoute(
+
+  static final router = Provider<GoRouter>((ref) {
+    return GoRouter(
+      initialLocation: initial(ref),
+      debugLogDiagnostics: true,
+      navigatorKey: _rootNavigatorKey,
+      routes: [
+        GoRoute(
+          path: '/',
+          name: 'LandingPage',
+          builder: (context, state) => LandingPage(),
+        ),
+        GoRoute(
             path: '/signIn',
             name: 'signIn',
             builder: (context, state) => SignInPage(),
-          ),
-          GoRoute(
-            path: '/signUp',
-            name: 'signUp',
-            builder: (context, state) => SignUpPage(),
-          ),
+            routes: [
+              GoRoute(
+                path: 'signUp',
+                name: 'signUp',
+                builder: (context, state) => SignUpPage(),
+              ),
+            ]),
+        GoRoute(
+          path: '/signUp',
+          name: 'signUps',
+          builder: (context, state) => SignUpPage(),
+        ),
 
-          /// MainWrapper
-          StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) {
-              return ScaffoldWithNavBar(navigationShell: navigationShell);
-            },
-            branches: <StatefulShellBranch>[
-              /// Brach Home
-              StatefulShellBranch(
-                navigatorKey: _shellNavigatorHome,
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: "/home",
-                    name: "Home",
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const HomePage(),
-                    routes: [
-                      GoRoute(
-                        path: 'gridPage',
-                        name: 'GridPage',
-                        pageBuilder: (context, state) =>
-                            CustomTransitionPage<void>(
-                          key: state.pageKey,
-                          child: const GridPage2(appBarChoice: 'arrow'),
-                          transitionsBuilder: (context, animation,
-                                  secondaryAnimation, child) =>
-                              FadeTransition(opacity: animation, child: child),
-                        ),
+        /// MainWrapper
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return ScaffoldWithNavBar(navigationShell: navigationShell);
+          },
+          branches: <StatefulShellBranch>[
+            /// Brach Home
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorHome,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: "/home",
+                  name: "Home",
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const HomePage(),
+                  routes: [
+                    GoRoute(
+                      path: 'gridPage',
+                      name: 'GridPage',
+                      pageBuilder: (context, state) =>
+                          CustomTransitionPage<void>(
+                        key: state.pageKey,
+                        child: const GridPage2(appBarChoice: 'arrow'),
+                        transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) =>
+                            FadeTransition(opacity: animation, child: child),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
-              // Branch Analyze
-              StatefulShellBranch(
-                navigatorKey: _shellNavigatorAnalyze,
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: "/analysis",
-                    name: "Analysis",
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const AnalysisPage(),
-                    routes: [],
-                  ),
-                ],
-              ),
+            // Branch Analyze
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorAnalyze,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: "/analysis",
+                  name: "Analysis",
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const AnalysisPage(),
+                  routes: [],
+                ),
+              ],
+            ),
 
-              // Branch Nearby
-              StatefulShellBranch(
-                navigatorKey: _shellNavigatorNearby,
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: "/nearby",
-                    name: "Nearby",
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const NearbyPage(),
-                    routes: [],
-                  ),
-                ],
-              ),
+            // Branch Nearby
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorNearby,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: "/nearby",
+                  name: "Nearby",
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const NearbyPage(),
+                  routes: [],
+                ),
+              ],
+            ),
 
-              /// Brach Resources
-              StatefulShellBranch(
-                navigatorKey: _shellNavigatorResources,
-                routes: <RouteBase>[
-                  GoRoute(
-                    path: "/resource",
-                    name: "Resources",
-                    builder: (BuildContext context, GoRouterState state) =>
-                        const ResourcePage(),
-                    routes: [],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ));
+            /// Brach Resources
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorResources,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: "/resource",
+                  name: "Resources",
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const ResourcePage(),
+                  routes: [],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  });
 
   // // GoRouter configuration
   // static final GoRouter router = GoRouter(

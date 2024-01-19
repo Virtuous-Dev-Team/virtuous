@@ -21,6 +21,8 @@ dependencies:
   flutter_riverpod: ^2.4.9
   google_sign_in: ^6.1.6
   sliding_clipped_nav_bar: ^3.1.0+4
+  toastification: ^1.2.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

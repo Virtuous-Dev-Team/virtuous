@@ -18,27 +18,18 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return appBarChoice.compareTo('regular') == 0
-        ? RegularAppBar()
-        : AppBarWithArrow();
+        ? RegularAppBar(ref: ref)
+        : AppBarWithArrow(
+            ref: ref,
+          );
   }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
-void _signOut(WidgetRef ref) async {
-  try {
-    final authService = ref.read(authRepositoryProvider);
-    await authService.signOutUser();
-
-    ref.read(AppNavigation.router).go('/signIn');
-  } catch (e) {
-    print('Error signing out: $e');
-  }
-}
-
 class RegularAppBar extends StatelessWidget {
-  const RegularAppBar({super.key, this.ref});
+  const RegularAppBar({super.key, required this.ref});
   final dynamic ref;
   @override
   Widget build(BuildContext context) {
@@ -55,7 +46,7 @@ class RegularAppBar extends StatelessWidget {
 }
 
 class AppBarWithArrow extends StatelessWidget {
-  const AppBarWithArrow({super.key, this.ref});
+  const AppBarWithArrow({super.key, required this.ref});
   final dynamic ref;
   @override
   Widget build(BuildContext context) {
@@ -93,6 +84,7 @@ class PopOutMenuWidget extends StatelessWidget {
           size: 30, color: iconColor), // Replace with your desired icon
       onSelected: (value) {
         if (value == 'signOut') {
+          print('sign out plz');
           _signOut(ref); // Use the ref parameter here
         }
         // TODO: Handle other menu items if needed
@@ -111,5 +103,17 @@ class PopOutMenuWidget extends StatelessWidget {
         // TODO: Add other menu items as needed
       ],
     );
+  }
+
+  void _signOut(WidgetRef ref) async {
+    try {
+      final authService = ref.read(authRepositoryProvider);
+      print('user signing out');
+
+      await authService.signOutUser();
+      ref.read(AppNavigation.router).go('/signIn');
+    } catch (e) {
+      print('Error signing out: $e');
+    }
   }
 }

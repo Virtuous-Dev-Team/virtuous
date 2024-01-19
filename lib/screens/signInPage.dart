@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
@@ -27,6 +29,7 @@ void callAuthSignIn(email, password, context, ref) async {
         //   context,
         //   CupertinoPageRoute(builder: (context) => HomePage()),
         // );
+
         final authService = context.read(authRepositoryProvider);
         ref.read(AppNavigation.router).go('/home');
       }
@@ -274,10 +277,12 @@ class SignInPage extends ConsumerWidget {
                             fontWeight: FontWeight.w400)),
                     onPressed: () {
                       // Redirect to Sign Up page
-                      Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(builder: (context) => SignUpPage()),
-                      );
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   CupertinoPageRoute(builder: (context) => SignUpPage()),
+                      // );
+                      GoRouter.of(context).go('/signIn/signUp');
+                      // ref.read(AppNavigation.router).go('/signIn/signUp');
                     },
                   ),
                 ],

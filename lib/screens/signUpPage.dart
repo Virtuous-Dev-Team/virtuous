@@ -2,18 +2,27 @@
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-void callAuthCreateAccount(email, password, fullName, context) async {
+Future<dynamic> callAuthCreateAccount(
+    email, password, fullName, context, ref) async {
   final Auth auth = Auth();
   String emailInput = email.text;
   String fullNameInput = fullName.text;
   String passwordInput = password.text;
+  Toastification toasty = Toastification();
 
   try {
+    // toasty.show(context: context);
     if (emailInput.isNotEmpty &&
         fullNameInput.isNotEmpty &&
         passwordInput.isNotEmpty) {
@@ -22,12 +31,11 @@ void callAuthCreateAccount(email, password, fullName, context) async {
       if (result['Success']) {
         // user is authenticated in firebase authenctication
         // send to SignInPage
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (context) => SignInPage()),
-        );
+        // ref.read(AppNavigation.router).go('/signIn');
       } else {
-        print(result["Error"]);
+        print('Error ${result}');
+
+        return {'Success': result['Success'], 'msg': result['error']};
       }
     } else {
       // Show user error and remind them to fill out fields.
@@ -37,7 +45,7 @@ void callAuthCreateAccount(email, password, fullName, context) async {
   }
 }
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends ConsumerWidget {
   TextEditingController email = TextEditingController();
   TextEditingController fullName = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -52,7 +60,9 @@ class SignUpPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    Toastification toasty = Toastification();
+    ToastNotificationWidget toast = ToastNotificationWidget();
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -162,9 +172,23 @@ class SignUpPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5.0)),
                     shadowColor: Colors.black,
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     // Redirect to Survey or Verify Email page after calling function
-                    callAuthCreateAccount(email, password, fullName, context);
+                    final dynamic showMessage = await callAuthCreateAccount(
+                        email, password, fullName, context, ref);
+                    print('Sign Up sucess: $showMessage');
+                    // toasty.show(
+                    //   context: context,
+                    //   showProgressBar: false,
+                    //   type: showMessage['Success']
+                    //       ? ToastificationType.success
+                    //       : ToastificationType.error,
+                    //   style: ToastificationStyle.flatColored,
+                    //   title: Text(showMessage['msg']),
+                    //   autoCloseDuration: const Duration(seconds: 5),
+                    // );
+                    // toast.successOrError(
+                    //     context, showMessage['msg'], showMessage['Success']);
                   },
                 ),
               ),
@@ -186,10 +210,9 @@ class SignUpPage extends StatelessWidget {
                             fontWeight: FontWeight.w400)),
                     onPressed: () {
                       // Redirect to Sign In page
-                      Navigator.pushReplacement(
-                        context,
-                        CupertinoPageRoute(builder: (context) => SignInPage()),
-                      );
+
+                      GoRouter.of(context).go('/signIn');
+                      // GoRouter.of(context).pop();
                     },
                   ),
                 ],

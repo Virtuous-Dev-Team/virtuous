@@ -28,8 +28,8 @@ class Auth {
         //sendEmailVerification();
         return {'Success': true, 'response': userCredentials.user};
       }
-    } catch (error) {
-      return Future.error({'Success': false, 'error': error});
+    } on FirebaseAuthException catch (error) {
+      return {'Success': false, 'error': error.message};
     }
   }
 
