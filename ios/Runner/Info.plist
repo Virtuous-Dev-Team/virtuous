@@ -14,10 +14,22 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.657811297689-bl2g6k5ohp56r28321ms5mbf1krcavp0</string>
+				<string>fb756505755813074</string>
 			</array>
 		</dict>
 	</array>
 	<!-- End of the Google Sign-in Section -->
+	<key>FacebookAppID</key>
+	<string>756505755813074</string>
+	<key>FacebookClientToken</key>
+	<string>e5a62008efea96ef8785452d7cd235b9</string>
+	<key>FacebookDisplayName</key>
+	<string>Virtue Tracker</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>fbapi</string>
+	<string>fb-messenger-share-api</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

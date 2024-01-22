@@ -256,7 +256,7 @@ class SignInPage extends StatelessWidget {
 
                   // Facebook Button
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () => Auth().signInWithFacebook(),
                     child: Container(
                       padding: EdgeInsets.all(20),
                       decoration: BoxDecoration(
