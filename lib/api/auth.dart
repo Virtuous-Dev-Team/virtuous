@@ -10,7 +10,8 @@ class Auth {
 
   User? get currentUser => auth.currentUser;
   Stream<User?> authStateChanges() => auth.authStateChanges();
-
+  bool _accountCreated = false;
+  bool get accountCreated => _accountCreated;
   Future<dynamic> createAccount(email, password, fullName) async {
     try {
       if (email == null) {
@@ -26,24 +27,26 @@ class Auth {
       if (result['Success']) {
         print("Account created successfully");
         //sendEmailVerification();
+        _accountCreated = true;
         return {'Success': true, 'response': userCredentials.user};
       }
     } on FirebaseAuthException catch (error) {
-      return {'Success': false, 'error': error.message};
+      return {'Success': false, 'Error': error.message};
     }
   }
 
   Future<dynamic> signOutUser() async {
     try {
       await auth.signOut();
-    } catch (e) {
-      return e;
+      return {'Success': true, 'response': "Signed out successfully"};
+    } on FirebaseAuthException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
   Future<dynamic> signInUser(String email, String password) async {
     if (email == null) {
-      return Future.error({'Error': "Email is null"});
+      return {'Success': true, 'Error': "Email is null"};
     }
     if (password == null) {
       return Future.error({'Error': "Password is null"});
@@ -52,8 +55,8 @@ class Auth {
       final response = await auth.signInWithEmailAndPassword(
           email: email, password: password);
       return {'Success': true, "response": response};
-    } catch (error) {
-      return Future.error({'Success': false, 'Error': error});
+    } on FirebaseAuthException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
@@ -65,8 +68,8 @@ class Auth {
         await user.sendEmailVerification();
         return ("Verification email sent to ${user.email}");
       }
-    } catch (error) {
-      return Future.error(error);
+    } on FirebaseAuthException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
@@ -108,8 +111,8 @@ class Auth {
         // After creating the userObject in Users collection, we can add sub collection totalData
         await userCollectionRef.doc(uid).collection("totalData").add({});
         return {'Success': true};
-      } catch (error) {
-        return Future.error({'Success': false, 'Error': error});
+      } on FirebaseAuthException catch (error) {
+        return {'Success': false, 'Error': error.message};
       }
     }
   }
@@ -159,3 +162,5 @@ final currentUserProvider = StateProvider<User?>(
     (ref) => ref.watch(authRepositoryProvider).currentUser);
 final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(authRepositoryProvider).authStateChanges());
+final accountCreatedProvider = StateProvider<bool>(
+    (ref) => ref.watch(authRepositoryProvider).accountCreated);

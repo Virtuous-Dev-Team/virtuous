@@ -23,8 +23,8 @@ class CommunityShared {
       await communitySharedDataCollection.add(sharedEntry);
 
       return {"Success": true, "response": "Submitted in shared database"};
-    } catch (error) {
-      return Future.error({'Success': false, 'Error': error});
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 }

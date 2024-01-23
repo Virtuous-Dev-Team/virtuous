@@ -32,10 +32,14 @@ Future<dynamic> callAuthCreateAccount(
         // user is authenticated in firebase authenctication
         // send to SignInPage
         // ref.read(AppNavigation.router).go('/signIn');
+        return {
+          'Success': result['Success'],
+          'msg': "Account created successfully"
+        };
       } else {
         print('Error ${result}');
 
-        return {'Success': result['Success'], 'msg': result['error']};
+        return {'Success': result['Success'], 'msg': result['Error']};
       }
     } else {
       // Show user error and remind them to fill out fields.
@@ -59,10 +63,15 @@ class SignUpPage extends ConsumerWidget {
     return null;
   }
 
+  ToastNotificationWidget toast = ToastNotificationWidget();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Toastification toasty = Toastification();
-    ToastNotificationWidget toast = ToastNotificationWidget();
+    // ToastNotificationWidget toast = ToastNotificationWidget();
+    void showToasty(msg, success) {
+      toast.successOrError(context, msg, success);
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -177,18 +186,16 @@ class SignUpPage extends ConsumerWidget {
                     final dynamic showMessage = await callAuthCreateAccount(
                         email, password, fullName, context, ref);
                     print('Sign Up sucess: $showMessage');
-                    // toasty.show(
-                    //   context: context,
-                    //   showProgressBar: false,
-                    //   type: showMessage['Success']
-                    //       ? ToastificationType.success
-                    //       : ToastificationType.error,
-                    //   style: ToastificationStyle.flatColored,
-                    //   title: Text(showMessage['msg']),
-                    //   autoCloseDuration: const Duration(seconds: 5),
-                    // );
-                    // toast.successOrError(
-                    //     context, showMessage['msg'], showMessage['Success']);
+                    final user = ref.read(accountCreatedProvider);
+                    print('user not created wowow $user');
+
+                    if (showMessage["Success"]) {
+                      print("Account created!");
+                    } else {
+                      print('Account creation failed');
+
+                      showToasty(showMessage['msg'], showMessage['Success']);
+                    }
                   },
                 ),
               ),

@@ -12,8 +12,9 @@ import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-void callAuthSignIn(email, password, context, ref) async {
+Future<dynamic> callAuthSignIn(email, password, context, ref) async {
   final Auth auth = Auth();
   String emailInput = email.text;
   String passwordInput = password.text;
@@ -30,8 +31,10 @@ void callAuthSignIn(email, password, context, ref) async {
         //   CupertinoPageRoute(builder: (context) => HomePage()),
         // );
 
-        final authService = context.read(authRepositoryProvider);
-        ref.read(AppNavigation.router).go('/home');
+        // final authService = context.read(authRepositoryProvider);
+        // ref.read(AppNavigation.router).go('/home');
+      } else {
+        return {'Success': result['Success'], 'msg': result['Error']};
       }
     }
     // If fields are empty
@@ -49,9 +52,14 @@ void callAuthSignIn(email, password, context, ref) async {
 class SignInPage extends ConsumerWidget {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  ToastNotificationWidget toast = ToastNotificationWidget();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void showToasty(msg, success) {
+      toast.successOrError(context, msg, success);
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -132,10 +140,16 @@ class SignInPage extends ConsumerWidget {
                   ],
                 ),
                 child: OutlinedButton(
-                  onPressed: () {
-                    callAuthSignIn(email, password, context, ref);
-                    email.clear();
-                    password.clear();
+                  onPressed: () async {
+                    final dynamic showMessage =
+                        await callAuthSignIn(email, password, context, ref);
+                    if (showMessage['Success'] == false) {
+                      // toast.successOrError(
+                      //     context, showMessage['msg'], showMessage['Success']);
+                      showToasty(showMessage['msg'], showMessage['Success']);
+                    }
+                    // email.clear();
+                    // password.clear();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFC1D9CD),

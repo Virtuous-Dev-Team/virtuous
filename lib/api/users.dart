@@ -32,7 +32,7 @@ class Users {
     try {
       // User? user = FirebaseAuth.instance.currentUser;
       // if (user == null) {
-      //   return Future.error({'Success': false, 'Error': 'User not found'});
+      //   return {'Success': false, 'Error': 'User not found'};
       // }
       final totalDataObject = {
         "communityName": currentCommunity,
@@ -49,7 +49,7 @@ class Users {
 
       // Maybe add a check to see if it completed
       await updateQuadrantsUsed(currentCommunity, quadrantUsed);
-
+      print("unn");
       if (shareLocation) {
         final CommunityShared communitySharedApi = CommunityShared();
         await communitySharedApi
@@ -58,8 +58,11 @@ class Users {
             .catchError((e) => print(e));
       }
       return {'Success': true, "response": "Entry added"};
-    } catch (e) {
-      return Future.error({'Success': false, 'Error': e});
+    } on FirebaseException catch (error) {
+      print('Error ${error.message}');
+      return {'Success': false, 'Error': error.message};
+    } catch (error) {
+      print(error);
     }
   }
 
@@ -72,12 +75,13 @@ class Users {
       // }
 
       // Increment whichever quadrant was used
+      throw FirebaseException(plugin: "", message: "erorrrororror");
       await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").update({
         'quadrantUsedData.${communityName}.${quadrantUsed}':
             FieldValue.increment(1),
       });
-    } catch (error) {
-      return Future.error({'Success': false, 'Error': error});
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
@@ -113,55 +117,59 @@ class Users {
         return {'Success': true, "response": recentEntriesList};
       } else {
         print('No documents found');
-        return Future.error({'Success': false, 'Error': "Query is empty"});
+        return {'Success': false, 'Error': "Query is empty"};
       }
-    } catch (e) {
-      return Future.error({'Success': false, 'Error': e});
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'error': error.message};
     }
   }
 
   // Working, need to add phone number verification
   Future<dynamic> surveyInfo(currentPosition, careerLength, currentCommunity,
       reasons, shareEntries, shareLocation) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    // if (user == null) {
-    //   return Future.error({'Success': false, 'Error': 'User not found'});
-    // }
-    final careerInfo = {
-      "currentPosition": currentPosition,
-      "careerLength": careerLength
-    };
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      // if (user == null) {
+      //   return Future.error({'Success': false, 'Error': 'User not found'});
+      // }
+      final careerInfo = {
+        "currentPosition": currentPosition,
+        "careerLength": careerLength
+      };
 
-    dynamic userLocation;
-    if (shareLocation) {
-      dynamic res = await addUserLocation();
-      if (res["Success"]) {
-        print("User location acquired ${res["response"]}");
-        userLocation = res["response"];
-      } else {
-        print("User location couldn't be acquired try again later");
+      dynamic userLocation;
+      if (shareLocation) {
+        dynamic res = await addUserLocation();
+        if (res["Success"]) {
+          print("User location acquired ${res["response"]}");
+          userLocation = res["response"];
+        } else {
+          print("User location couldn't be acquired try again later");
+        }
       }
+
+      final userObject = {
+        "currentCommunity": currentCommunity,
+        "userLocation": userLocation,
+        "reasons": reasons,
+        "shareEntries": shareEntries,
+        "shareLocation": shareLocation
+      };
+      final notificationPreferences = {
+        "allowNotifications": null,
+        "notificationsTimes": [],
+        "fcmToken": null
+      };
+      userObject["careerInfo"] = careerInfo;
+      userObject["notificationPreferences"] = notificationPreferences;
+      userObject["quadrantUsedData"] = quadrantLists[currentCommunity];
+
+      await usersCollectionRef
+          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
+          .set(userObject, SetOptions(merge: true));
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
-
-    final userObject = {
-      "currentCommunity": currentCommunity,
-      "userLocation": userLocation,
-      "reasons": reasons,
-      "shareEntries": shareEntries,
-      "shareLocation": shareLocation
-    };
-    final notificationPreferences = {
-      "allowNotifications": null,
-      "notificationsTimes": [],
-      "fcmToken": null
-    };
-    userObject["careerInfo"] = careerInfo;
-    userObject["notificationPreferences"] = notificationPreferences;
-    userObject["quadrantUsedData"] = quadrantLists[currentCommunity];
-
-    await usersCollectionRef
-        .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
-        .set(userObject, SetOptions(merge: true));
   }
 
   // Used whenever we need to to ask for user permissions for location
@@ -207,8 +215,8 @@ class Users {
         "Success": true,
         "response": GeoPoint(position.latitude, position.longitude)
       };
-    } catch (e) {
-      print('Error updating location: $e');
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
@@ -226,9 +234,8 @@ class Users {
               'User location sharing is off, return to app settings to turn them on'
         });
       }
-    } catch (error) {
-      print(error);
-      return Future.error({'Success': false, 'Error': error});
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 
@@ -247,8 +254,8 @@ class Users {
       // print(userInfo);
 
       return {'Success': true, "response": userInfo};
-    } catch (error) {
-      return Future.error({'Success': false, 'Error': error});
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 

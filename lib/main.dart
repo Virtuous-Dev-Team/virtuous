@@ -39,11 +39,11 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   // Finished Testing addVirtue api
-  // u
-  //     .addVirtueEntry("legal", "Courage", "quadrantColor",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
-  //     .then((value) => {print(value["Success"])})
-  //     .catchError((error) => {print(error)});
+  u
+      .addVirtueEntry("legal", "Courage", "quadrantColor",
+          ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
+      .then((value) => {print(value["Success"])})
+      .catchError((error) => {print('error in main: $error')});
 
   // Finished Testing surveyInfo api, need to add more
   // u.surveyInfo("best attorney ever in the world, even better than saul",
@@ -66,7 +66,8 @@ Future testingApi() async {
   // Tested and working
   // u.updateQuadrantsUsed("legal", "Compassion");
   // auth.signOutUser();
-  stats.getQuadrantsUsedList("legal");
+
+  // stats.getQuadrantsUsedList("legal");
   // Testing api ending
 }
 
@@ -83,7 +84,9 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: SignInPage(),
+//       home: GridPagey(
+//         appBarChoice: 'regular',
+//       ),
 //     );
 //   }
 // }

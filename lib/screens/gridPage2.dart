@@ -16,7 +16,7 @@ Future<dynamic> callGetQuadrantList() async {
   final Communities communities = Communities();
 
   try {
-    dynamic result = await communities.getQuadrantList("");
+    dynamic result = await communities.getQuadrantList("legal");
     if (result['Success']) {
       // user is authenticated in firebase authenctication
       // send to homepage

@@ -8,7 +8,7 @@ class Communities {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        return Future.error({'Success': false, 'Error': "User not found"});
+        return {'Success': false, 'Error': "User not found"};
       }
       final communityCollectionRef =
           FirebaseFirestore.instance.collection('Communities');
@@ -27,13 +27,13 @@ class Communities {
             'quadrantColor': doc['quadrantColor'] ?? 'Error'
           };
         }).toList();
-        // print(gridPageList);
+        print(gridPageList);
         return {'Success': true, "response": gridPageList};
       } else {
-        return Future.error({'Success': false, 'Error': "Query is empty"});
+        return {'Success': false, 'Error': "Query is empty"};
       }
-    } catch (e) {
-      return Future.error(e);
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 }
