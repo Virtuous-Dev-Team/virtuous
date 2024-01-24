@@ -54,6 +54,12 @@ class Auth {
     try {
       final response = await auth.signInWithEmailAndPassword(
           email: email, password: password);
+      print('sign in response: ${response.additionalUserInfo?.isNewUser}');
+      // if (userCredential.additionalUserInfo?.isNewUser ?? false) {
+      //   // Update the state provider to indicate first-time sign-in
+      //   context.read(isFirstTimeSignInProvider).state = true;
+      // }
+
       return {'Success': true, "response": response};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -164,3 +170,5 @@ final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(authRepositoryProvider).authStateChanges());
 final accountCreatedProvider = StateProvider<bool>(
     (ref) => ref.watch(authRepositoryProvider).accountCreated);
+
+// final isFirstTimeSignInProvider = StateProvider<bool>((ref) => false);

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/api/surveyPage.dart';
+import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
@@ -17,19 +19,36 @@ import 'package:virtuetracker/screens/signUpPage.dart';
 
 String initial(ref) {
   try {
+    print('time to nvgate');
     final user = ref.watch(authStateChangesProvider).value;
+    // final fisrtTimey = ref.watch(isFirstTimeSignInProvider);
+    // final dynamic userInfo = ref.watch(currentUserInfo);
+    // final Future<Map<String, dynamic>> userInfoFuture =
+    //     ref.read(currentUserInfo);
     Auth auth = Auth();
 
     final creationTime = user.metadata.creationTime;
     final lastSignInTime = user.metadata.lastSignInTime;
+    // var surveyInfo;
     print('use ${user} and meta');
-    print(lastSignInTime);
+    // print('userInfo: ${userInfoFuture}');
+    // userInfoFuture.then((Map<String, dynamic> userInfo) {
+    //   print('userInfo: ${userInfo["response"]}');
+    //   // surveyInfo = userInfo['response']['currentCommunity'];
+    //   // print('sirveyInfo $surveyInfo');
+    //   // if (userInfo['response']['currentCommunity'] != null) return '/analysis';
+    // }).catchError((error) {
+    //   print('Error fetching user information: $error');
+    //   // Handle the error case
+    // });
+    // print('cure $fisrtTimey');
 
     if (user != null) {
       if (creationTime == lastSignInTime) {
-        print('welcome new user, first time creating account');
+        print('welcome new user, first time creating account ');
         return '/signIn';
       }
+
       return '/home';
     } else {
       // User is not signed in, redirect to the sign-in page
@@ -60,7 +79,7 @@ class AppNavigation {
 
   static final router = Provider<GoRouter>((ref) {
     return GoRouter(
-      initialLocation: initial(ref),
+      // initialLocation: initial(ref),
       debugLogDiagnostics: true,
       navigatorKey: _rootNavigatorKey,
       routes: [
@@ -84,6 +103,11 @@ class AppNavigation {
           path: '/signUp',
           name: 'signUps',
           builder: (context, state) => SignUpPage(),
+        ),
+        GoRoute(
+          path: '/survey',
+          name: 'SurveyPage',
+          builder: (context, state) => SurveyPage(),
         ),
 
         /// MainWrapper

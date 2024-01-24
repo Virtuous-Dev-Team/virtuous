@@ -8,14 +8,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
+final Auth auth = Auth();
+final Users users = Users();
 Future<dynamic> callAuthSignIn(email, password, context, ref) async {
-  final Auth auth = Auth();
   String emailInput = email.text;
   String passwordInput = password.text;
 
@@ -30,7 +32,7 @@ Future<dynamic> callAuthSignIn(email, password, context, ref) async {
         //   context,
         //   CupertinoPageRoute(builder: (context) => HomePage()),
         // );
-
+        return {'Success': result['Success'], 'msg': "Successful sign in"};
         // final authService = context.read(authRepositoryProvider);
         // ref.read(AppNavigation.router).go('/home');
       } else {
@@ -47,6 +49,14 @@ Future<dynamic> callAuthSignIn(email, password, context, ref) async {
 
     print(error);
   }
+}
+
+Future<dynamic> getUserInfo(ref) async {
+  // final info = await ref.watch(currentUserInfo);
+  final info = await users.getUserInfo();
+
+  print('info in sign in page ${info}');
+  return info;
 }
 
 class SignInPage extends ConsumerWidget {
@@ -147,7 +157,26 @@ class SignInPage extends ConsumerWidget {
                       // toast.successOrError(
                       //     context, showMessage['msg'], showMessage['Success']);
                       showToasty(showMessage['msg'], showMessage['Success']);
+                    } else {
+                      final isNewUser = await getUserInfo(ref);
+                      if (isNewUser['Success']) {
+                        final goToSurveyPage =
+                            isNewUser['response']['currentCommunity'];
+                        print('isNewUser: ${goToSurveyPage}');
+                        if (goToSurveyPage == null) {
+                          print('needs to fill out survey');
+                          GoRouter.of(context).go('/survey');
+                        } else {
+                          print('go to home page');
+                          GoRouter.of(context).go('/home');
+                        }
+                      }
+                      // final isNewUser = await ref.watch(currentUserInfo);
+
+                      // print(
+                      //     'isNewUser: ${isNewUser['response']['currentCommunity']}');
                     }
+                    // GoRouter.of(context).go('/home');
                     // email.clear();
                     // password.clear();
                   },

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/stats.dart';
+import 'package:virtuetracker/api/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
@@ -84,9 +85,7 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: GridPagey(
-//         appBarChoice: 'regular',
-//       ),
+//       home: SurveyPage(),
 //     );
 //   }
 // }

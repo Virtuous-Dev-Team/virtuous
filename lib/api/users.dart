@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 
 class Users {
@@ -88,12 +90,12 @@ class Users {
   // Done
   Future<dynamic> getMostRecentEntries(communityName) async {
     try {
-      // User? user = FirebaseAuth.instance.currentUser;
-      // if (user == null) {
-      //   return Future.error({'Success': false, 'Error': 'User not found'});
-      // }
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': 'User not found'});
+      }
       QuerySnapshot querySnapshot = await usersCollectionRef
-          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
+          .doc(user.uid)
           .collection("totalData")
           .where("communityName", isEqualTo: communityName)
           .orderBy('dateEntried', descending: true)
@@ -240,19 +242,18 @@ class Users {
   }
 
   // Done
-  Future<dynamic> getUserInfo() async {
+  Future<Map<String, dynamic>> getUserInfo() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
       // if (user == null) {
       //   return Future.error({'Success': false, 'Error': "User not found"});
       // }
-
+      print('called getUseriNFIO');
       DocumentSnapshot documentSnapshot =
-          await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").get();
+          await usersCollectionRef.doc(user?.uid).get();
       final userInfo = documentSnapshot.data() as Map<String, dynamic>;
       // print(userInfo);
-
       return {'Success': true, "response": userInfo};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -272,3 +273,9 @@ class Users {
         .get();
   }
 }
+
+final usersRepositoryProvider = Provider<Users>((ref) {
+  return Users();
+});
+final currentUserInfo =
+    StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());

@@ -191,6 +191,7 @@ class SignUpPage extends ConsumerWidget {
 
                     if (showMessage["Success"]) {
                       print("Account created!");
+                      GoRouter.of(context).go('/signIn');
                     } else {
                       print('Account creation failed');
 
