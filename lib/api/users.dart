@@ -88,7 +88,7 @@ class Users {
   }
 
   // Done
-  Future<dynamic> getMostRecentEntries(communityName) async {
+  Future getMostRecentEntries(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -115,7 +115,7 @@ class Users {
           };
         }).toList();
 
-        print(recentEntriesList);
+        // print(recentEntriesList);
         return {'Success': true, "response": recentEntriesList};
       } else {
         print('No documents found');

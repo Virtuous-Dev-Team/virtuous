@@ -24,6 +24,7 @@ dependencies:
   toastification: ^1.2.0
   shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0
+  flutter_facebook_auth: ^6.0.4
 
 dev_dependencies:
   flutter_test:

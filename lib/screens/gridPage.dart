@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/communities.dart';
+import 'package:virtuetracker/controllers/communityController.dart';
+import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -41,8 +44,6 @@ class _GridPageyState extends State<GridPagey> {
       if (result['Success']) {
         // user is authenticated in firebase authenctication
         // send to homepage
-        var a = result['response'];
-        print(a.runtimeType);
         setState(() {
           quadrantList = result['response'];
         });
@@ -135,6 +136,27 @@ class BuildGrid extends StatelessWidget {
             },
             itemCount: listy!.length,
           );
+  }
+}
+
+// final quadrantListProvider = Provider((ref) => )
+class GridPageTest extends ConsumerWidget {
+  const GridPageTest({super.key});
+  void getController(ref) {
+    final controller = ref.watch(communitiesControllerProvider);
+    controller.getQuadrantListy("legal");
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final listy = ref.watch(communitiesControllerProvider);
+    final controller = ref.watch(communitiesControllerProvider);
+
+    return controller.when(
+      loading: () => CircularProgressIndicator(),
+      error: (error, stackTrace) => Text('Error: $error'),
+      data: (quadrantList) => BuildGrid(listy: quadrantList),
+    );
   }
 }
 

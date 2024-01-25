@@ -2,14 +2,15 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Communities {
   Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        return {'Success': false, 'Error': "User not found"};
-      }
+      // if (user == null) {
+      //   return {'Success': false, 'Error': "User not found"};
+      // }
       final communityCollectionRef =
           FirebaseFirestore.instance.collection('Communities');
 
@@ -27,7 +28,7 @@ class Communities {
             'quadrantColor': doc['quadrantColor'] ?? 'Error'
           };
         }).toList();
-        print(gridPageList);
+        // print(gridPageList);
         return {'Success': true, "response": gridPageList};
       } else {
         return {'Success': false, 'Error': "Query is empty"};
@@ -37,3 +38,7 @@ class Communities {
     }
   }
 }
+
+final communitiesRepositoryProvider = Provider<Communities>((ref) {
+  return Communities();
+});

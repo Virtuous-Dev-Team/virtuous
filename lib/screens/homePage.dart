@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
@@ -17,13 +19,24 @@ const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
 Users users = Users();
-Future<dynamic> getRecentEntries() async {}
+Future<dynamic> getRecentEntries(ref) async {
+  try {
+    final result = ref.watch(usersRepositoryProvider);
+    dynamic recentEntriesList = await result.getMostRecentEntries("legal");
+    print(recentEntriesList);
+    return recentEntriesList['response'];
+  } catch (error) {
+    print(error);
+  }
+}
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dynamic response = getRecentEntries(ref);
+    print('Fetching user recent entries ${response}');
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),

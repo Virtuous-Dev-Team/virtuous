@@ -251,34 +251,36 @@ class SignInPage extends ConsumerWidget {
                 children: [
                   // Google Button
                   GestureDetector(
-                    onTap: () => Auth().signInWithGoogle(),
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Image.asset(
-                        "assets/images/googleLogo.png",
-                        height: 20,
-                      ),
-                    ),
-                  ),
+                      onTap: () => Auth().signInWithGoogle(),
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset(
+                          "assets/images/googleLogo.png",
+                          height: 20,
+                        ),
+                      )),
 
                   SizedBox(width: 45),
 
                   // Apple Button
                   GestureDetector(
                     onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Image.asset(
-                        "assets/images/appleLogo.png",
-                        height: 20,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset(
+                          "assets/images/appleLogo.png",
+                          height: 20,
+                        ),
                       ),
                     ),
                   ),
@@ -287,16 +289,19 @@ class SignInPage extends ConsumerWidget {
 
                   // Facebook Button
                   GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Image.asset(
-                        "assets/images/facebookLogo.png",
-                        height: 20,
+                    onTap: () => Auth().signInWithFacebook(),
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Image.asset(
+                          "assets/images/facebookLogo.png",
+                          height: 20,
+                        ),
                       ),
                     ),
                   ),

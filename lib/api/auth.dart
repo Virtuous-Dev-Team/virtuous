@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class Auth {
   final auth = FirebaseAuth.instance;
@@ -156,6 +161,28 @@ class Auth {
     } catch (e) {
       print('Error with google sign in: $e');
     }
+  }
+
+  // --- facebook sign in ---
+  // doesn't work rn cuz app is not approved by facebook
+  Future<UserCredential> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance.login();
+
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+    final fbSignIn = await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    // similar to google sign in, call after checking if uid alr exists in collction
+    // createNewUser(user?.uid, );
+
+    // Once signed in, return the UserCredential
+    return fbSignIn;
   }
 }
 
