@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
       ),
       home: GridPage2(), // closed for testing
       //home: NavControllerPage(),
-      //home: SignUpPage(),
+      //home: SignInPage(),
     );
   }
 }

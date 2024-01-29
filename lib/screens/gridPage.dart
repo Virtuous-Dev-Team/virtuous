@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/communities.dart';
 
@@ -47,21 +49,21 @@ class GridPage extends StatelessWidget {
             SizedBox(width: 12),
           ],
         ),
-        body: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFFFFDF9),
-              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
+        body: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 10,
+              left: 10,
+              right: 10,
+              height: 680, //740
+              child: Container(
+                color: Color(0xFFFFFDF9),
               ),
             ),
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
+            Column(
               children: [
-                SizedBox(height: 40),
-                Text(
-                  'Which virtue did you use today?',
+                SizedBox(height: 50,),
+                Text('Which virtue did you use today?',
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 16,
@@ -69,302 +71,77 @@ class GridPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 5,
-                ),
+                SizedBox(height: 5,),
                 Divider(
                   thickness: 0.5,
                   color: Colors.black,
-                  indent: 10,
-                  endIndent: 10,
-                ),
-                SizedBox(height: 40),
-                Container(
-                  child: Center(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(width: 10),
-
-                            // Honesty Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Honesty',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFF3A3CA),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            SizedBox(width: 20),
-
-                            // Courage Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Courage',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFC1D9CD),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-
-                            SizedBox(width: 20),
-
-                            // Compassion Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Compassion',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFB0E5F6),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 40,
-                        ),
-
-                        // second row
-                        Row(
-                          children: [
-                            SizedBox(width: 10),
-
-                            // Generosity Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Generosity',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFF6EEA2),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            SizedBox(width: 20),
-
-                            // Fidelity Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Fidelity',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFC58686),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-
-                            SizedBox(width: 20),
-
-                            // Integrity Button Rectangle(quadrantName: 'Integrity', quadrantColor: '0xFFFADAB4')
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Fairness',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFDEBFF5),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                        ],
-                        ),
-
-                        SizedBox(
-                          height: 40,
-                        ),
-                        // third row
-                        Row(
-                          children: [
-                            SizedBox(width: 10),
-
-                            // Fairness Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Fairness',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFFDEBFF5),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                            SizedBox(width: 20),
-
-                            // Self-Control Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Self-Control',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFF7AB0D8),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-
-                            SizedBox(width: 20),
-
-                            // Prudence Button
-                            Expanded(
-                              child: ElevatedButton(
-                                child: Text(
-                                  'Prudence',
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  elevation: 4,
-                                  backgroundColor: Color(0xFF7FA881),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 40.0,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0)),
-                                  shadowColor: Colors.black,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  indent: 30,
+                  endIndent: 30,
                 ),
               ],
+            ),
+            Container(
+              padding: EdgeInsets.all(15),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 100),
+                child: GridView.count(
+                  mainAxisSpacing: 5,
+                  crossAxisSpacing: 5,
+                  crossAxisCount: 3,
+                  children: [
+                    Rectangle(quadrantName: 'Honesty', quadrantColor: 0xFFF3A3CA),
+                    Rectangle(quadrantName: 'Courage', quadrantColor: 0XFFCBF1D1),
+                    Rectangle(quadrantName: 'Compassion', quadrantColor: 0XFFB0E5F6),
+                    Rectangle(quadrantName: 'Generosity', quadrantColor: 0XFFF6EEA2),
+                    Rectangle(quadrantName: 'Fidelity', quadrantColor: 0XFFC58686),
+                    Rectangle(quadrantName: 'Integrity', quadrantColor: 0XFFFADAB4),
+                    Rectangle(quadrantName: 'Fairness', quadrantColor: 0XFFDEBFF5),
+                    Rectangle(quadrantName: 'Self-control', quadrantColor: 0XFF7AB0D8),
+                    Rectangle(quadrantName: 'Prudence', quadrantColor: 0XFF7FA881),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Integrity Button Rectangle(quadrantName: 'Integrity', quadrantColor: '0xFFFADAB4')
+/* child: ListView.builder(itemCount: 1, itemBuilder: (BuildContext context, int index)
+                        {
+                          return Container(child:Rectangle(quadrantName: 'Integrity', quadrantColor: 0xFFFADAB4) ,);
+                        }
+                        */
+class Rectangle extends StatelessWidget {
+  const Rectangle({super.key, required this.quadrantName, required this.quadrantColor});
+
+  final String quadrantName;
+  final int quadrantColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Center(
+        child: SizedBox(
+          width: 109,
+          height: 90,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color(quadrantColor),
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0)),
+            ),
+            onPressed: () {  },
+            child: AutoSizeText(
+              maxLines: 1,
+              quadrantName,
+              style: GoogleFonts.tinos(textStyle: TextStyle(
+                color: Colors.black,),
+              ),
             ),
           ),
         ),
@@ -372,3 +149,61 @@ class GridPage extends StatelessWidget {
     );
   }
 }
+
+/*
+body: Center(
+            child: Container(
+              /*
+              decoration: BoxDecoration(
+              color: Color(0xFFFFFDF9),
+              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(20),
+              ),
+              ),
+
+              padding: const EdgeInsets.all(10.0),
+               */
+          child: Column(
+            children: [
+              /*
+              SizedBox(height: 40),
+              Text(
+                'Which virtue did you use today?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                  ),
+                ),
+              ),
+              SizedBox(height: 5,),
+              Divider(
+                thickness: 0.5,
+                color: Colors.black,
+                indent: 10,
+                endIndent: 10,
+              ),
+              SizedBox(height: 40),
+
+               */
+              Container(
+                child: Center(
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      ),
+                      itemCount: 9,
+                          itemBuilder: (BuildContext context, int index){
+                            return Rectangle(
+                                quadrantName: 'Integrity', quadrantColor: 0xFFFADAB4);
+
+                          },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+ */

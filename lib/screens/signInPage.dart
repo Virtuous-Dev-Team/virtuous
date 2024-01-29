@@ -63,6 +63,24 @@ class SignInPage extends StatelessWidget {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
+  String? validateEmail(String? email) {
+    RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
+    final isEmailValid = emailRegex.hasMatch(email ?? '');
+    if (!isEmailValid) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? pass) {
+    RegExp passRegex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    final isPassValid = passRegex.hasMatch(pass ?? '');
+    if (!isPassValid) {
+      return 'Please enter a stronger password';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,7 +114,7 @@ class SignInPage extends StatelessWidget {
               // username textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: email,
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -107,6 +125,9 @@ class SignInPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validateEmail,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
 
@@ -115,7 +136,7 @@ class SignInPage extends StatelessWidget {
               // password textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: password,
                   obscureText: true,
                   decoration: InputDecoration(
@@ -127,6 +148,8 @@ class SignInPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                  validator: validatePassword,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
 

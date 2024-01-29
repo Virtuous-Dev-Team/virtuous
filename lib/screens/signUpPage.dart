@@ -72,6 +72,15 @@ class SignUpPage extends StatelessWidget {
     return null;
   }
 
+  String? validatePassword(String? pass) {
+    RegExp passRegex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    final isPassValid = passRegex.hasMatch(pass ?? '');
+    if (!isPassValid) {
+      return 'Please enter a stronger password';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,7 +147,7 @@ class SignUpPage extends StatelessWidget {
               // Password input field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: password,
                   obscureText: true,
                   decoration: InputDecoration(
@@ -150,6 +159,8 @@ class SignUpPage extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
+                  validator: validatePassword,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               SizedBox(height: 10.0),
