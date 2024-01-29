@@ -25,6 +25,8 @@ dependencies:
   shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0
   flutter_facebook_auth: ^6.0.4
+  auto_size_text: ^3.0.0
+  colours: ^0.0.2
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +42,4 @@ flutter:
     - assets/images/googleLogo.png
     - assets/images/facebookLogo.png
     - assets/images/appleLogo.png
+    - assets/images/intro_virtue.png

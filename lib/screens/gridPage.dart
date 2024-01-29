@@ -1,6 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
@@ -155,7 +157,7 @@ class GridPageTest extends ConsumerWidget {
     return controller.when(
       loading: () => CircularProgressIndicator(),
       error: (error, stackTrace) => Text('Error: $error'),
-      data: (quadrantList) => BuildGrid(listy: quadrantList),
+      data: (quadrantList) => Text(quadrantList),
     );
   }
 }

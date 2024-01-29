@@ -64,6 +64,16 @@ class SignUpPage extends ConsumerWidget {
     return null;
   }
 
+  String? validatePassword(String? pass) {
+    RegExp passRegex =
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    final isPassValid = passRegex.hasMatch(pass ?? '');
+    if (!isPassValid) {
+      return 'Please enter a stronger password';
+    }
+    return null;
+  }
+
   ToastNotificationWidget toast = ToastNotificationWidget();
 
   @override
@@ -137,7 +147,7 @@ class SignUpPage extends ConsumerWidget {
               // Password input field
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: password,
                   obscureText: true,
                   decoration: InputDecoration(
@@ -149,6 +159,8 @@ class SignUpPage extends ConsumerWidget {
                       color: Colors.black,
                     ),
                   ),
+                  validator: validatePassword,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
               SizedBox(height: 10.0),

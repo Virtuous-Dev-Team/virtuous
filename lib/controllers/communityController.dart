@@ -7,7 +7,7 @@ class CommunitiesController extends AsyncNotifier<dynamic> {
   @override
   FutureOr<void> build() {
     // TODO: implement build
-    return getQuadrantListy();
+    getQuadrantListy();
   }
 
   Future<void> getQuadrantListy() async {
@@ -16,11 +16,13 @@ class CommunitiesController extends AsyncNotifier<dynamic> {
       print('calling get controllers');
       final result = await AsyncValue.guard(
           () => communitiesRepo.getQuadrantList("legal"));
-
-      state = result.value;
-      print(result
-          .value); // This line sets the state to the result of the asynchronous operation.
-    } catch (error) {}
+      print(state);
+      state = AsyncData(result.value);
+      print(
+          state); // This line sets the state to the result of the asynchronous operation.
+    } catch (error) {
+      print('Error in communityController: $error');
+    }
   }
 }
 

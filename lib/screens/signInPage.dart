@@ -64,6 +64,24 @@ class SignInPage extends ConsumerWidget {
   TextEditingController password = TextEditingController();
   ToastNotificationWidget toast = ToastNotificationWidget();
 
+  String? validateEmail(String? email) {
+    RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
+    final isEmailValid = emailRegex.hasMatch(email ?? '');
+    if (!isEmailValid) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePassword(String? pass) {
+    RegExp passRegex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    final isPassValid = passRegex.hasMatch(pass ?? '');
+    if (!isPassValid) {
+      return 'Please enter a stronger password';
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void showToasty(msg, success) {
@@ -101,7 +119,7 @@ class SignInPage extends ConsumerWidget {
               // username textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: email,
                   decoration: InputDecoration(
                     labelText: 'Email',
@@ -112,6 +130,9 @@ class SignInPage extends ConsumerWidget {
                       color: Colors.black,
                     ),
                   ),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: validateEmail,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
 
@@ -120,7 +141,7 @@ class SignInPage extends ConsumerWidget {
               // password textfield
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
+                child: TextFormField(
                   controller: password,
                   obscureText: true,
                   decoration: InputDecoration(
@@ -132,6 +153,8 @@ class SignInPage extends ConsumerWidget {
                       color: Colors.black,
                     ),
                   ),
+                  validator: validatePassword,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                 ),
               ),
 
