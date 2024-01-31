@@ -83,6 +83,8 @@ class SignUpPage extends ConsumerWidget {
       toast.successOrError(context, msg, success);
     }
 
+    final formGlobalKey = GlobalKey<FormState>();
+
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -103,77 +105,77 @@ class SignUpPage extends ConsumerWidget {
                 style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
               ),
               SizedBox(height: 20.0),
-              // Email input field
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextFormField(
-                  controller: email,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.black),
-                    prefixIcon: Icon(
-                      Icons.mail_outline,
-                      color: Colors.black,
-                    ),
-                  ),
-                  keyboardType: TextInputType.emailAddress,
-                  validator: validateEmail,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              // Full Name input field
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextFormField(
-                  controller: fullName,
-                  decoration: InputDecoration(
-                    labelText: 'Full Name',
-                    labelStyle: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.black),
-                    prefixIcon: Icon(
-                      Icons.person_outline,
-                      color: Colors.black,
-                    ),
-                  ),
-                  validator: (fullName) => fullName!.length < 3
-                      ? 'Name should be at least 3 characters'
-                      : null,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              // Password input field
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextFormField(
-                  controller: password,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(
-                        fontStyle: FontStyle.italic, color: Colors.black),
-                    prefixIcon: Icon(
-                      Icons.fingerprint_outlined,
-                      color: Colors.black,
-                    ),
-                  ),
-                  validator: validatePassword,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                ),
-              ),
-              SizedBox(height: 10.0),
-              // // Phone Number input field
-              // TextField(
-              //   decoration: InputDecoration(
-              //     labelText: 'Phone Number',
-              //     labelStyle:
-              //         TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-              //     prefixIcon: Icon(Icons.phone),
-              //   ),
-              //   keyboardType: TextInputType.phone,
-              // ),
+              Form(
+                  key: formGlobalKey,
+                  child: Column(
+                    children: [
+// Email input field
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: TextFormField(
+                          controller: email,
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            labelStyle: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Colors.black),
+                            prefixIcon: Icon(
+                              Icons.mail_outline,
+                              color: Colors.black,
+                            ),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: validateEmail,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      // Full Name input field
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: TextFormField(
+                          controller: fullName,
+                          decoration: InputDecoration(
+                            labelText: 'Full Name',
+                            labelStyle: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Colors.black),
+                            prefixIcon: Icon(
+                              Icons.person_outline,
+                              color: Colors.black,
+                            ),
+                          ),
+                          validator: (fullName) => fullName!.length < 3
+                              ? 'Name should be at least 3 characters'
+                              : null,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                      // Password input field
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: TextFormField(
+                          controller: password,
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            labelStyle: TextStyle(
+                                fontStyle: FontStyle.italic,
+                                color: Colors.black),
+                            prefixIcon: Icon(
+                              Icons.fingerprint_outlined,
+                              color: Colors.black,
+                            ),
+                          ),
+                          validator: validatePassword,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                        ),
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
+                  )),
+
               SizedBox(height: 20.0),
               // Sign Up button
               Padding(
@@ -195,20 +197,30 @@ class SignUpPage extends ConsumerWidget {
                     shadowColor: Colors.black,
                   ),
                   onPressed: () async {
-                    // Redirect to Survey or Verify Email page after calling function
-                    final dynamic showMessage = await callAuthCreateAccount(
-                        email, password, fullName, context, ref);
-                    print('Sign Up sucess: $showMessage');
-                    final user = ref.read(accountCreatedProvider);
-                    print('user not created wowow $user');
+                    if (formGlobalKey.currentState!.validate()) {
+                      print('Fields pass validation');
+                      try {
+                        // Redirect to Survey or Verify Email page after calling function
+                        final dynamic showMessage = await callAuthCreateAccount(
+                            email, password, fullName, context, ref);
+                        print('Sign Up sucess: $showMessage');
+                        final user = ref.read(accountCreatedProvider);
+                        print('user not created wowow $user');
 
-                    if (showMessage["Success"]) {
-                      print("Account created!");
-                      GoRouter.of(context).go('/signIn');
+                        if (showMessage["Success"]) {
+                          print("Account created!");
+                          GoRouter.of(context).go('/signIn');
+                        } else {
+                          print('Account creation failed');
+
+                          showToasty(
+                              showMessage['msg'], showMessage['Success']);
+                        }
+                      } catch (e) {
+                        print(e);
+                      }
                     } else {
-                      print('Account creation failed');
-
-                      showToasty(showMessage['msg'], showMessage['Success']);
+                      print('Fields not passing validation');
                     }
                   },
                 ),
