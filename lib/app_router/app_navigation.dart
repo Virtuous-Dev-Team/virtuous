@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
-import 'package:virtuetracker/api/surveyPage.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
@@ -16,6 +16,7 @@ import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
+import 'package:virtuetracker/screens/tutorialPage.dart';
 
 String initial(ref) {
   try {
@@ -86,7 +87,7 @@ class AppNavigation {
         GoRoute(
           path: '/',
           name: 'LandingPage',
-          builder: (context, state) => LandingPage(),
+          builder: (context, state) => LandingPageTest(),
         ),
         GoRoute(
             path: '/signIn',
@@ -105,10 +106,16 @@ class AppNavigation {
           builder: (context, state) => SignUpPage(),
         ),
         GoRoute(
-          path: '/survey',
-          name: 'SurveyPage',
-          builder: (context, state) => SurveyPage(),
-        ),
+            path: '/survey',
+            name: 'SurveyPage',
+            builder: (context, state) => SurveyPage(),
+            routes: [
+              GoRoute(
+                path: 'tutorial',
+                name: 'tutorial',
+                builder: (context, state) => TutorialPage(),
+              ),
+            ]),
 
         /// MainWrapper
         StatefulShellRoute.indexedStack(

@@ -2,6 +2,7 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 //import 'package:virtuetracker/widgets/appBarWidget.dart';
@@ -87,6 +88,7 @@ class _TutorialPageState extends State<TutorialPage> {
                         title: 'Getting Started',
                         content:
                             'Now you’re ready to use Virtuous to it’s fullest potential and become the best version of yourself. Good luck!',
+                        context: context,
                         backgroundColor: Color(0xFFF2E1F8),
                       ),
                     ],
@@ -399,9 +401,8 @@ class _TutorialPageState extends State<TutorialPage> {
           children: [
             Expanded(
                 child: Image(
-                  image: const AssetImage(
-                      "assets/images/intro_virtue.png"),
-                  fit: BoxFit.contain,
+              image: const AssetImage("assets/images/intro_virtue.png"),
+              fit: BoxFit.contain,
             ))
 
 // Other widgets or content can go here
@@ -414,7 +415,8 @@ class _TutorialPageState extends State<TutorialPage> {
   Widget buildTutorialScreen5(
       {required String title,
       required String content,
-      required Color backgroundColor}) {
+      required Color backgroundColor,
+      required context}) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -444,10 +446,7 @@ class _TutorialPageState extends State<TutorialPage> {
           SizedBox(height: 20.0),
           MaterialButton(
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                CupertinoPageRoute(builder: (context) => HomePage()),
-              );
+              GoRouter.of(context).go('/home');
             },
             child: Container(
               decoration: BoxDecoration(

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
+import 'package:virtuetracker/controllers/userControllers.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
@@ -18,29 +19,17 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-Users users = Users();
-Future<dynamic> getRecentEntries(ref) async {
-  try {
-    final result = ref.watch(usersRepositoryProvider);
-    dynamic recentEntriesList = await result.getMostRecentEntries("legal");
-    print(recentEntriesList);
-    return recentEntriesList['response'];
-  } catch (error) {
-    print(error);
-  }
-}
-
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dynamic response = getRecentEntries(ref);
+    final response = ref
+        .watch(UserRecentEntriesControllerProvider((communityName: "legal")));
     print('Fetching user recent entries ${response}');
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
-
         appBar: AppBarWidget('regular'),
         body: Center(
           child: Container(
@@ -56,14 +45,7 @@ class HomePage extends ConsumerWidget {
               children: [
                 SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () => {
-                    // TODO: Implement Reflect button functionality.
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   CupertinoPageRoute(builder: (context) => GridPage()),
-                    // )
-                    GoRouter.of(context).go('/home/gridPage')
-                  },
+                  onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
                   child: Text(
                     'Reflect',
                     style: TextStyle(
@@ -89,53 +71,70 @@ class HomePage extends ConsumerWidget {
                 Container(
                   padding: EdgeInsets.all(10),
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(5)),
                     border: Border.all(
                       width: 1,
                     ),
                   ),
-                  child: Center(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 15),
-                            margin: EdgeInsets.symmetric(horizontal: 3),
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF3A3CA),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(' '),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            "Honesty",
-                            textAlign: TextAlign.right,
-                            style: GoogleFonts.tinos(
-                              textStyle: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(' '),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // Builds list from response from api
+                  child: response.when(
+                      data: (recentEntriesList) =>
+                          BuildRecentEntriesList(listy: recentEntriesList),
+                      error: (error, stacktrace) => Text("Error: $error"),
+                      loading: () => const CircularProgressIndicator()),
                 ),
               ],
             ),
           ),
         ),
-        // bottomNavigationBar: BottomNavBar(
-        //   currentIndex: 0,
-        //   onTap: (index) {},
-        // ),
+      ),
+    );
+  }
+}
+
+class BuildRecentEntriesList extends StatelessWidget {
+  const BuildRecentEntriesList({super.key, required this.listy});
+  final List<dynamic> listy;
+  @override
+  Widget build(BuildContext context) {
+    print('Recent entries in HomePage: $listy');
+    return Center(
+      child: Row(
+        children: [
+          Expanded(
+            flex: 1,
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 15),
+              margin: EdgeInsets.symmetric(horizontal: 3),
+              decoration: BoxDecoration(
+                color: Color(0xFFF3A3CA),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(' '),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: FractionallySizedBox(
+              widthFactor: 2,
+              child: Center(
+                child: Text(
+                  "Honesty",
+                  maxLines: 1,
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(' '),
+          ),
+        ],
       ),
     );
   }

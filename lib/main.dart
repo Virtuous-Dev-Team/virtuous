@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/stats.dart';
-import 'package:virtuetracker/api/surveyPage.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
@@ -74,39 +74,39 @@ Future testingApi() async {
 }
 
 // Test screens and widgets with this
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-
-      // routerConfig: AppRouter.router,
-      // home: HomePage(), // closed for testing
-      home: GridPageTest(),
-    );
-  }
-}
-
-// This widget has the navigation with routes
-// class MyApp extends ConsumerWidget {
-//   const MyApp({super.key});
+// class MyApp extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final goRouter = ref.watch(goRouterProvider);
-//     final goRouter = ref.watch(AppNavigation.router);
-
-//     return MaterialApp.router(
-//       routerConfig: goRouter,
-//       title: 'Virtue Tacker',
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
-//       //home: NavControllerPage(),
+
+//       // routerConfig: AppRouter.router,
+//       // home: HomePage(), // closed for testing
+//       home: GridPagey(appBarChoice: 'regular'),
 //     );
 //   }
 // }
+
+// This widget has the navigation with routes
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final goRouter = ref.watch(goRouterProvider);
+    final goRouter = ref.watch(AppNavigation.router);
+
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      title: 'Virtue Tacker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      //home: NavControllerPage(),
+    );
+  }
+}

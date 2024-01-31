@@ -25,7 +25,8 @@ class Communities {
             querySnapshot.docs.single['quadrantInformation'].map((doc) {
           return {
             'quadrantName': doc['quadrantName'] ?? 'Error',
-            'quadrantColor': doc['quadrantColor'] ?? 'Error'
+            'quadrantColor': doc['quadrantColor'] ?? 'Error',
+            'quadrantDefinition': doc['quadrantDefinition'] ?? 'Error'
           };
         }).toList();
         // print(gridPageList);

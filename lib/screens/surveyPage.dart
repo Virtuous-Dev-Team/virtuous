@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -9,6 +10,8 @@ const Color buttonColor = Color(0xFFCEC0A1);
 const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
+
+Users usersAPI = new Users();
 
 void main() => runApp(MaterialApp(home: SurveyPage()));
 
@@ -113,6 +116,10 @@ class UserInfoPage extends StatelessWidget {
   }
 }
 
+Future getLocation() async {
+  await usersAPI.addUserLocation().then((value) => print(value));
+}
+
 class PrivacyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -142,7 +149,10 @@ class PrivacyPage extends StatelessWidget {
               child: Text(value),
             );
           }).toList(),
-          onChanged: (String? newValue) {},
+          onChanged: (String? newValue) async {
+            print('User would like to share locations: $newValue');
+            if (newValue == "Yes") await getLocation();
+          },
           decoration: InputDecoration(
               labelText: 'Would you like to share your location?'),
         ),

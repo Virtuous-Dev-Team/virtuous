@@ -183,6 +183,16 @@ class Users {
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+        // await Geolocator.openAppSettings();
+        bool opened = await Geolocator.openLocationSettings();
+        if (opened) {
+          serviceEnabled = await Geolocator.isLocationServiceEnabled();
+          print('here after $serviceEnabled');
+          if (serviceEnabled) {
+            return await addUserLocation();
+          }
+        }
+
         return Future.error(
             {'Success': false, 'Error': 'Location services are disabled'});
       }

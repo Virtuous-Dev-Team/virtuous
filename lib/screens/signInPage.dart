@@ -74,7 +74,8 @@ class SignInPage extends ConsumerWidget {
   }
 
   String? validatePassword(String? pass) {
-    RegExp passRegex = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+    RegExp passRegex =
+        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
     final isPassValid = passRegex.hasMatch(pass ?? '');
     if (!isPassValid) {
       return 'Please enter a stronger password';
@@ -177,8 +178,6 @@ class SignInPage extends ConsumerWidget {
                     final dynamic showMessage =
                         await callAuthSignIn(email, password, context, ref);
                     if (showMessage['Success'] == false) {
-                      // toast.successOrError(
-                      //     context, showMessage['msg'], showMessage['Success']);
                       showToasty(showMessage['msg'], showMessage['Success']);
                     } else {
                       final isNewUser = await getUserInfo(ref);
