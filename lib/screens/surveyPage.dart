@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/api/users.dart';
@@ -111,6 +112,7 @@ class UserInfoPage extends StatelessWidget {
               labelText: 'Please describe your reasons for joining Virtuous.'),
           maxLines: 5,
         ),
+
       ],
     );
   }
@@ -202,6 +204,23 @@ class NotificationsPage extends StatelessWidget {
           decoration: InputDecoration(
               labelText: 'Select a time to receive notifications.'),
         ),
+        MaterialButton(
+          onPressed: (){},
+          child: Container(
+            decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius:BorderRadius.circular(10)
+            ),
+            child: const Center(
+              child: Text("Submit",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal,
+                  color: iconColor,
+                ),),
+            ),
+          ),
+        )
       ],
     );
   }
