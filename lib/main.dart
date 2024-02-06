@@ -4,6 +4,7 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/gridPage2.dart';
 import 'package:virtuetracker/screens/navController.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
@@ -44,8 +45,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       //home: GridPage2(), // closed for testing
-      //home: NavControllerPage(),
-      home: TutorialPage(),
+      home: SurveyPage(),
+      //home: TutorialPage(),
     );
   }
 }
