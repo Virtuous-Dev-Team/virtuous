@@ -45,8 +45,8 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       //home: GridPage2(), // closed for testing
-      home: SurveyPage(),
-      //home: TutorialPage(),
+      //home: SurveyPage(),
+      home: TutorialPage(),
     );
   }
 }
