@@ -249,25 +249,25 @@ class SignInPage extends ConsumerWidget {
                         },
                       );
 
-                      // final dynamic showMessage =
-                      //     await callAuthSignIn(email, password, context, ref);
-                      // if (showMessage['Success'] == false) {
-                      //   showToasty(showMessage['msg'], showMessage['Success']);
-                      // } else {
-                      //   final isNewUser = await getUserInfo(ref);
-                      //   if (isNewUser['Success']) {
-                      //     final goToSurveyPage =
-                      //         isNewUser['response']['currentCommunity'];
-                      //     print('isNewUser: ${goToSurveyPage}');
-                      //     if (goToSurveyPage == null) {
-                      //       print('needs to fill out survey');
-                      //       GoRouter.of(context).go('/survey');
-                      //     } else {
-                      //       print('go to home page');
-                      //       GoRouter.of(context).go('/home');
-                      //     }
-                      //   }
-                      // }
+                      final dynamic showMessage =
+                          await callAuthSignIn(email, password, context, ref);
+                      if (showMessage['Success'] == false) {
+                        showToasty(showMessage['msg'], showMessage['Success']);
+                      } else {
+                        final isNewUser = await getUserInfo(ref);
+                        if (isNewUser['Success']) {
+                          final goToSurveyPage =
+                              isNewUser['response']['currentCommunity'];
+                          print('isNewUser: ${goToSurveyPage}');
+                          if (goToSurveyPage == null) {
+                            print('needs to fill out survey');
+                            GoRouter.of(context).go('/survey');
+                          } else {
+                            print('go to home page');
+                            GoRouter.of(context).go('/home');
+                          }
+                        }
+                      }
                     } catch (e) {
                       print(e);
                     }

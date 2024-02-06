@@ -45,8 +45,21 @@ class _TutorialPageState extends State<TutorialPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: mainBackgroundColor,
-        //appBar: AppBarWidget('Tutorial'),
-        body: Center(
+        //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
+        appBar: AppBar(
+        backgroundColor: appBarColor,
+        elevation: 0,
+        actions: [
+        IconButton(
+        icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+        onPressed: () {
+        // TODO: Implement profile icon functionality.
+        },
+        ),
+        SizedBox(width: 12),
+        ],
+    ),
+    body: Center(
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -131,15 +144,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: iconColor,
+          SizedBox(height: 30,),
+          Center(
+            child: Text(
+              'Getting started',
+              style: TextStyle(
+                fontSize: 15.0,
+              ),
             ),
           ),
-          SizedBox(height: 8.0),
+          SizedBox(height: 15.0),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -182,6 +196,7 @@ class _TutorialPageState extends State<TutorialPage> {
             color: Colours.swatch("#534D3F"),
             height: MediaQuery.of(context).size.height / 35,
           ),
+          SizedBox(height: 40,),
           Text(
             "Select the button above to add an entry.",
             style: TextStyle(
@@ -208,15 +223,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: iconColor,
+          SizedBox(height: 30,),
+          Center(
+            child: Text(
+              'Getting started',
+              style: TextStyle(
+                fontSize: 15.0,
+              ),
             ),
           ),
-          SizedBox(height: 8.0),
+          SizedBox(height: 15.0),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -282,15 +298,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: iconColor,
+          SizedBox(height: 30,),
+          Center(
+            child: Text(
+              'Getting started',
+              style: TextStyle(
+                fontSize: 15.0,
+              ),
             ),
           ),
-          SizedBox(height: 8.0),
+          SizedBox(height: 15.0),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -345,12 +362,14 @@ class _TutorialPageState extends State<TutorialPage> {
             color: Colours.swatch("#F3A3CA"),
             height: MediaQuery.of(context).size.height / 35,
           ),
-          Text(
-            "Describe how you used this virtue today.",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-              color: Colours.swatch("#000000"),
+          Container(
+            child: Text(
+              "Describe how you used this virtue today.",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                color: Colours.swatch("#000000"),
+              ),
             ),
           ),
           SizedBox(height: 8.0),
@@ -423,15 +442,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: iconColor,
+          SizedBox(height: 30,),
+          Center(
+            child: Text(
+              'Getting started',
+              style: TextStyle(
+                fontSize: 15.0,
+              ),
             ),
           ),
-          SizedBox(height: 20.0),
+          SizedBox(height: 15.0),
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -443,7 +463,7 @@ class _TutorialPageState extends State<TutorialPage> {
               style: TextStyle(color: textColor, fontSize: 16),
             ),
           ),
-          SizedBox(height: 20.0),
+          SizedBox(height: 50.0),
           MaterialButton(
             onPressed: () {
               GoRouter.of(context).go('/home');
