@@ -26,6 +26,10 @@ class HomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final response = ref
         .watch(UserRecentEntriesControllerProvider((communityName: "legal")));
+    // final a = ref.watch(
+    //     UserRecentEntriesController().getMostRecentEntries("communityName"));
+
+    // print('testing homepage: $a');
     print('Fetching user recent entries ${response}');
     return SafeArea(
       child: Scaffold(

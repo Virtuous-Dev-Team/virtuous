@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
+import 'package:virtuetracker/controllers/authControllers.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
@@ -120,53 +121,51 @@ class SignInPage extends ConsumerWidget {
 
               // username textfield
               Form(
-                  key: formGlobalKey,
+                  // key: formGlobalKey,
                   child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: TextFormField(
-                          controller: email,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                            prefixIcon: Icon(
-                              Icons.email_outlined,
-                              color: Colors.black,
-                            ),
-                          ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: validateEmail,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: TextFormField(
+                      controller: email,
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.black),
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Colors.black,
                         ),
                       ),
+                      keyboardType: TextInputType.emailAddress,
+                      validator: validateEmail,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                  ),
 
-                      SizedBox(height: 10.0),
+                  SizedBox(height: 10.0),
 
-                      // password textfield
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: TextFormField(
-                          controller: password,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            labelStyle: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                            prefixIcon: Icon(
-                              Icons.fingerprint_outlined,
-                              color: Colors.black,
-                            ),
-                          ),
-                          validator: validatePassword,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                  // password textfield
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: TextFormField(
+                      controller: password,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        labelStyle: TextStyle(
+                            fontStyle: FontStyle.italic, color: Colors.black),
+                        prefixIcon: Icon(
+                          Icons.fingerprint_outlined,
+                          color: Colors.black,
                         ),
                       ),
-                    ],
-                  )),
+                      validator: validatePassword,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                    ),
+                  ),
+                ],
+              )),
               // Padding(
               //   padding: const EdgeInsets.symmetric(horizontal: 25),
               //   child: TextFormField(
@@ -224,36 +223,58 @@ class SignInPage extends ConsumerWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () async {
-                    if (formGlobalKey.currentState!.validate()) {
-                      print('Fields pass validation');
-                      try {
-                        final dynamic showMessage =
-                            await callAuthSignIn(email, password, context, ref);
-                        if (showMessage['Success'] == false) {
-                          showToasty(
-                              showMessage['msg'], showMessage['Success']);
-                        } else {
-                          final isNewUser = await getUserInfo(ref);
-                          if (isNewUser['Success']) {
-                            final goToSurveyPage =
-                                isNewUser['response']['currentCommunity'];
-                            print('isNewUser: ${goToSurveyPage}');
-                            if (goToSurveyPage == null) {
-                              print('needs to fill out survey');
-                              GoRouter.of(context).go('/survey');
-                            } else {
-                              print('go to home page');
-                              GoRouter.of(context).go('/home');
-                            }
-                          }
-                        }
-                      } catch (e) {
-                        print(e);
-                      }
-                    } else {
-                      print('Fields not passing validation');
-                      return;
+                    // if (formGlobalKey.currentState!.validate()) {
+                    print('Fields pass validation');
+                    try {
+                      // res.when(data: data, error: error, loading: loading)
+                      final authController =
+                          ref.watch(authControllerProvider.notifier);
+
+                      authController.signIn(email.text, password.text);
+
+                      final authState = ref.watch(authControllerProvider);
+
+                      authState.when(
+                        data: (response) => {
+                          // Handle successful sign-in
+                          print('Sign-in successful: $response')
+                        },
+                        error: (error, stacktrace) => {
+                          // Handle error
+                          print('')
+                        },
+                        loading: () => {
+                          // Handle loading state
+                          print('Sign-in in progress...')
+                        },
+                      );
+
+                      // final dynamic showMessage =
+                      //     await callAuthSignIn(email, password, context, ref);
+                      // if (showMessage['Success'] == false) {
+                      //   showToasty(showMessage['msg'], showMessage['Success']);
+                      // } else {
+                      //   final isNewUser = await getUserInfo(ref);
+                      //   if (isNewUser['Success']) {
+                      //     final goToSurveyPage =
+                      //         isNewUser['response']['currentCommunity'];
+                      //     print('isNewUser: ${goToSurveyPage}');
+                      //     if (goToSurveyPage == null) {
+                      //       print('needs to fill out survey');
+                      //       GoRouter.of(context).go('/survey');
+                      //     } else {
+                      //       print('go to home page');
+                      //       GoRouter.of(context).go('/home');
+                      //     }
+                      //   }
+                      // }
+                    } catch (e) {
+                      print(e);
                     }
+                    // } else {
+                    //   print('Fields not passing validation');
+                    //   return;
+                    // }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFFC1D9CD),

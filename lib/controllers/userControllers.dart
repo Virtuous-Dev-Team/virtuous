@@ -39,6 +39,9 @@ class UserRecentEntriesController
 //     AsyncNotifierProvider<UserRecentEntriesController, dynamic>(() {
 //   return UserRecentEntriesController();
 // });
+final entries = Provider<UserRecentEntriesController>((ref) {
+  return UserRecentEntriesController();
+});
 final UserRecentEntriesControllerProvider = AsyncNotifierProvider.family<
     UserRecentEntriesController,
     dynamic,

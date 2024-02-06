@@ -27,10 +27,15 @@ dependencies:
   flutter_facebook_auth: ^6.0.4
   auto_size_text: ^3.0.0
   colours: ^0.0.2
+  riverpod_annotation: ^2.3.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+    # a tool for running code generators
+  build_runner:
+  # the code generator
+  riverpod_generator:
 
   flutter_lints: ^2.0.0
 

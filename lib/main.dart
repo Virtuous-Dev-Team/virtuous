@@ -4,14 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/stats.dart';
-import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/gridPage2.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
-import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
@@ -41,11 +39,11 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   // Finished Testing addVirtue api
-  // u
-  //     .addVirtueEntry("legal", "Courage", "quadrantColor",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
-  //     .then((value) => {print(value["Success"])})
-  //     .catchError((error) => {print('error in main: $error')});
+  u
+      .addVirtueEntry("legal", "Courage", "quadrantColor",
+          ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
+      .then((value) => {print(value["Success"])})
+      .catchError((error) => {print('error in main: $error')});
 
   // Finished Testing surveyInfo api, need to add more
   // u.surveyInfo("best attorney ever in the world, even better than saul",
@@ -86,7 +84,7 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: GridPagey(appBarChoice: 'regular'),
+//       home: SurveyPage(),
 //     );
 //   }
 // }
@@ -106,7 +104,6 @@ class MyApp extends ConsumerWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: NavControllerPage(),
     );
   }
 }

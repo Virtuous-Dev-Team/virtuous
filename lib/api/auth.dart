@@ -128,6 +128,16 @@ class Auth {
     }
   }
 
+  Future verifyPhoneNumber() async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+44 7123 123 456',
+      verificationCompleted: (PhoneAuthCredential credential) {},
+      verificationFailed: (FirebaseAuthException e) {},
+      codeSent: (String verificationId, int? resendToken) {},
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
+
   // --- google sign in ---
   Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow

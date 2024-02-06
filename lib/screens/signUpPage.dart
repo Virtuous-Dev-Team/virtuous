@@ -9,6 +9,7 @@ import 'package:toastification/toastification.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
+import 'package:virtuetracker/controllers/authControllers.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
@@ -243,9 +244,7 @@ class SignUpPage extends ConsumerWidget {
                             fontWeight: FontWeight.w400)),
                     onPressed: () {
                       // Redirect to Sign In page
-
                       GoRouter.of(context).go('/signIn');
-                      // GoRouter.of(context).pop();
                     },
                   ),
                 ],
