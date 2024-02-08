@@ -66,26 +66,21 @@ class HomePage extends ConsumerWidget {
                 ),
                 Text(' '),
                 Divider(
-                  thickness: 0.5,
+                  thickness: 1,
                   color: Colors.black,
-                  indent: 0,
-                  endIndent: 0,
                 ),
                 SizedBox(height: 15),
                 Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(5)),
-                    border: Border.all(
-                      width: 1,
-                    ),
-                  ),
                   // Builds list from response from api
                   child: response.when(
-                      data: (recentEntriesList) =>
-                          BuildRecentEntriesList(listy: recentEntriesList),
-                      error: (error, stacktrace) => Text("Error: $error"),
+                      error: (error, stacktrace) => Text(
+                            "You currently don't have any entries, click the Reflect button to make your first entry!",
+                            style: TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                      data: (recentEntriesList) => BuildRecentEntriesList(
+                          listy: recentEntriesList ?? []),
                       loading: () => const CircularProgressIndicator()),
+                  // child: BuildRecentEntriesList(listy: []),
                 ),
               ],
             ),
@@ -96,49 +91,108 @@ class HomePage extends ConsumerWidget {
   }
 }
 
+// Builds recent entries list
 class BuildRecentEntriesList extends StatelessWidget {
   const BuildRecentEntriesList({super.key, required this.listy});
   final List<dynamic> listy;
   @override
   Widget build(BuildContext context) {
     print('Recent entries in HomePage: $listy');
-    return Center(
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              margin: EdgeInsets.symmetric(horizontal: 3),
-              decoration: BoxDecoration(
-                color: Color(0xFFF3A3CA),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(' '),
-            ),
+    final List<dynamic> list = [
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
+    ];
+
+    return listy == null
+        ? Center(
+            child: Text('List is Null'),
+          )
+        : Expanded(
+            child: ListView.builder(
+                itemCount: listy.length,
+                itemBuilder: (BuildContext context, index) {
+                  final Map<String, dynamic> item =
+                      listy![index] as Map<String, dynamic>;
+                  print('item : $item');
+                  return RecentEntryWidget(
+                      quadrantName: item['quadrantUsed'],
+                      quadrantColor:
+                          int.tryParse(item['quadrantColor'].toString()) ??
+                              0xFFA6A1CC);
+                }),
+          );
+  }
+}
+
+// Recent entrywidget, that is also tappable
+class RecentEntryWidget extends StatelessWidget {
+  const RecentEntryWidget(
+      {super.key, required this.quadrantName, required this.quadrantColor});
+  final String quadrantName;
+  final int quadrantColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        print('Clicked virtue');
+      },
+      child: Container(
+        width: double.infinity,
+        height: 80,
+        padding: EdgeInsets.all(10),
+        margin: EdgeInsets.only(bottom: 15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+            width: 1,
           ),
-          Expanded(
-            flex: 2,
-            child: FractionallySizedBox(
-              widthFactor: 2,
-              child: Center(
+        ),
+        child: Wrap(
+          direction: Axis.horizontal,
+          runAlignment: WrapAlignment.center,
+          // alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 20,
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                  height: 55,
+                  width: 55,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Color(quadrantColor),
+                  ),
+                  child: Text("")),
+            ),
+            Expanded(
+                flex: 1,
                 child: Text(
-                  "Honesty",
+                  quadrantName,
                   maxLines: 1,
                   style: GoogleFonts.tinos(
-                    textStyle: TextStyle(
-                      color: Colors.black,
-                    ),
+                    textStyle: TextStyle(color: Colors.black, fontSize: 16),
                   ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(' '),
-          ),
-        ],
+                )),
+          ],
+        ),
       ),
     );
   }

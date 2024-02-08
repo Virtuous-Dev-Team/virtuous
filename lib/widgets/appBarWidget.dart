@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
+import 'package:virtuetracker/controllers/authControllers.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -85,7 +87,7 @@ class PopOutMenuWidget extends StatelessWidget {
       onSelected: (value) {
         if (value == 'signOut') {
           print('sign out plz');
-          _signOut(ref); // Use the ref parameter here
+          _signOut(ref, context); // Use the ref parameter here
         }
         // TODO: Handle other menu items if needed
       },
@@ -105,13 +107,29 @@ class PopOutMenuWidget extends StatelessWidget {
     );
   }
 
-  void _signOut(WidgetRef ref) async {
-    try {
-      final authService = ref.read(authRepositoryProvider);
-      print('user signing out');
+  void showToasty(String msg, bool success, BuildContext context) {
+    ToastNotificationWidget toast = new ToastNotificationWidget();
+    print('calling toast widget');
+    toast.successOrError(context, msg, success);
+  }
 
-      await authService.signOutUser();
-      ref.read(AppNavigation.router).go('/signIn');
+  void _signOut(WidgetRef ref, BuildContext context) async {
+    try {
+      // final authService = ref.read(authRepositoryProvider);
+      // print('user signing out');
+
+      // await authService.signOutUser();
+      // ref.read(AppNavigation.router).go('/signIn');
+      await ref.watch(authControllerProvider.notifier).signOut();
+
+      ref.watch(authControllerProvider).when(
+          loading: () => CircularProgressIndicator(),
+          error: (error, stackTrace) {
+            showToasty(error.toString(), false, context);
+          },
+          data: (response) {
+            GoRouter.of(context).go('/signIn');
+          });
     } catch (e) {
       print('Error signing out: $e');
     }

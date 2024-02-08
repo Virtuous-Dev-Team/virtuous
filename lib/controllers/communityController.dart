@@ -32,6 +32,7 @@ class CommunitiesController
       // This line sets the state to the result of the asynchronous operation.
     } catch (error) {
       print('Error in communityController: $error');
+      state = AsyncError(error, StackTrace.current);
     }
   }
 }

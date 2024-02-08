@@ -114,39 +114,6 @@ const Color textColor = Colors.white;
 //   }
 // }
 
-class BuildGrid extends StatelessWidget {
-  final List<dynamic>? listy;
-
-  const BuildGrid({Key? key, this.listy}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // print(listy);
-    return (listy ?? []).isEmpty
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
-        : GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 25,
-              mainAxisSpacing: 25,
-            ),
-            itemBuilder: (context, index) {
-              final Map<String, dynamic> item =
-                  listy![index] as Map<String, dynamic>;
-              return Rectangle(
-                quadrantName: item['quadrantName'],
-                quadrantColor:
-                    int.tryParse(item['quadrantColor'].toString()) ?? 0,
-                quadrantDefinition: item['quadrantDefinition'],
-              );
-            },
-            itemCount: listy!.length,
-          );
-  }
-}
-
 class GridPagey extends ConsumerWidget {
   final String appBarChoice;
 
@@ -215,6 +182,39 @@ class GridPagey extends ConsumerWidget {
   }
 }
 
+class BuildGrid extends StatelessWidget {
+  final List<dynamic>? listy;
+
+  const BuildGrid({Key? key, this.listy}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // print(listy);
+    return (listy ?? []).isEmpty
+        ? Center(
+            child: CircularProgressIndicator(),
+          )
+        : GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 25,
+              mainAxisSpacing: 25,
+            ),
+            itemBuilder: (context, index) {
+              final Map<String, dynamic> item =
+                  listy![index] as Map<String, dynamic>;
+              return Rectangle(
+                quadrantName: item['quadrantName'],
+                quadrantColor:
+                    int.tryParse(item['quadrantColor'].toString()) ?? 0,
+                quadrantDefinition: item['quadrantDefinition'],
+              );
+            },
+            itemCount: listy!.length,
+          );
+  }
+}
+
 class Rectangle extends StatelessWidget {
   const Rectangle(
       {super.key,
@@ -228,38 +228,6 @@ class Rectangle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return Container(
-    //   child: Center(
-    //     child: SizedBox(
-    //       height: 100,
-    //       width: 100,
-    //       child: ElevatedButton(
-    //         child: FractionallySizedBox(
-    //           widthFactor: 2,
-    //           child: Center(
-    //             child: Text(
-    //               quadrantName,
-    //               maxLines: 1,
-    //               style: GoogleFonts.tinos(
-    //                 textStyle: TextStyle(
-    //                   color: Colors.black,
-    //                 ),
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //         style: ElevatedButton.styleFrom(
-    //           elevation: 4,
-    //           backgroundColor: Color(quadrantColor),
-    //           shape: RoundedRectangleBorder(
-    //               borderRadius: BorderRadius.circular(5.0)),
-    //           shadowColor: Colors.black,
-    //         ),
-    //         onPressed: () {},
-    //       ),
-    //     ),
-    //   ),
-    // );
     return AspectRatio(
       aspectRatio: 1.0, // Maintain a 1:1 aspect ratio (adjust as needed)
       child: Container(

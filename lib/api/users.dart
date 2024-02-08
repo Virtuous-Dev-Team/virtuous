@@ -32,10 +32,10 @@ class Users {
   Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
       quadrantAnswers, shareLocation) async {
     try {
-      // User? user = FirebaseAuth.instance.currentUser;
-      // if (user == null) {
-      //   return {'Success': false, 'Error': 'User not found'};
-      // }
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
       final totalDataObject = {
         "communityName": currentCommunity,
         "quadrantUsed": quadrantUsed,
@@ -45,7 +45,7 @@ class Users {
       };
       // Add virtue entry to totalData subcollection
       await usersCollectionRef
-          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
+          .doc(user.uid)
           .collection("totalData")
           .add(totalDataObject);
 
@@ -77,7 +77,6 @@ class Users {
       // }
 
       // Increment whichever quadrant was used
-      throw FirebaseException(plugin: "", message: "erorrrororror");
       await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").update({
         'quadrantUsedData.${communityName}.${quadrantUsed}':
             FieldValue.increment(1),
@@ -99,7 +98,7 @@ class Users {
           .collection("totalData")
           .where("communityName", isEqualTo: communityName)
           .orderBy('dateEntried', descending: true)
-          .limit(5)
+          .limit(12)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -127,13 +126,21 @@ class Users {
   }
 
   // Working, need to add phone number verification
-  Future<dynamic> surveyInfo(currentPosition, careerLength, currentCommunity,
-      reasons, shareEntries, shareLocation) async {
+  Future<dynamic> surveyInfo(
+      currentPosition,
+      careerLength,
+      currentCommunity,
+      reasons,
+      shareEntries,
+      shareLocation,
+      allowNotifications,
+      phoneNumber,
+      notificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      // if (user == null) {
-      //   return Future.error({'Success': false, 'Error': 'User not found'});
-      // }
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': 'User not found'});
+      }
       final careerInfo = {
         "currentPosition": currentPosition,
         "careerLength": careerLength

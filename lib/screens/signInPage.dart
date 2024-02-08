@@ -18,6 +18,8 @@ import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 final Auth auth = Auth();
 final Users users = Users();
+ToastNotificationWidget toast = ToastNotificationWidget();
+
 Future<dynamic> callAuthSignIn(email, password, context, ref) async {
   String emailInput = email.text;
   String passwordInput = password.text;
@@ -63,7 +65,6 @@ Future<dynamic> getUserInfo(ref) async {
 class SignInPage extends ConsumerWidget {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
-  ToastNotificationWidget toast = ToastNotificationWidget();
 
   String? validateEmail(String? email) {
     RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
@@ -87,6 +88,7 @@ class SignInPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void showToasty(msg, success) {
+      print('calling toast widget');
       toast.successOrError(context, msg, success);
     }
 
@@ -166,46 +168,6 @@ class SignInPage extends ConsumerWidget {
                   ),
                 ],
               )),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 25),
-              //   child: TextFormField(
-              //     controller: email,
-              //     decoration: InputDecoration(
-              //       labelText: 'Email',
-              //       labelStyle: TextStyle(
-              //           fontStyle: FontStyle.italic, color: Colors.black),
-              //       prefixIcon: Icon(
-              //         Icons.email_outlined,
-              //         color: Colors.black,
-              //       ),
-              //     ),
-              //     keyboardType: TextInputType.emailAddress,
-              //     validator: validateEmail,
-              //     autovalidateMode: AutovalidateMode.onUserInteraction,
-              //   ),
-              // ),
-
-              // SizedBox(height: 10.0),
-
-              // // password textfield
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 25),
-              //   child: TextFormField(
-              //     controller: password,
-              //     obscureText: true,
-              //     decoration: InputDecoration(
-              //       labelText: 'Password',
-              //       labelStyle: TextStyle(
-              //           fontStyle: FontStyle.italic, color: Colors.black),
-              //       prefixIcon: Icon(
-              //         Icons.fingerprint_outlined,
-              //         color: Colors.black,
-              //       ),
-              //     ),
-              //     validator: validatePassword,
-              //     autovalidateMode: AutovalidateMode.onUserInteraction,
-              //   ),
-              // ),
 
               const SizedBox(height: 20),
 
@@ -227,32 +189,65 @@ class SignInPage extends ConsumerWidget {
                     print('Fields pass validation');
                     try {
                       // res.when(data: data, error: error, loading: loading)
-                      final authController =
-                          ref.watch(authControllerProvider.notifier);
+                      // final authController =
+                      //     ref.watch(authControllerProvider.notifier);
 
-                      authController.signIn(email.text, password.text);
+                      // authController.signIn(email.text, password.text);
+                      // final authState = ref.watch(authControllerProvider);
+                      // await ref
+                      //     .watch(authControllerProvider.notifier)
+                      //     .signIn(email.text, password.text);
+                      // authState.when(
+                      //   loading: () => CircularProgressIndicator(),
+                      //   error: (error, stackTrace) {
+                      //     showToasty(error, false);
+                      //   },
+                      //   data: (response) async {
+                      //     final isNewUser = await getUserInfo(ref);
+                      //     if (isNewUser['Success']) {
+                      //       final goToSurveyPage =
+                      //           isNewUser['response']['currentCommunity'];
+                      //       print('isNewUser: ${goToSurveyPage}');
+                      //       if (goToSurveyPage == null) {
+                      //         print('needs to fill out survey');
+                      //         // GoRouter.of(context).go('/survey');
+                      //       } else {
+                      //         print('go to home page');
+                      //         // GoRouter.of(context).go('/home');
+                      //       }
+                      //     }
+                      //   },
+                      // );
+                      // final authController =
+                      //     ref.read(authControllerProvider.notifier);
 
-                      final authState = ref.watch(authControllerProvider);
+                      // await authController.signIn(email.text, password.text);
 
-                      authState.when(
-                        data: (response) => {
-                          // Handle successful sign-in
-                          print('Sign-in successful: $response')
-                        },
-                        error: (error, stacktrace) => {
-                          // Handle error
-                          print('')
-                        },
-                        loading: () => {
-                          // Handle loading state
-                          print('Sign-in in progress...')
-                        },
-                      );
-
+                      // ref.watch(authControllerProvider).when(
+                      //       loading: () => CircularProgressIndicator(),
+                      //       error: (error, stackTrace) {
+                      //         showToasty(error, false);
+                      //       },
+                      //       data: (response) async {
+                      //         final isNewUser = await getUserInfo(ref);
+                      //         if (isNewUser['Success']) {
+                      //           final goToSurveyPage =
+                      //               isNewUser['response']['currentCommunity'];
+                      //           print('isNewUser: $goToSurveyPage');
+                      //           if (goToSurveyPage == null) {
+                      //             print('needs to fill out survey');
+                      //             GoRouter.of(context).go('/survey');
+                      //           } else {
+                      //             print('go to home page');
+                      //             GoRouter.of(context).go('/home');
+                      //           }
+                      //         }
+                      //       },
+                      //     );
                       final dynamic showMessage =
                           await callAuthSignIn(email, password, context, ref);
                       if (showMessage['Success'] == false) {
-                        showToasty(showMessage['msg'], showMessage['Success']);
+                        // showToasty(showMessage['msg'], showMessage['Success']);
                       } else {
                         final isNewUser = await getUserInfo(ref);
                         if (isNewUser['Success']) {
@@ -269,7 +264,7 @@ class SignInPage extends ConsumerWidget {
                         }
                       }
                     } catch (e) {
-                      print(e);
+                      print('Error in sig in btn container $e');
                     }
                     // } else {
                     //   print('Fields not passing validation');
