@@ -12,6 +12,14 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
+final List<int> quadrantColors = [
+  0xFFF3A3CA, 0XFFCBF1D1, 0XFFB0E5F6, 0XFFF6EEA2, 0XFFC58686, 0XFFFADAB4, 0XFFDEBFF5, 0XFF7AB0D8, 0XFF7FA881,
+];
+
+final List<String> quadrantNames = [
+  'Honesty', 'Courage', 'Compassion', 'Generosity', 'Fidelity', 'Integrity', 'Fairness', 'Self-control', 'Prudence',
+];
+
 Future<dynamic> callGetQuadrantList() async {
   final Communities communities = Communities();
 
@@ -81,24 +89,22 @@ class GridPage extends StatelessWidget {
               ],
             ),
             Container(
-              padding: EdgeInsets.all(15),
+              padding: EdgeInsets.all(30),
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 100),
-                child: GridView.count(
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5,
-                  crossAxisCount: 3,
-                  children: [
-                    Rectangle(quadrantName: 'Honesty', quadrantColor: 0xFFF3A3CA),
-                    Rectangle(quadrantName: 'Courage', quadrantColor: 0XFFCBF1D1),
-                    Rectangle(quadrantName: 'Compassion', quadrantColor: 0XFFB0E5F6),
-                    Rectangle(quadrantName: 'Generosity', quadrantColor: 0XFFF6EEA2),
-                    Rectangle(quadrantName: 'Fidelity', quadrantColor: 0XFFC58686),
-                    Rectangle(quadrantName: 'Integrity', quadrantColor: 0XFFFADAB4),
-                    Rectangle(quadrantName: 'Fairness', quadrantColor: 0XFFDEBFF5),
-                    Rectangle(quadrantName: 'Self-control', quadrantColor: 0XFF7AB0D8),
-                    Rectangle(quadrantName: 'Prudence', quadrantColor: 0XFF7FA881),
-                  ],
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3, // Adjust the number of columns here!!!
+                    crossAxisSpacing: 25,
+                    mainAxisSpacing: 25,
+                  ),
+                  itemCount: 9, // Number of items in the grid
+                  itemBuilder: (context, index) {
+                    return Rectangle(
+                      quadrantName: quadrantNames[index],
+                      quadrantColor: quadrantColors[index],
+                    );
+                  },
                 ),
               ),
             ),
@@ -123,25 +129,32 @@ class Rectangle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Center(
-        child: SizedBox(
-          width: 109,
-          height: 90,
+    return AspectRatio(
+      aspectRatio: 1.0, // Maintain a 1:1 aspect ratio (adjust as needed)
+      child: Container(
+        child: Container(
+          width: 100.0, // Set a fixed width for the button
           child: ElevatedButton(
+            onPressed: () {
+              // ADD ME!!!
+            },
+            child: FractionallySizedBox(
+              widthFactor: 2,
+              child: Center(
+                child: Text(
+                  quadrantName,
+                  maxLines: 1,
+                  style: GoogleFonts.tinos(textStyle: TextStyle(
+                    color: Colors.black,),
+                  ),
+                ),
+              ),
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Color(quadrantColor),
               elevation: 4,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0)),
-            ),
-            onPressed: () {  },
-            child: AutoSizeText(
-              maxLines: 1,
-              quadrantName,
-              style: GoogleFonts.tinos(textStyle: TextStyle(
-                color: Colors.black,),
-              ),
             ),
           ),
         ),
@@ -149,61 +162,3 @@ class Rectangle extends StatelessWidget {
     );
   }
 }
-
-/*
-body: Center(
-            child: Container(
-              /*
-              decoration: BoxDecoration(
-              color: Color(0xFFFFFDF9),
-              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
-              ),
-              ),
-
-              padding: const EdgeInsets.all(10.0),
-               */
-          child: Column(
-            children: [
-              /*
-              SizedBox(height: 40),
-              Text(
-                'Which virtue did you use today?',
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(height: 5,),
-              Divider(
-                thickness: 0.5,
-                color: Colors.black,
-                indent: 10,
-                endIndent: 10,
-              ),
-              SizedBox(height: 40),
-
-               */
-              Container(
-                child: Center(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      ),
-                      itemCount: 9,
-                          itemBuilder: (BuildContext context, int index){
-                            return Rectangle(
-                                quadrantName: 'Integrity', quadrantColor: 0xFFFADAB4);
-
-                          },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
- */

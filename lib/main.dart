@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
-import 'package:virtuetracker/screens/gridPage2.dart';
 import 'package:virtuetracker/screens/navController.dart';
-import 'package:virtuetracker/screens/surveyPage.dart';
-import 'package:virtuetracker/screens/tutorialPage.dart';
+import 'package:virtuetracker/screens/surveyPagePLUSUSER.dart';
+import 'package:virtuetracker/screens/tutorialPage.dart'; //add without PLUSUSER
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
@@ -44,9 +43,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: GridPage2(), // closed for testing
-      //home: SurveyPage(),
-      home: TutorialPage(),
+      //home: GridPage(), // closed for testing
+      home: SurveyPage(),
+      //home: TutorialPage(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/api/users.dart';
 //import 'package:virtuetracker/widgets/appBarWidget.dart';     UNCOMMENT
@@ -99,95 +100,116 @@ class UserInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(5),
       children: <Widget>[
+        SizedBox(height: 20,),
         Center(
           child: Text(
             'Let us get to know you.',
-            style: TextStyle(
-              fontSize: 18.0,
+              style: GoogleFonts.tinos(
+              textStyle: TextStyle(
+                fontSize: 18.0,
+              ),
             ),
           ),
         ),
         SizedBox(
-          height: 15,
+          height: 25,
         ),
         Text(
           'What is your career?',
+            style: GoogleFonts.tinos(
+            textStyle: TextStyle(),
+            ),
         ),
         SizedBox(height: 3,),
         Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             border: Border.all(
               color: Color(0xFFCEC0A1),
               width: 2.0, // Set the border width
             ),
-            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0),
           ),
           child: TextField(
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,
               isDense: true,
-              hintText: 'Enter text...',
+              hintText: 'Eg. lawyer',
+              hintStyle: GoogleFonts.tinos(
+                  textStyle: TextStyle(color: Colors.black)),
               border: InputBorder.none, // Hide the default border
             ),
           ),
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 20,),
         Text(
           'How long have you been in this career?',
+            style: GoogleFonts.tinos(
+              textStyle: TextStyle(
+              ),
+            ),
         ),
         SizedBox(height: 3,),
         Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             border: Border.all(
               color: Color(0xFFCEC0A1),
               width: 2.0, // Set the border width
             ),
-            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0),
           ),
           child: TextField(
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,
               isDense: true,
-              hintText: 'Enter text...',
+              hintText: 'Eg. 2 years',
+                hintStyle: GoogleFonts.tinos(
+                textStyle: TextStyle(color: Colors.black)),
               border: InputBorder.none, // Hide the default border
             ),
           ),
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 20,),
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Choose a community that best fits your reason for joining Virtuous.',
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(),),
             ),
             GestureDetector(
             onTap: () {},
             child: Text(
               'Learn more about communities.',
-                style: TextStyle(
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
                   decoration: TextDecoration.underline, // Add underline
                   decorationColor: Color(0xFF534D3F),
                   fontStyle: FontStyle.italic,
                   color: Color(0xFFCEC0A1),
+                  ),
                 ),
               ),
             ),
           ],
         ),
-    // Dropdown inside the Container with beige outline
+         SizedBox(height: 3,),
          Container(
-            padding: EdgeInsets.all(5.0),
+            padding: EdgeInsets.all(3.0),
             decoration: BoxDecoration(
               border: Border.all(
                 color: Color(0xFFCEC0A1),
                 width: 2.0, // Set the border width
                 ),
-                borderRadius: BorderRadius.circular(8.0),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5.0),
               ),
               child: Row(
                 children: [
@@ -202,7 +224,8 @@ class UserInfoPage extends StatelessWidget {
                         height: 30.0, // Adjust the height of each item
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(value),
+                          child: Text(value, style: GoogleFonts.tinos(
+                              textStyle: TextStyle()),),
                         ),
                       ),
                     );
@@ -219,18 +242,22 @@ class UserInfoPage extends StatelessWidget {
               ],
             ),
         ),
-        SizedBox(height: 40),
+        SizedBox(height: 30),
         Text(
-          'Please describe yor reasons for joining Virtuous.',
+          'Please describe your reasons for joining Virtuous.',
+            style: GoogleFonts.tinos(
+            textStyle: TextStyle()),
         ),
+        SizedBox(height: 3,),
         Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             border: Border.all(
               color: Color(0xFFCEC0A1),
               width: 2.0, // Set the border width
             ),
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.white,
           ),
           child: TextFormField(
             maxLines: 3,
@@ -238,7 +265,9 @@ class UserInfoPage extends StatelessWidget {
               filled: true,
               fillColor: Colors.white,
               hintText: 'Enter text...',
-              contentPadding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
+              hintStyle: GoogleFonts.tinos(
+                  textStyle: TextStyle()),
+              contentPadding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
               border: InputBorder.none,
             ),
           ),
@@ -256,47 +285,65 @@ Future getLocation() async {
 
  */
 
-class PrivacyPage extends StatelessWidget {
+
+class PrivacyPage extends StatefulWidget {
+  @override
+  _PrivacyPageState createState() => _PrivacyPageState();
+}
+
+class _PrivacyPageState extends State<PrivacyPage> {
+  bool _shouldEntryShare = false;
+  bool _shouldShareLocation = false;
+
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(5),
       children: <Widget>[
+        SizedBox(height: 20,),
         Center(
           child: Text(
             'Privacy',
-            style: TextStyle(
+            style: GoogleFonts.tinos(
+            textStyle: TextStyle(
               fontSize: 18.0,
+            ),
             ),
           ),
         ),
         SizedBox(
-          height: 15,
+          height: 25,
         ),
         Text(
           'Would you like to participate in entry sharing?',
+            style: GoogleFonts.tinos(
+            textStyle: TextStyle()),
         ),
         Text(
           'If you select "Yes," your data may be shown to other users.',
-          style: TextStyle(
+          style: GoogleFonts.tinos(
+          textStyle: TextStyle(
             fontStyle: FontStyle.italic,
             color: Color(0xFFCEC0A1),
           ),
+          ),
         ),
+        SizedBox(height: 5,),
         Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             border: Border.all(
               color: Color(0xFFCEC0A1),
               width: 2.0, // Set the border width
             ),
-            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0),
           ),
           child: Row(
             children: [
               Expanded(
                 child: DropdownButton<String>(
-                  value: 'Yes',
+                  value: _shouldEntryShare ? 'Yes' : 'No',
                   items: <String>['Yes', 'No']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -305,50 +352,59 @@ class PrivacyPage extends StatelessWidget {
                         height: 30.0, // Adjust the height of each item
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(value),
+                          child: Text(value, style: GoogleFonts.tinos(
+                            textStyle: TextStyle())),
                         ),
                       ),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    // Handle dropdown value change
+                    setState(() {
+                      _shouldEntryShare = newValue == 'Yes';
+                    });
                   },
                   dropdownColor: Colors.white, // Set the background color of the dropdown
                   isDense: true, // Reduce height
                   icon: Icon(Icons.arrow_drop_down, color: Colors.black), // Align the arrow to the right
                   isExpanded: true, // Extend the button to the right
+                  underline: Container(),
                 ),
               ),
             ],
           ),
         ),
         SizedBox(
-          height: 15,
+          height: 25,
         ),
         Text(
-          'Would you like to share your location?',
+          'Would you like to share your location?', style: GoogleFonts.tinos(
+            textStyle: TextStyle()),
         ),
         Text(
           'We will not share your location with other users.',
-          style: TextStyle(
+            style: GoogleFonts.tinos(
+            textStyle: TextStyle(
             fontStyle: FontStyle.italic,
             color: Color(0xFFCEC0A1),
+            ),
           ),
         ),
+        SizedBox(height: 5,),
         Container(
-          padding: EdgeInsets.all(5.0),
+          padding: EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             border: Border.all(
               color: Color(0xFFCEC0A1),
               width: 2.0, // Set the border width
             ),
-            borderRadius: BorderRadius.circular(8.0),
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.white,
           ),
           child: Row(
             children: [
               Expanded(
                 child: DropdownButton<String>(
-                  value: 'Yes',
+                  value: _shouldShareLocation ? 'Yes' : 'No',
                   items: <String>['Yes', 'No']
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
@@ -357,13 +413,16 @@ class PrivacyPage extends StatelessWidget {
                         height: 30.0, // Adjust the height of each item
                         child: Align(
                           alignment: Alignment.centerLeft,
-                          child: Text(value),
+                          child: Text(value, style: GoogleFonts.tinos(
+                              textStyle: TextStyle()),),
                         ),
                       ),
                     );
                   }).toList(),
                   onChanged: (String? newValue) {
-                    // Handle dropdown value change
+                    setState(() {
+                      _shouldShareLocation = newValue == 'Yes';
+                    });
                   },
                   dropdownColor: Colors.white, // Set the background color of the dropdown
                   isDense: true, // Reduce height
@@ -385,38 +444,48 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  bool _shouldShowContent = false; // Declare _shouldShowContent here
+  bool _shouldShowContent = false;
+  TimeOfDay? selectedTime;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            SizedBox(height: 20,),
             Center(
               child: Text(
                 'Notifications',
-                style: TextStyle(
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
                   fontSize: 18.0,
+                  ),
                 ),
               ),
             ),
             SizedBox(
-              height: 15,
+              height: 25,
             ),
             Text(
               'Turn on notifications?',
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                ),
+              ),
             ),
+            SizedBox(height: 3,),
             Container(
-              padding: EdgeInsets.all(5.0),
+              padding: EdgeInsets.all(3.0),
               decoration: BoxDecoration(
                 border: Border.all(
                   color: Color(0xFFCEC0A1),
                   width: 2.0, // Set the border width
                 ),
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(5.0),
+                color: Colors.white,
               ),
               child: Row(
                 children: [
@@ -431,7 +500,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             height: 30.0, // Adjust the height of each item
                             child: Align(
                               alignment: Alignment.centerLeft,
-                              child: Text(value),
+                              child: Text(value, style: GoogleFonts.tinos(
+                            textStyle: TextStyle(),), ),
                             ),
                           ),
                         );
@@ -451,43 +521,58 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ],
               ),
             ),
-            SizedBox(height: 40,),
+            SizedBox(height: 20,),
             Visibility(
               visible: _shouldShowContent, // Set this to true when 'Yes' is selected
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                      'Enter your phone number.'
+                      'Enter your phone number.',
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(
+                        ),
+                      ),
                   ),
+                  SizedBox(height: 3,),
                   Container(
-                    padding: EdgeInsets.all(5.0),
+                    padding: EdgeInsets.all(3.0),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Color(0xFFCEC0A1),
                         width: 2.0, // Set the border width
                       ),
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: TextField(
+                      keyboardType: TextInputType.phone,
                       decoration: InputDecoration(
                           contentPadding: EdgeInsets.zero,
                           isDense: true,
                           border: InputBorder.none, // Hide the default border
-                          hintText: '(999)-999-9999'
+                          hintText: '(999)-999-9999',
+                          hintStyle: GoogleFonts.tinos(
+                          textStyle: TextStyle(color: Colors.black)),
                       ),
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Text('How often would you like to receive notifications from us?'),
+                  /*
+                  Text('How often would you like to receive notifications from us?',
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 3,),
                   Container(
-                    padding: EdgeInsets.all(5.0),
+                    padding: EdgeInsets.all(3.0),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Color(0xFFCEC0A1),
                         width: 2.0, // Set the border width
                       ),
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(5.0),
                     ),
                     child: Row(
                       children: [
@@ -502,7 +587,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                   height: 30.0, // Adjust the height of each item
                                   child: Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(value),
+                                    child: Text(value, style: GoogleFonts.tinos(
+                                  textStyle: TextStyle(),),),
                                   ),
                                 ),
                               );
@@ -518,9 +604,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         ),
                       ],
                     ),
-                  ),
+                  ), //REMOVED for lincoln's request
+                   */
                   SizedBox(height: 20,),
-                  Text('Select a time to receive notifications.'),
+                  Text('Select a time to receive notifications.',
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(
+                      ),
+                    ),
+                  ),
                   Center(
                     child: Container(
                       width: double.infinity,
@@ -529,12 +621,37 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         child: Text('Select Time', style: TextStyle(color: Color(0xFFFFFDF9),),),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.amber,
-                          // Change button color to beige
                         ),
                       ),
                     ),
                   ),
+                  SizedBox(height: 10,),
+                  Center(
+                    child: Text(
+                      selectedTime != null
+                          ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
+                          : 'Time not selected',
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20,),
                 ],
+              ),
+            ),
+            Center(
+              child: Container(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => _selectTime(context),
+                  child: Text('Submit'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.amber,
+                    // Change button color to beige
+                  ),
+                ),
               ),
             ),
           ],
@@ -544,13 +661,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? selectedTime = await showTimePicker(
+    TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
-    if (selectedTime != null) {
-      print("Selected Time: ${selectedTime.format(context)}");
+    if (pickedTime != null && pickedTime != selectedTime) {
+      setState(() {
+        selectedTime = pickedTime;
+      });
     }
   }
 }
