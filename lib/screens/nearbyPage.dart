@@ -158,88 +158,100 @@ Widget MyCommunity(double screnWidth,double screenHeight){
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Padding(
-              padding:  EdgeInsets.only(top: screenHeight/60),
-              child: Container(
-                  width: screnWidth/1.5,
-                  constraints: BoxConstraints(maxWidth: screnWidth),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colours.swatch("#D7F1F7")
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding:  EdgeInsets.only(top: screenHeight/60),
+                  child: Container(
+                      width: screnWidth/1.5,
+                      constraints: BoxConstraints(maxWidth: screnWidth),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colours.swatch("#D7F1F7")
+                      ),
+                      child:Center(child: Text("Why are virtues important in my community?",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.normal,
+                            color: Colours.swatch(clrBlack),
+                          )),)
+
                   ),
-                  child:Center(child: Text("Why are virtues important in my community?",
-                      style: TextStyle(
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.normal,
-                    color: Colours.swatch(clrBlack),
-                  )),)
+                ),
+                Padding(
+                  padding:  EdgeInsets.only(top: screenHeight/60),
+                  child: Container(
+                    // width: screnWidth/3,
+                      constraints: BoxConstraints(maxWidth: screnWidth),
+                      // decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(5),
+                      //     color: Colours.swatch("#FAD4E3")
+                      // ),
+                      child:Center(child: Text("The legal community has seen an increase in corruption. Using virtues ensures that those who practice law use their knowledge for noble purposes etc etc etc"
+                          ,style: TextStyle(
+                            fontSize: 16,
 
-              ),
+                            fontWeight: FontWeight.normal,
+                            color: Colours.swatch(clrBlack),
+                          )),)
+
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding:  EdgeInsets.only(top: screenHeight/60),
-              child: Container(
-                // width: screnWidth/3,
-                  constraints: BoxConstraints(maxWidth: screnWidth),
-                  // decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(5),
-                  //     color: Colours.swatch("#FAD4E3")
-                  // ),
-                  child:Center(child: Text("The legal community has seen an increase in corruption. Using virtues ensures that those who practice law use their knowledge for noble purposes etc etc etc"
-                      ,style: TextStyle(
-                        fontSize: 16,
 
-                        fontWeight: FontWeight.normal,
-                        color: Colours.swatch(clrBlack),
-                      )),)
-
-              ),
-            ),
             Divider(
               endIndent: 10,
               indent: 10,
               color: Colours.swatch(clrBlack),
               height: screenHeight / 35,
             ),
-            Padding(
-              padding:  EdgeInsets.only(top: screenHeight/60),
-              child: Container(
-                  width: screnWidth/3,
-                  constraints: BoxConstraints(maxWidth: screnWidth),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colours.swatch("#FAD4E3")
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:  EdgeInsets.only(top: screenHeight/60),
+                  child: Container(
+                    width: screnWidth/3,
+                    constraints: BoxConstraints(maxWidth: screnWidth),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colours.swatch("#FAD4E3")
+                    ),
+                    child:Center(child: Text("About my virtues:",style: TextStyle(
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.normal,
+                      color: Colours.swatch(clrBlack),
+                    )),),
+
+
                   ),
-                  child:Center(child: Text("About my virtues:",style: TextStyle(
-                    fontSize: 20,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.normal,
-                    color: Colours.swatch(clrBlack),
-                  )),),
 
+                ),
+                SizedBox(
+                  height: screenHeight,
+                  child: ListView.builder(
+                    itemCount: virtues.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Icon(Icons.circle,size: 10,), // You can replace this icon with a bullet point icon
+                        title: Text(virtues[index],
+                            style: TextStyle(
+                              fontSize: 16,
 
-              ),
-
-            ),
-            SizedBox(
-              height: screenHeight,
-              child: ListView.builder(
-                itemCount: virtues.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Icon(Icons.circle,size: 10,), // You can replace this icon with a bullet point icon
-                    title: Text(virtues[index],
-                        style: TextStyle(
-                          fontSize: 16,
-
-                          fontWeight: FontWeight.normal,
-                          color: Colours.swatch(clrBlack),
-                        )),
-                  );
-                },
-              ),
+                              fontWeight: FontWeight.normal,
+                              color: Colours.swatch(clrBlack),
+                            )),
+                      );
+                    },
+                  ),
+                )
+              ],
             )
+
           ],
         ),
       ),
