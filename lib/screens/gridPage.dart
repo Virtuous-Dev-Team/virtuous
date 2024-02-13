@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/rendering.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
@@ -235,6 +236,11 @@ class Rectangle extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             // ADD ME!!!
+            GoRouter.of(context).goNamed('VirtueEntryPage', pathParameters: {
+              'quadrantName': quadrantName,
+              'quadrantDefinition': quadrantDefinition,
+              'quadrantColor': quadrantColor.toString(),
+            });
           },
           child: FractionallySizedBox(
             widthFactor: 2,

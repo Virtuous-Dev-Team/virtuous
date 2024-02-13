@@ -17,6 +17,7 @@ import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
+import 'package:virtuetracker/screens/virtueEntry.dart';
 
 String initial(ref) {
   try {
@@ -136,6 +137,28 @@ class AppNavigation {
                     GoRoute(
                       path: 'gridPage',
                       name: 'GridPage',
+                      routes: [
+                        GoRoute(
+                          path:
+                              'virtueEntry/:quadrantName/:quadrantDefinition/:quadrantColor',
+                          name: 'VirtueEntryPage',
+                          builder: (context, state) {
+                            // final quadrantName = Families.family(state.params['fid']!);
+                            final quadrantName =
+                                state.pathParameters['quadrantName'];
+                            final quadrantDefinition =
+                                state.pathParameters['quadrantDefinition'];
+                            final quadrantColor =
+                                state.pathParameters['quadrantColor'];
+
+                            return VirtueEntry(
+                              quadrantName: quadrantName,
+                              definition: quadrantDefinition,
+                              color: quadrantColor,
+                            );
+                          },
+                        )
+                      ],
                       pageBuilder: (context, state) =>
                           CustomTransitionPage<void>(
                         key: state.pageKey,

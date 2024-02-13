@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:virtuetracker/api/users.dart';
 
 // 2. declare a part file
 part 'authControllers.g.dart';
@@ -25,10 +26,13 @@ part 'authControllers.g.dart';
 //     return AsyncError(result.value['Error'], StackTrace.current);
 //   }
 // }
+
 class AuthController extends _$AuthController {
   @override
-  FutureOr<void> build() async {
+  FutureOr<dynamic> build() async {
     // return a value (or do nothing if the return type is void)
+    // state = AsyncLoading();
+    return;
   }
 
   Future<void> signIn(String email, String password) async {
@@ -39,8 +43,20 @@ class AuthController extends _$AuthController {
       final result = await AsyncValue.guard(
           () => authRepository.signInUser(email, password));
       print(result);
+
       if (result.value['Success']) {
-        state = AsyncData(result.value['response']);
+        final isNewUser = await ref.read(usersRepositoryProvider).getUserInfo();
+        if (isNewUser['Success']) {
+          final goToSurveyPage = isNewUser['response']['currentCommunity'];
+          print('isNewUser: $goToSurveyPage');
+          if (goToSurveyPage == null) {
+            print('needs to fill out survey');
+            state = AsyncData('/survey');
+          } else {
+            print('go to home page');
+            state = AsyncData('/home');
+          }
+        }
 
         // print(
         //     "returning list from recen entries controller ${result.value['response']}");
@@ -61,9 +77,31 @@ class AuthController extends _$AuthController {
       final result = await AsyncValue.guard(() => authRepository.signOutUser());
       print(result);
       if (result.value['Success']) {
-        state = AsyncData(result.value['response']);
+        print('trying to sign out withing controller');
+        state = AsyncData('/signIn');
       } else {
         print("failed sign out ${result.value['Error']}");
+        state = AsyncError(result.value['Error'], StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> createAccount(
+      String email, String password, String fullName) async {
+    try {
+      final authRepository = ref.read(authRepositoryProvider);
+
+      state = const AsyncLoading();
+      final result = await AsyncValue.guard(
+          () => authRepository.createAccount(email, password, fullName));
+      print(result);
+      if (result.value['Success']) {
+        print('trying to create out withing controller');
+        state = AsyncData('/signIn');
+      } else {
+        print("failed create accout ${result.value['Error']}");
         state = AsyncError(result.value['Error'], StackTrace.current);
       }
     } catch (error) {

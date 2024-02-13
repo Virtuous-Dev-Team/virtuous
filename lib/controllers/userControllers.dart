@@ -14,11 +14,11 @@ class UserRecentEntriesController
 
   Future<void> getMostRecentEntries(String communityName) async {
     try {
-      final authRepo = ref.read(usersRepositoryProvider);
+      final userRepo = ref.read(usersRepositoryProvider);
       print('calling get controllers');
       state = const AsyncLoading();
       final result = await AsyncValue.guard(
-          () => authRepo.getMostRecentEntries(communityName));
+          () => userRepo.getMostRecentEntries(communityName));
       // print(result.value['response']);
       if (result.value['Success']) {
         state = AsyncData(result.value['response']);

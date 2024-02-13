@@ -76,16 +76,26 @@ class SignUpPage extends ConsumerWidget {
   }
 
   ToastNotificationWidget toast = ToastNotificationWidget();
+  void showToasty(msg, success, context) {
+    toast.successOrError(context, msg, success);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // ToastNotificationWidget toast = ToastNotificationWidget();
-    void showToasty(msg, success) {
-      toast.successOrError(context, msg, success);
-    }
 
     final formGlobalKey = GlobalKey<FormState>();
-
+    ref.watch(authControllerProvider).when(
+        loading: () => CircularProgressIndicator(),
+        error: (error, stackTrace) {
+          showToasty(error.toString(), false, context);
+        },
+        data: (response) {
+          print('going to sign in page, after signing out ');
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            GoRouter.of(context).go(response);
+          });
+        });
     return Scaffold(
       backgroundColor: Color(0xFFFFFDF9),
       body: SingleChildScrollView(
@@ -202,21 +212,8 @@ class SignUpPage extends ConsumerWidget {
                       print('Fields pass validation');
                       try {
                         // Redirect to Survey or Verify Email page after calling function
-                        final dynamic showMessage = await callAuthCreateAccount(
-                            email, password, fullName, context, ref);
-                        print('Sign Up sucess: $showMessage');
-                        final user = ref.read(accountCreatedProvider);
-                        print('user not created wowow $user');
-
-                        if (showMessage["Success"]) {
-                          print("Account created!");
-                          GoRouter.of(context).go('/signIn');
-                        } else {
-                          print('Account creation failed');
-
-                          showToasty(
-                              showMessage['msg'], showMessage['Success']);
-                        }
+                        ref.read(authControllerProvider.notifier).createAccount(
+                            email.text, password.text, fullName.text);
                       } catch (e) {
                         print(e);
                       }
