@@ -7,6 +7,7 @@ import '../App_Configuration/apptheme.dart';
 import '../Models/CalendarModel.dart';
 import '../Models/ChartDataModel.dart';
 import '../widgets/Calendar.dart';
+import '../widgets/appBarWidget.dart';
 
 class ResourcePage extends StatelessWidget {
   const ResourcePage({super.key});
@@ -83,6 +84,11 @@ class ResourcePage extends StatelessWidget {
 double screenHeight=MediaQuery.of(context).size.height;
 double screenWidth=MediaQuery.of(context).size.width;
     return
+      SafeArea(
+          child: Scaffold(
+          backgroundColor: Color(0xFFEFE5CC),
+    appBar: AppBarWidget('regular'),
+    body:
       Container(
         decoration: BoxDecoration(
           color: Color(0xFFFFFDF9),
@@ -345,7 +351,7 @@ mainAxisAlignment: MainAxisAlignment.spaceBetween,
             ],
           ),
         ),
-      );
+      )));
 
 
 

@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:virtuetracker/App_Configuration/apptheme.dart';
 
+import '../widgets/appBarWidget.dart';
+
 class NearbyPage extends StatefulWidget {
   const NearbyPage({Key? key}) : super(key: key);
 
@@ -29,7 +31,12 @@ class _NearbyPageState extends State<NearbyPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     double screenHeight=MediaQuery.of(context).size.height;
     double screenWidth=MediaQuery.of(context).size.width;
-    return Container(
+    return
+      SafeArea(
+          child: Scaffold(
+          backgroundColor: Color(0xFFEFE5CC),
+    appBar: AppBarWidget('regular'),
+    body:Container(
       decoration: BoxDecoration(
         color: const Color(0xFFFFFDF9),
         border: Border.all(color: const Color(0xFFFEFE5CC), width: 9.0),
@@ -80,7 +87,7 @@ class _NearbyPageState extends State<NearbyPage> with SingleTickerProviderStateM
       )
 
 
-    );
+    )));
   }
 }
 

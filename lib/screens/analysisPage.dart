@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../App_Configuration/apptheme.dart';
+import '../widgets/appBarWidget.dart';
 
 class AnalysisPage extends StatelessWidget {
   const AnalysisPage({super.key});
@@ -24,7 +25,12 @@ class AnalysisPage extends StatelessWidget {
       _ChartData('Prudence', 27)
     ];
     _tooltip = TooltipBehavior(enable: false);
-    return Container(
+    return
+      SafeArea(
+          child: Scaffold(
+          backgroundColor: Color(0xFFEFE5CC),
+    appBar: AppBarWidget('regular'),
+    body:Container(
       child: Center(child:
        Container(
           decoration: BoxDecoration(
@@ -142,7 +148,7 @@ class AnalysisPage extends StatelessWidget {
 
 
       ),
-    );
+    )));
   }
 }
 class _ChartData {
