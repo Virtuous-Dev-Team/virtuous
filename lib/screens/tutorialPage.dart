@@ -3,8 +3,10 @@ import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/screens/homePage.dart';
+import 'package:virtuetracker/screens/navController.dart';
 //import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -47,19 +49,19 @@ class _TutorialPageState extends State<TutorialPage> {
         backgroundColor: mainBackgroundColor,
         //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
         appBar: AppBar(
-        backgroundColor: appBarColor,
-        elevation: 0,
-        actions: [
-        IconButton(
-        icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-        onPressed: () {
-        // TODO: Implement profile icon functionality.
-        },
+          backgroundColor: appBarColor,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+              onPressed: () {
+                // TODO: Implement profile icon functionality.
+              },
+            ),
+            SizedBox(width: 12),
+          ],
         ),
-        SizedBox(width: 12),
-        ],
-    ),
-    body: Center(
+        body: Center(
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -78,7 +80,7 @@ class _TutorialPageState extends State<TutorialPage> {
                         content:
                             'Welcome to Virtuous! This is the home page. Let’s have you practice adding an entry. '
                             'Select the “Reflect” button below to add a virtue entry to your account. '
-                            'This page also shows you all of your entries for the current date.',
+                            'This page also shows your last dozen of entries.',
                         backgroundColor: Color(0xFFFFEEDB),
                       ),
                       buildTutorialScreen2(
@@ -144,12 +146,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           Center(
             child: Text(
               'Getting started',
-              style: TextStyle(
-                fontSize: 15.0,
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 18.0,
+                ),
               ),
             ),
           ),
@@ -162,48 +168,54 @@ class _TutorialPageState extends State<TutorialPage> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               content,
-              style: TextStyle(color: textColor, fontSize: 16),
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(color: textColor, fontSize: 16),
+              ),
             ),
           ),
           SizedBox(height: 20.0),
-          MaterialButton(
+          ElevatedButton(
             onPressed: () {
               _pageController.nextPage(
                   duration: Duration(milliseconds: 500),
                   curve: Curves.easeInOut);
             },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colours.swatch('#c5b898'),
-                  borderRadius: BorderRadius.circular(100)),
-              width: 200,
-              height: 200,
-              child: Center(
-                  child: Text(
-                "Reflect",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: iconColor,
-                ),
-              )),
+            child: Text("Reflect",
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal,
+                    color: iconColor,
+                  ),
+                )),
+            style: ElevatedButton.styleFrom(
+              primary: buttonColor,
+              shape: CircleBorder(),
+              elevation: 4,
+              padding: EdgeInsets.all(70),
             ),
           ),
+
 // SizedBox(height: 10.0),
           Divider(
             endIndent: 10,
             indent: 10,
             color: Colours.swatch("#534D3F"),
             height: MediaQuery.of(context).size.height / 35,
+            thickness: 2,
           ),
-          SizedBox(height: 40,),
+          SizedBox(
+            height: 40,
+          ),
           Text(
             "Select the button above to add an entry.",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-              fontStyle: FontStyle.italic,
-              color: Colours.swatch("#C5B898"),
+            style: GoogleFonts.tinos(
+              textStyle: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                fontStyle: FontStyle.italic,
+                color: Colors.black,
+              ),
             ),
           ),
 
@@ -223,12 +235,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           Center(
             child: Text(
               'Getting started',
-              style: TextStyle(
-                fontSize: 15.0,
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 18.0,
+                ),
               ),
             ),
           ),
@@ -241,7 +257,9 @@ class _TutorialPageState extends State<TutorialPage> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               content,
-              style: TextStyle(color: textColor, fontSize: 16),
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(color: textColor, fontSize: 16),
+              ),
             ),
           ),
           SizedBox(height: 50.0),
@@ -265,15 +283,25 @@ class _TutorialPageState extends State<TutorialPage> {
                         width: 90,
                         decoration: BoxDecoration(
                           color: Colours.swatch(GridviewData![index].color),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(5.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 4,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Center(
                             child: Text(
                           GridviewData![index].text.toString(),
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                            color: iconColor,
+                          style: GoogleFonts.tinos(
+                            textStyle: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: iconColor,
+                            ),
                           ),
                         ))),
                   )
@@ -298,12 +326,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           Center(
             child: Text(
               'Getting started',
-              style: TextStyle(
-                fontSize: 15.0,
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 18.0,
+                ),
               ),
             ),
           ),
@@ -316,17 +348,21 @@ class _TutorialPageState extends State<TutorialPage> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               content,
-              style: TextStyle(color: textColor, fontSize: 16),
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(color: textColor, fontSize: 16),
+              ),
             ),
           ),
           SizedBox(height: 20.0),
           Text(
             "Honesty",
-            style: TextStyle(
-              fontSize: 18,
-              decoration: TextDecoration.underline,
-              fontWeight: FontWeight.normal,
-              color: iconColor,
+            style: GoogleFonts.tinos(
+              textStyle: TextStyle(
+                fontSize: 18,
+                decoration: TextDecoration.underline,
+                fontWeight: FontWeight.normal,
+                color: iconColor,
+              ),
             ),
           ),
           SizedBox(height: 8.0),
@@ -346,12 +382,14 @@ class _TutorialPageState extends State<TutorialPage> {
             child: Center(
               child: Text(
                 "Honesty is being truthful and sincere in both words and actions, without deceit or deception.",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                  fontStyle: FontStyle.italic,
-                  color: Colours.swatch("#888479"),
+                // textAlign: TextAlign.center,
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    fontStyle: FontStyle.italic,
+                    color: Colours.swatch("#888479"),
+                  ),
                 ),
               ),
             ),
@@ -361,19 +399,22 @@ class _TutorialPageState extends State<TutorialPage> {
             indent: 10,
             color: Colours.swatch("#F3A3CA"),
             height: MediaQuery.of(context).size.height / 35,
+            thickness: 2,
           ),
           Container(
             child: Text(
               "Describe how you used this virtue today.",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-                color: Colours.swatch("#000000"),
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: Colours.swatch("#000000"),
+                ),
               ),
             ),
           ),
           SizedBox(height: 8.0),
-          textFieldNoteInput(context, tfDescription)
+          textFieldNoteInput(context, tfDescription, false)
 
 // Other widgets or content can go here
         ],
@@ -382,7 +423,7 @@ class _TutorialPageState extends State<TutorialPage> {
   }
 
   Widget textFieldNoteInput(
-      BuildContext context, TextEditingController controller) {
+      BuildContext context, TextEditingController controller, bool readOnly) {
     return SizedBox(
         width: MediaQuery.of(context).size.width / 1.2,
         height: 120,
@@ -391,6 +432,7 @@ class _TutorialPageState extends State<TutorialPage> {
           cursorRadius: const Radius.circular(0),
           controller: controller,
           maxLines: 4,
+          readOnly: readOnly,
           style: TextStyle(color: iconColor, fontSize: 16),
           decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
@@ -402,7 +444,8 @@ class _TutorialPageState extends State<TutorialPage> {
               border: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black),
               ),
-              fillColor: Colours.swatch("#ffffff")),
+              filled: true,
+              fillColor: Colors.white),
         ));
   }
 
@@ -442,12 +485,16 @@ class _TutorialPageState extends State<TutorialPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           Center(
             child: Text(
               'Getting started',
-              style: TextStyle(
-                fontSize: 15.0,
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 18.0,
+                ),
               ),
             ),
           ),
@@ -460,7 +507,9 @@ class _TutorialPageState extends State<TutorialPage> {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               content,
-              style: TextStyle(color: textColor, fontSize: 16),
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(color: textColor, fontSize: 16),
+              ),
             ),
           ),
           SizedBox(height: 50.0),
@@ -468,25 +517,37 @@ class _TutorialPageState extends State<TutorialPage> {
             onPressed: () {
               GoRouter.of(context).go('/home');
             },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colours.swatch('#bab7d4'),
-                  borderRadius: BorderRadius.circular(10)),
-              width: 210,
-              height: 50,
-              child: Center(
-                  child: Text(
-                "Continue to Virtuous",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal,
-                  color: iconColor,
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFbab7d4), // Dark purple color
+                  borderRadius:
+                      BorderRadius.circular(5), // Adjusted border radius
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 4,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
-              )),
+                width: 210,
+                height: 50,
+                child: Center(
+                  child: Text(
+                    "Continue to Virtuous",
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-
-// Other widgets or content can go here
         ],
       ),
     );

@@ -18,6 +18,30 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
+final List<int> quadrantColors = [
+  0xFFF3A3CA,
+  0XFFCBF1D1,
+  0XFFB0E5F6,
+  0XFFF6EEA2,
+  0XFFC58686,
+  0XFFFADAB4,
+  0XFFDEBFF5,
+  0XFF7AB0D8,
+  0XFF7FA881,
+];
+
+final List<String> quadrantNames = [
+  'Honesty',
+  'Courage',
+  'Compassion',
+  'Generosity',
+  'Fidelity',
+  'Integrity',
+  'Fairness',
+  'Self-control',
+  'Prudence',
+];
+
 // Example 1 on how to use Stateful widgets to load data from api call
 
 // class GridPagey extends StatefulWidget {
