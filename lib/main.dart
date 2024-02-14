@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
 
       // routerConfig: AppRouter.router,
       // home: HomePage(), // closed for testing
-      home: TutorialPage(),
+      home: SurveyPageTest(),
     );
   }
 }

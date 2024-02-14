@@ -127,15 +127,15 @@ class Users {
 
   // Working, need to add phone number verification
   Future<dynamic> surveyInfo(
-      currentPosition,
-      careerLength,
-      currentCommunity,
-      reasons,
-      shareEntries,
-      shareLocation,
-      allowNotifications,
-      phoneNumber,
-      notificationTime) async {
+      String currentPosition,
+      String careerLength,
+      String currentCommunity,
+      String reason,
+      bool shareEntries,
+      bool shareLocation,
+      bool allowNotifications,
+      String phoneNumber,
+      String notificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -160,7 +160,7 @@ class Users {
       final userObject = {
         "currentCommunity": currentCommunity,
         "userLocation": userLocation,
-        "reasons": reasons,
+        "reasons": reason,
         "shareEntries": shareEntries,
         "shareLocation": shareLocation
       };

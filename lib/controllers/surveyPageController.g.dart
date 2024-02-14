@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'authControllers.dart';
+part of 'surveyPageController.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authControllerHash() => r'95d8bc73edf449df11c80b7597fe76d5044f370b';
+String _$surveyPageControllerHash() =>
+    r'33c714c7ba284d38fd7886f0d4871a7f5dcc49ba';
 
-/// See also [AuthController].
-@ProviderFor(AuthController)
-final authControllerProvider =
-    AutoDisposeAsyncNotifierProvider<AuthController, dynamic>.internal(
-  AuthController.new,
-  name: r'authControllerProvider',
+/// See also [SurveyPageController].
+@ProviderFor(SurveyPageController)
+final surveyPageControllerProvider =
+    AutoDisposeAsyncNotifierProvider<SurveyPageController, dynamic>.internal(
+  SurveyPageController.new,
+  name: r'surveyPageControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$authControllerHash,
+      : _$surveyPageControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AuthController = AutoDisposeAsyncNotifier<dynamic>;
+typedef _$SurveyPageController = AutoDisposeAsyncNotifier<dynamic>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
