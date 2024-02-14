@@ -46,15 +46,21 @@ Future testingApi() async {
   final Auth auth = Auth();
   final Settings settings = Settings();
 
+  // await settings
+  //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
+  //         "newCommunity", "4 Years")
+  //     .catchError((e) => print(e));
+
+  // await settings.updatePrivacy(true, false).catchError((e) => print(e));
+
   await settings
-      .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
-          "newCommunity", "4 Years")
+      .updateNotificationPreferences(false, "12:01pm")
       .catchError((e) => print(e));
 
   // Finished Testing addVirtue api
   // u
   //     .addVirtueEntry("legal", "Honesty", "0xFFF3A3CA",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
+  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true, true)
   //     .then((value) => {print(value["Success"])})
   //     .catchError((error) => {print('error in main: $error')});
 
