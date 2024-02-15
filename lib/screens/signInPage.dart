@@ -13,6 +13,7 @@ import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 final Auth auth = Auth();
@@ -224,6 +225,8 @@ class SignInPage extends ConsumerWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () async {
+
+
                     if (formGlobalKey.currentState!.validate()) {
                       print('Fields pass validation');
                       try {

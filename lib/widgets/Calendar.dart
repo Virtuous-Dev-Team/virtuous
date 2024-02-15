@@ -25,7 +25,7 @@ class CustomCalender{
         weekendTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
       weekDayBackgroundColor: Colours.white,
 
-        childAspectRatio: 1.5,
+       // childAspectRatio: 1.5,
 
 
         //background: Colors.white,

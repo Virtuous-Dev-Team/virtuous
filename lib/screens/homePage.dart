@@ -24,9 +24,9 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final response = ref
-    //     .watch(UserRecentEntriesControllerProvider((communityName: "legal")));
-    // print('Fetching user recent entries ${response}');
+    final response = ref
+        .watch(UserRecentEntriesControllerProvider((communityName: "legal")));
+    print('Fetching user recent entries ${response}');
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
@@ -76,13 +76,12 @@ class HomePage extends ConsumerWidget {
                       width: 1,
                     ),
                   ),
-
                   // Builds list from response from api
-                  // child: response.when(
-                  //     data: (recentEntriesList) =>
-                  //         BuildRecentEntriesList(listy: recentEntriesList),
-                  //     error: (error, stacktrace) => Text("Error: $error"),
-                  //     loading: () => const CircularProgressIndicator()),
+                  child: response.when(
+                      data: (recentEntriesList) =>
+                          BuildRecentEntriesList(listy: recentEntriesList),
+                      error: (error, stacktrace) => Text("Error: $error"),
+                      loading: () => const CircularProgressIndicator()),
                 ),
               ],
             ),
