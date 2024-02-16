@@ -32,7 +32,7 @@ class Users {
 
   // Done,
   Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
-      quadrantAnswers, shareLocation) async {
+      quadrantAnswers, shareLocation, shareEntries) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -54,7 +54,7 @@ class Users {
       // Maybe add a check to see if it completed
       await updateQuadrantsUsed(currentCommunity, quadrantUsed);
       print("unn");
-      if (shareLocation) {
+      if (shareLocation && shareEntries) {
         final CommunityShared communitySharedApi = CommunityShared();
         await communitySharedApi
             .addSharedVirtueEntry(
@@ -129,15 +129,15 @@ class Users {
 
   // Working, need to add phone number verification
   Future<dynamic> surveyInfo(
-      currentPosition,
-      careerLength,
-      currentCommunity,
-      reasons,
-      shareEntries,
-      shareLocation,
-      allowNotifications,
-      phoneNumber,
-      notificationTime) async {
+      String currentPosition,
+      String careerLength,
+      String currentCommunity,
+      String reason,
+      bool shareEntries,
+      bool shareLocation,
+      bool allowNotifications,
+      String phoneNumber,
+      String notificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -162,13 +162,13 @@ class Users {
       final userObject = {
         "currentCommunity": currentCommunity,
         "userLocation": userLocation,
-        "reasons": reasons,
+        "reasons": reason,
         "shareEntries": shareEntries,
         "shareLocation": shareLocation
       };
       final notificationPreferences = {
-        "allowNotifications": null,
-        "notificationsTimes": [],
+        "allowNotifications": allowNotifications,
+        "notificationTime": notificationTime,
         "fcmToken": null
       };
       userObject["careerInfo"] = careerInfo;
@@ -259,18 +259,18 @@ class Users {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         // await Geolocator.openAppSettings();
-        bool opened = await Geolocator.openLocationSettings();
-        if (opened) {
-          serviceEnabled = await Geolocator.isLocationServiceEnabled();
-          print('here after $serviceEnabled');
-          if (serviceEnabled) {
-            return await addUserLocation();
-          }
-        }
+        // bool opened = await Geolocator.openLocationSettings();
+        // if (opened) {
+        //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
+        //   print('here after $serviceEnabled');
+        //   if (serviceEnabled) {
+        //     return await addUserLocation();
+        //   }
+        // }
 
-        return Future.error(
-            {'Success': false, 'Error': 'Location services are disabled'});
+        return {'Success': false, 'Error': 'Location services are disabled'};
       }
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
       print('Location services are enabled');
 
@@ -279,17 +279,16 @@ class Users {
         permission = await Geolocator.requestPermission();
         print('current $permission');
         if (permission == LocationPermission.denied) {
-          return Future.error(
-              {'Success': false, 'Error': 'Location permissions are denied'});
+          return {'Success': false, 'Error': 'Location permissions are denied'};
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
         // Permission are denied until User changes it in settings, we can't request permission.
-        return Future.error({
+        return {
           'Success': false,
           'Error': 'Location permissions are denied permanently'
-        });
+        };
       }
 
       print('Location services are allowed to check location');

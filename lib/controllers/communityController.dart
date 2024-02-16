@@ -21,11 +21,9 @@ class CommunitiesController
       print(result.value['response']);
       if (result.value['Success']) {
         state = AsyncData(result.value['response']);
-        // state = result.value['response'];
 
         print(
             "returning list from communities controller ${result.value['response']}");
-        print("returning list from communities controller ${state}");
       } else {
         state = AsyncError(result.value['Error'], StackTrace.current);
       }

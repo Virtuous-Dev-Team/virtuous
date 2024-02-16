@@ -85,12 +85,27 @@ class SignInPage extends ConsumerWidget {
     return null;
   }
 
+  void showToasty(msg, bool success, BuildContext context) {
+    print('calling toast widget');
+    toast.successOrError(context, msg, success);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void showToasty(msg, success) {
-      print('calling toast widget');
-      toast.successOrError(context, msg, success);
-    }
+    ref.watch(authControllerProvider).when(
+          loading: () => CircularProgressIndicator(),
+          error: (error, stackTrace) {
+            Future.delayed(Duration.zero, () {
+              showToasty(error.toString(), false, context);
+            });
+          },
+          data: (response) async {
+            print("What is the response in sign in: $response");
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              GoRouter.of(context).go(response);
+            });
+          },
+        );
 
     final formGlobalKey = GlobalKey<FormState>();
     return Scaffold(
@@ -188,81 +203,10 @@ class SignInPage extends ConsumerWidget {
                     // if (formGlobalKey.currentState!.validate()) {
                     print('Fields pass validation');
                     try {
-                      // res.when(data: data, error: error, loading: loading)
-                      // final authController =
-                      //     ref.watch(authControllerProvider.notifier);
+                      final authController =
+                          ref.read(authControllerProvider.notifier);
 
-                      // authController.signIn(email.text, password.text);
-                      // final authState = ref.watch(authControllerProvider);
-                      // await ref
-                      //     .watch(authControllerProvider.notifier)
-                      //     .signIn(email.text, password.text);
-                      // authState.when(
-                      //   loading: () => CircularProgressIndicator(),
-                      //   error: (error, stackTrace) {
-                      //     showToasty(error, false);
-                      //   },
-                      //   data: (response) async {
-                      //     final isNewUser = await getUserInfo(ref);
-                      //     if (isNewUser['Success']) {
-                      //       final goToSurveyPage =
-                      //           isNewUser['response']['currentCommunity'];
-                      //       print('isNewUser: ${goToSurveyPage}');
-                      //       if (goToSurveyPage == null) {
-                      //         print('needs to fill out survey');
-                      //         // GoRouter.of(context).go('/survey');
-                      //       } else {
-                      //         print('go to home page');
-                      //         // GoRouter.of(context).go('/home');
-                      //       }
-                      //     }
-                      //   },
-                      // );
-                      // final authController =
-                      //     ref.read(authControllerProvider.notifier);
-
-                      // await authController.signIn(email.text, password.text);
-
-                      // ref.watch(authControllerProvider).when(
-                      //       loading: () => CircularProgressIndicator(),
-                      //       error: (error, stackTrace) {
-                      //         showToasty(error, false);
-                      //       },
-                      //       data: (response) async {
-                      //         final isNewUser = await getUserInfo(ref);
-                      //         if (isNewUser['Success']) {
-                      //           final goToSurveyPage =
-                      //               isNewUser['response']['currentCommunity'];
-                      //           print('isNewUser: $goToSurveyPage');
-                      //           if (goToSurveyPage == null) {
-                      //             print('needs to fill out survey');
-                      //             GoRouter.of(context).go('/survey');
-                      //           } else {
-                      //             print('go to home page');
-                      //             GoRouter.of(context).go('/home');
-                      //           }
-                      //         }
-                      //       },
-                      //     );
-                      final dynamic showMessage =
-                          await callAuthSignIn(email, password, context, ref);
-                      if (showMessage['Success'] == false) {
-                        // showToasty(showMessage['msg'], showMessage['Success']);
-                      } else {
-                        final isNewUser = await getUserInfo(ref);
-                        if (isNewUser['Success']) {
-                          final goToSurveyPage =
-                              isNewUser['response']['currentCommunity'];
-                          print('isNewUser: ${goToSurveyPage}');
-                          if (goToSurveyPage == null) {
-                            print('needs to fill out survey');
-                            GoRouter.of(context).go('/survey');
-                          } else {
-                            print('go to home page');
-                            GoRouter.of(context).go('/home');
-                          }
-                        }
-                      }
+                      await authController.signIn(email.text, password.text);
                     } catch (e) {
                       print('Error in sig in btn container $e');
                     }

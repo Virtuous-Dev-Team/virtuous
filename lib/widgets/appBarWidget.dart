@@ -17,8 +17,25 @@ const Color textColor = Colors.white;
 class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   const AppBarWidget(this.appBarChoice, {Key? key}) : super(key: key);
   final String appBarChoice;
+  void showToasty(String msg, bool success, BuildContext context) {
+    ToastNotificationWidget toast = new ToastNotificationWidget();
+    print('calling toast widget');
+    toast.successOrError(context, msg, success);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(authControllerProvider).when(
+        loading: () => CircularProgressIndicator(),
+        error: (error, stackTrace) {
+          showToasty(error.toString(), false, context);
+        },
+        data: (response) {
+          print('going to sign in page, after signing out ');
+          WidgetsBinding.instance?.addPostFrameCallback((_) {
+            GoRouter.of(context).go(response);
+          });
+        });
     return appBarChoice.compareTo('regular') == 0
         ? RegularAppBar(ref: ref)
         : AppBarWithArrow(
@@ -87,7 +104,7 @@ class PopOutMenuWidget extends StatelessWidget {
       onSelected: (value) {
         if (value == 'signOut') {
           print('sign out plz');
-          _signOut(ref, context); // Use the ref parameter here
+          ref.read(authControllerProvider.notifier).signOut();
         }
         // TODO: Handle other menu items if needed
       },
@@ -107,31 +124,24 @@ class PopOutMenuWidget extends StatelessWidget {
     );
   }
 
-  void showToasty(String msg, bool success, BuildContext context) {
-    ToastNotificationWidget toast = new ToastNotificationWidget();
-    print('calling toast widget');
-    toast.successOrError(context, msg, success);
-  }
+  // void _signOut(WidgetRef ref, BuildContext context) async {
+  //   try {
+  //     // final authService = ref.read(authRepositoryProvider);
+  //     // print('user signing out');
 
-  void _signOut(WidgetRef ref, BuildContext context) async {
-    try {
-      // final authService = ref.read(authRepositoryProvider);
-      // print('user signing out');
+  //     // await authService.signOutUser();
+  //     // ref.read(AppNavigation.router).go('/signIn');
 
-      // await authService.signOutUser();
-      // ref.read(AppNavigation.router).go('/signIn');
-      await ref.watch(authControllerProvider.notifier).signOut();
-
-      ref.watch(authControllerProvider).when(
-          loading: () => CircularProgressIndicator(),
-          error: (error, stackTrace) {
-            showToasty(error.toString(), false, context);
-          },
-          data: (response) {
-            GoRouter.of(context).go('/signIn');
-          });
-    } catch (e) {
-      print('Error signing out: $e');
-    }
-  }
+  //     ref.watch(authControllerProvider).when(
+  //         loading: () => CircularProgressIndicator(),
+  //         error: (error, stackTrace) {
+  //           showToasty(error.toString(), false, context);
+  //         },
+  //         data: (response) {
+  //           GoRouter.of(context).go('/signIn');
+  //         });
+  //   } catch (e) {
+  //     print('Error signing out: $e');
+  //   }
+  // }
 }
