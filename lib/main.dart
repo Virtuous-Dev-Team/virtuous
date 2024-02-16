@@ -41,25 +41,26 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   // Finished Testing addVirtue api
-  u
-      .addVirtueEntry("legal", "Honesty", "0xFFF3A3CA",
-          ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
-      .then((value) => {print(value["Success"])})
-      .catchError((error) => {print('error in main: $error')});
+  // u
+  //     .addVirtueEntry("legal", "Honesty", "0xFFF3A3CA",
+  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true)
+  //     .then((value) => {print(value["Success"])})
+  //     .catchError((error) => {print('error in main: $error')});
 
   // Finished Testing surveyInfo api, need to add more
-  u
-      .surveyInfo(
-          "best attorney ever in the world, even better than saul",
-          "3 years",
-          "legal",
-          "I need to a",
-          true,
-          true,
-          true,
-          123 - 456 - 789,
-          "12:18pm")
-      .catchError((error) => {print('error in main: $error')});
+  // u
+  //     .surveyInfo(
+  //         "best attorney ever in the world, even better than saul",
+  //         "3 years",
+  //         "legal",
+  //         "I need to a",
+  //         true,
+  //         true,
+  //         true,
+  //         123 - 456 - 789,
+  //         "12:18pm")
+  //     .catchError((error) => {print('error in main: $error')});
+
 
   // await u
   //     .getUpdatedLocation(true)

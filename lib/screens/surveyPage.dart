@@ -405,6 +405,11 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   bool _shouldShowContent = false; // Declare _shouldShowContent here
 
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _otpController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -490,16 +495,90 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.zero,
-                          isDense: true,
-                          border: InputBorder.none, // Hide the default border
-                          hintText: '(999)-999-9999'),
-                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                              prefixText: "+1 ",
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                              border: InputBorder.none, // Hide the default border
+                              hintText: '(999)-999-9999'),
+                              validator: (value) {
+                                if(value!.length != 10) 
+                                  return "Invalid phone number";
+                                return null;
+                              },
+                        ),
+                      )
                   ),
                   SizedBox(
                     height: 20,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if(_formKey.currentState!.validate()) {
+                          Users().sendOtp(phone: _phoneController.text, errorStep: () =>
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error sending OTP",style: TextStyle(color: Colors.white),),backgroundColor: Colors.red,)), nextStep: () {
+                            showDialog(context: context, builder: (context) => AlertDialog(
+                              title: Text("OTP Verification"),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Enter 6 digit OTP"),
+                                  SizedBox(height: 12,),
+                                  Form(
+                                    key: _formKey1,
+                                    // text field is kinda invisible someone pls make it visible 
+                                    child: TextFormField(
+                                        keyboardType: TextInputType.number,
+                                        controller: _otpController,
+                                        decoration: InputDecoration(
+                                            fillColor: Colors.white,
+                                            contentPadding: EdgeInsets.zero,
+                                            isDense: true,
+                                            // border: InputBorder.
+                                            ),
+                                            validator: (value) {
+                                              if(value!.length != 6) 
+                                                return "Invalid OTP";
+                                              return null;
+                                            },
+                                            
+                                      ),
+                                    ),
+                                ],),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      if(_formKey1.currentState!.validate()) {
+                                        Users().confirmOtp(otp: _otpController.text).then((value) {
+                                          if(value == "Success") {
+                                            Navigator.pop(context);
+                                            print("Phone number verified");
+                                          }
+                                          else {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(value,style: TextStyle(color: Colors.white),),backgroundColor: Colors.red,));
+                                          }
+                                        });
+                                      }
+                                    }, 
+                                    child: Text("Submit")
+                                    )
+                                ],
+                            ));
+                          });
+                        }
+                      },
+                      child: Text("Verify"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: buttonColor,
+                        foregroundColor: Colors.white
+                      ),
+                    ),
                   ),
                   Text(
                       'How often would you like to receive notifications from us?'),
@@ -562,7 +641,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.amber,
+                          primary: buttonColor,
                           // Change button color to beige
                         ),
                       ),
