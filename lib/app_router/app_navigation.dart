@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
@@ -100,6 +101,11 @@ class AppNavigation {
                 path: 'signUp',
                 name: 'signUp',
                 builder: (context, state) => SignUpPage(),
+              ),
+              GoRoute(
+                path: 'forgotPassword',
+                name: 'forgotPassword',
+                builder: (context, state) => ForgotPasswordPage(),
               ),
             ]),
         GoRoute(

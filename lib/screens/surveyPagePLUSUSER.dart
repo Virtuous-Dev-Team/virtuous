@@ -720,10 +720,6 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: () async {
-                                    for (int i = 0; i < answers.length; i++) {
-                                      print('Answer ${i + 1}: ${answers[i]}');
-                                    }
-                                    ;
                                     print(careerPosition.text);
                                     print(careerLength.text);
                                     print(currentCommunity);

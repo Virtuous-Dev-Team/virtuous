@@ -450,26 +450,164 @@ class _TutorialPageState extends State<TutorialPage> {
   }
 
   Widget buildTutorialScreen4() {
-    return InkWell(
-      onTap: () {
-        _pageController.nextPage(
-            duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-                child: Image(
-              image: const AssetImage("assets/images/intro_virtue.png"),
-              fit: BoxFit.contain,
-            ))
-
-// Other widgets or content can go here
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 30,
+          ),
+          Center(
+            child: Text(
+              'Getting started',
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 18.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25),
+            child: Text(
+              'Now that you know how to make an entry, let’s show you some of the other features Virtuous has to offer. ',
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 15.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFFF3A3CA),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "The Home page, as we showed before,\nallows you to add an entry and see\nyour entries from today.",
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(color: textColor, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      Icons.home,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 15.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFF7FA881),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "The Analyze page allows you to see stats related to your virtue usage as well as a visual calendar for easy tracking. ",
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(color: textColor, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      Icons.bar_chart,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 15),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFFC58686),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "The Nearby page shows you data related to the virtue usage of users in your location. ",
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(color: textColor, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      Icons.near_me,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 15.0),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color(0xFFB0E5F6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "The Resources page provides information on the purpose of Virtuous and insight on your virtues. ",
+                      style: GoogleFonts.tinos(
+                        textStyle: TextStyle(color: textColor, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Icon(
+                      Icons.library_books,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

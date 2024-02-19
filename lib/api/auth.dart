@@ -83,6 +83,12 @@ class Auth {
     );
   }
 
+  Future forgotPassword() async {
+    try {} catch (error) {
+      return {'Success': false, 'Error': error};
+    }
+  }
+
   // --- google sign in ---
   Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:virtuetracker/api/users.dart';
-//import 'package:virtuetracker/widgets/appBarWidget.dart';     UNCOMMENT
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -12,24 +10,75 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-Users usersAPI = new Users();
+void main() {
+  runApp(MyApp());
+}
 
-void main() => runApp(MaterialApp(home: SurveyPage()));
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: SurveyPage(),
+    );
+  }
+}
 
 class SurveyPage extends StatefulWidget {
   @override
-  _SurveyPageState createState() => _SurveyPageState();
+  SurveyPageState createState() => SurveyPageState();
 }
 
-class _SurveyPageState extends State<SurveyPage> {
+class SurveyPageState extends State<SurveyPage> {
   final PageController _pageController = PageController();
+  int _currentPage = 0;
+
+  // Text editing controllers for each TextField
+  TextEditingController careerPosition = TextEditingController();
+  TextEditingController careerLength = TextEditingController();
+  TextEditingController reasons = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
+  TextEditingController notificationTime = TextEditingController();
+
+  // Selected values for dropdowns
+  String currentCommunity = 'Legal';
+  String shareEntries = 'No';
+  String shareLocation = 'No';
+  String allowNotifications = 'No';
+
+  String formattedPhoneNumber = '';
+
+  // Dropdown values for each page
+  List<String> careerDropdownValues = [
+    'Legal',
+    'Education',
+    'Technology',
+    'Healthcare'
+  ];
+  List<String> yesNoDropdownValues = ['Yes', 'No'];
+
+  // List to store answers
+  List<String> answers = ['', '', '', '', '', '', '', '', ''];
+
+  bool _shouldShowContent = false;
+  TimeOfDay? selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    // Set initial values for text fields
+    careerPosition.text = '';
+    careerLength.text = '';
+    reasons.text = '';
+    phoneNumber.text = '';
+    // phoneNumber.addListener(_formatPhoneNumberOnType);
+    notificationTime.text = '';
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: mainBackgroundColor,
-        //appBar: AppBarWidget('regular'),                 UNCOMMENT
         appBar: AppBar(
           backgroundColor: appBarColor,
           elevation: 0,
@@ -42,7 +91,7 @@ class _SurveyPageState extends State<SurveyPage> {
             ),
             SizedBox(width: 12),
           ],
-        ), // PLACEHOLDER 4 ^^ DELETE ME
+        ),
         body: Center(
           child: Container(
             width: double.infinity,
@@ -57,6 +106,11 @@ class _SurveyPageState extends State<SurveyPage> {
                 Expanded(
                   child: PageView(
                     controller: _pageController,
+                    onPageChanged: (int page) {
+                      setState(() {
+                        _currentPage = page;
+                      });
+                    },
                     children: <Widget>[
                       UserInfoPage(),
                       PrivacyPage(),
@@ -719,6 +773,27 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
+  void _formatPhoneNumberOnType() {
+    // final newValue = phoneNumber.text.replaceAll(RegExp(r'\D'), '');
+    // final formattedValue = _formatPhoneNumber(newValue);
+    // setState(() {
+    //   // phoneNumber.value = phoneNumber.value.copyWith(
+    //     // text: formattedValue,
+    //     // selection: TextSelection.collapsed(offset: formattedValue.length),
+    //   );
+    // });
+  }
+
+  String _formatPhoneNumber(String input) {
+    if (input.length <= 3) {
+      return input;
+    } else if (input.length <= 6) {
+      return '${input.substring(0, 3)}-${input.substring(3)}';
+    } else {
+      return '${input.substring(0, 3)}-${input.substring(3, 6)}-${input.substring(6, 10)}';
+    }
+  }
+
   Future<void> _selectTime(BuildContext context) async {
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -728,6 +803,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
     if (pickedTime != null && pickedTime != selectedTime) {
       setState(() {
         selectedTime = pickedTime;
+        // answers[8] =
+        //     '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+        // notificationTime.text =
+        //     '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
       });
     }
   }

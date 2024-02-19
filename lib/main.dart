@@ -8,13 +8,15 @@ import 'package:virtuetracker/api/stats.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
+import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/surveyPagePLUSUSER.dart';
-import 'package:virtuetracker/screens/tutorialPage.dart'; //add without PLUSUSER
+import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/widgets/Calendar.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
@@ -113,7 +115,7 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: SurveyPageTest(),
+//       home: TutorialPage(),
 //     );
 //   }
 // }
