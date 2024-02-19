@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
-import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
@@ -17,7 +16,7 @@ import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
-import 'package:virtuetracker/screens/surveyPagePLUSUSER.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
 
@@ -116,7 +115,7 @@ class AppNavigation {
         GoRoute(
             path: '/survey',
             name: 'SurveyPage',
-            builder: (context, state) => SurveyPageTest(),
+            builder: (context, state) => SurveyPage(),
             routes: [
               GoRoute(
                 path: 'tutorial',
