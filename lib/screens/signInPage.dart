@@ -14,6 +14,7 @@ import 'package:virtuetracker/controllers/authControllers.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
+import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 final Auth auth = Auth();
