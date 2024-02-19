@@ -48,6 +48,7 @@ class HomePage extends ConsumerWidget {
             child: Column(
               children: [
                 SizedBox(height: 10),
+                
                 ElevatedButton(
                   onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
                   child: Text(

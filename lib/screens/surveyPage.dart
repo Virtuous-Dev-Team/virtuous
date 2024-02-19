@@ -531,6 +531,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
   bool _shouldShowContent = false;
   TimeOfDay? selectedTime;
 
+  TextEditingController _phoneController = TextEditingController();
+  TextEditingController _otpController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _formKey1 = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -641,29 +646,30 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    child: TextField(
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.zero,
-                        isDense: true,
-                        border: InputBorder.none, // Hide the default border
-                        hintText: '(999)-999-9999',
-                        hintStyle: GoogleFonts.tinos(
-                            textStyle: TextStyle(color: Colors.black)),
-                      ),
-                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                              prefixText: "+1 ",
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                              border: InputBorder.none, // Hide the default border
+                              hintText: '(999)-999-9999'),
+                              validator: (value) {
+                                if(value!.length != 10) 
+                                  return "Invalid phone number";
+                                return null;
+                              },
+                        ),
+                      )
                   ),
                   SizedBox(
                     height: 20,
                   ),
-                  /*
-                  Text('How often would you like to receive notifications from us?',
-                    style: GoogleFonts.tinos(
-                      textStyle: TextStyle(
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 3,),
+                  Text(
+                      'How often would you like to receive notifications from us?'),
                   Container(
                     padding: EdgeInsets.all(3.0),
                     decoration: BoxDecoration(
@@ -730,7 +736,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.amber,
+                          primary: buttonColor,
+                          // Change button color to beige
                         ),
                       ),
                     ),
