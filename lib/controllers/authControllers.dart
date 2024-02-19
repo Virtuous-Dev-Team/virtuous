@@ -47,15 +47,11 @@ class AuthController extends _$AuthController {
       if (result.value['Success']) {
         final isNewUser = await ref.read(usersRepositoryProvider).getUserInfo();
         if (isNewUser['Success']) {
-          final goToSurveyPage = isNewUser['response']['currentCommunity'];
-          print('isNewUser: $goToSurveyPage');
-          if (goToSurveyPage == null) {
-            print('needs to fill out survey');
-            state = AsyncData('/survey');
-          } else {
-            print('go to home page');
-            state = AsyncData('/home');
-          }
+          print('go to home page');
+          state = AsyncData('/home');
+        } else {
+          print('User has no record in Users collection so go to survey page');
+          state = AsyncData('/survey');
         }
 
         // print(

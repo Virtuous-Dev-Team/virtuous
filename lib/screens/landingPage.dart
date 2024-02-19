@@ -95,19 +95,13 @@ class _LandingPageTestState extends State<LandingPageTest> {
       await Future.delayed(Duration.zero); // Ensure the build is complete
       final isNewUser = await getUserInfo();
       if (isNewUser['Success']) {
-        final goToSurveyPage = isNewUser['response']['currentCommunity'];
-        print('isNewUser: ${goToSurveyPage}');
-        if (goToSurveyPage == null) {
-          print('needs to fill out survey');
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            GoRouter.of(context).go('/survey');
-          });
-        } else {
-          print('go to home page from landing page');
-          SchedulerBinding.instance.addPostFrameCallback((_) {
-            GoRouter.of(context).go('/home');
-          });
-        }
+        print('go to home page from landing page');
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          GoRouter.of(context).go('/home');
+        });
+      } else {
+        print('User has no record in Users collection so go to survey page');
+        GoRouter.of(context).go('/survey');
       }
     } else {
       // Use GoRouter to navigate to the sign-in page

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 
@@ -25,7 +26,9 @@ class SurveyPageController extends _$SurveyPageController {
       bool shareLocation,
       bool allowNotifications,
       String phoneNumber,
-      String notificationTime) async {
+      String notificationTime,
+      bool phoneVerified,
+      GeoPoint userLocation) async {
     try {
       final userRepository = ref.read(usersRepositoryProvider);
       state = const AsyncLoading();
@@ -38,15 +41,34 @@ class SurveyPageController extends _$SurveyPageController {
           shareLocation,
           allowNotifications,
           phoneNumber,
-          notificationTime));
+          notificationTime,
+          phoneVerified,
+          userLocation));
       if (result.value['Success']) {
-        state = AsyncData(result.value['response']);
+        state = AsyncData('/survey/tutorial');
       }
 
       // print(
       //     "returning list from recen entries controller ${result.value['response']}");
       else {
         print("failed survey ${result.value['Error']}");
+        state = AsyncError(result.value['Error'], StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> getLocation() async {
+    try {
+      final userRepository = ref.read(usersRepositoryProvider);
+      state = const AsyncLoading();
+      final result =
+          await AsyncValue.guard(() => userRepository.addUserLocation());
+      if (result.value['Success']) {
+        state = AsyncData(result.value['response']);
+      } else {
+        print("failed getting location ${result.value['Error']}");
         state = AsyncError(result.value['Error'], StackTrace.current);
       }
     } catch (error) {

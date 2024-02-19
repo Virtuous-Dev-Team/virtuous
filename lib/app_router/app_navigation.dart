@@ -16,6 +16,7 @@ import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
+import 'package:virtuetracker/screens/surveyPagePLUSUSER.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
 
@@ -109,7 +110,7 @@ class AppNavigation {
         GoRoute(
             path: '/survey',
             name: 'SurveyPage',
-            builder: (context, state) => SurveyPage(),
+            builder: (context, state) => SurveyPageTest(),
             routes: [
               GoRoute(
                 path: 'tutorial',

@@ -28,13 +28,7 @@ class Auth {
 
       final userCredentials = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      dynamic result = await createNewUser(userCredentials.user?.uid, fullName);
-      if (result['Success']) {
-        print("Account created successfully");
-        //sendEmailVerification();
-        _accountCreated = true;
-        return {'Success': true, 'response': userCredentials.user};
-      }
+      return {'Success': true, 'response': userCredentials.user};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};
     }
@@ -59,11 +53,6 @@ class Auth {
     try {
       final response = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      print('sign in response: ${response.additionalUserInfo?.isNewUser}');
-      // if (userCredential.additionalUserInfo?.isNewUser ?? false) {
-      //   // Update the state provider to indicate first-time sign-in
-      //   context.read(isFirstTimeSignInProvider).state = true;
-      // }
 
       return {'Success': true, "response": response};
     } on FirebaseAuthException catch (error) {
@@ -81,50 +70,6 @@ class Auth {
       }
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};
-    }
-  }
-
-  // This function creates user in the Users collection
-  // Haven't incorporated email verification
-  Future<dynamic> createNewUser(
-    uid,
-    fullName,
-  ) async {
-    User? user = FirebaseAuth.instance.currentUser;
-    final userCollectionRef = FirebaseFirestore.instance.collection('Users');
-
-    if (user != null) {
-      try {
-        final userObject = {
-          "name": fullName,
-          "currentCommunity": null,
-          "userLocation": null,
-          "reasons": [],
-          "shareEntries": null,
-          "shareLocation": false
-        };
-
-        final careerInfo = {"careerLength": null, "currentPosition": null};
-
-        final notificationPreferences = {
-          "allowNotifications": null,
-          "notificationsTimes": [],
-          "fcmToken": null
-        };
-
-        final quadrantUsedData = {};
-
-        userObject["careerInfo"] = careerInfo;
-        userObject["notificationPreferences"] = notificationPreferences;
-        userObject["quadrantUsedData"] = quadrantUsedData;
-        await userCollectionRef.doc(uid).set(userObject);
-
-        // After creating the userObject in Users collection, we can add sub collection totalData
-        await userCollectionRef.doc(uid).collection("totalData").add({});
-        return {'Success': true};
-      } on FirebaseAuthException catch (error) {
-        return {'Success': false, 'Error': error.message};
-      }
     }
   }
 
@@ -196,8 +141,6 @@ class Auth {
   }
 }
 
-// final firebaseAuthProvider =
-//     Provider<FirebaseAuth>((ref) => FirebaseAuth.instance);
 final authRepositoryProvider = Provider<Auth>((ref) {
   return Auth();
 });
@@ -207,5 +150,3 @@ final authStateChangesProvider = StreamProvider<User?>(
     (ref) => ref.watch(authRepositoryProvider).authStateChanges());
 final accountCreatedProvider = StateProvider<bool>(
     (ref) => ref.watch(authRepositoryProvider).accountCreated);
-
-// final isFirstTimeSignInProvider = StateProvider<bool>((ref) => false);

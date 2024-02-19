@@ -53,9 +53,9 @@ Future testingApi() async {
 
   // await settings.updatePrivacy(true, false).catchError((e) => print(e));
 
-  await settings
-      .updateNotificationPreferences(false, "12:01pm")
-      .catchError((e) => print(e));
+  // await settings
+  //     .updateNotificationPreferences(false, "12:01pm")
+  //     .catchError((e) => print(e));
 
   // Finished Testing addVirtue api
   // u
@@ -113,7 +113,7 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: NearbyPage(),
+//       home: SurveyPageTest(),
 //     );
 //   }
 // }

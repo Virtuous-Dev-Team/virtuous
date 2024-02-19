@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:virtuetracker/api/users.dart';
+import 'package:virtuetracker/controllers/surveyPageController.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -32,15 +37,25 @@ class SurveyPageTest extends StatefulWidget {
 class SurveyPageTestState extends State<SurveyPageTest> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  ToastNotificationWidget toast = ToastNotificationWidget();
 
   // Text editing controllers for each TextField
-  TextEditingController textFieldControllerPage1Question1 =
-      TextEditingController();
-  TextEditingController textFieldControllerPage1Question2 =
-      TextEditingController();
-  TextEditingController textFieldControllerPage1Question4 =
-      TextEditingController();
-  TextEditingController textFieldControllerPage3 = TextEditingController();
+  TextEditingController careerPosition = TextEditingController();
+  TextEditingController careerLength = TextEditingController();
+  TextEditingController reasons = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
+  TextEditingController notificationTime = TextEditingController();
+  // Phone verification
+  bool phoneVerified = false;
+  // Location of user
+  GeoPoint? userLocation;
+  // Selected values for dropdowns
+  String currentCommunity = 'Legal';
+  String shareEntries = 'No';
+  String shareLocation = 'No';
+  String allowNotifications = 'No';
+
+  String formattedPhoneNumber = '';
 
   // Dropdown values for each page
   List<String> careerDropdownValues = [
@@ -50,13 +65,6 @@ class SurveyPageTestState extends State<SurveyPageTest> {
     'Healthcare'
   ];
   List<String> yesNoDropdownValues = ['Yes', 'No'];
-
-  // Selected values for dropdowns
-  String selectedValuePage1 = 'Legal';
-  String selectedValuePage2Question1 = 'No';
-  String selectedValuePage2Question2 = 'No';
-  String selectedValuePage3Question1 = 'No';
-  String selectedValuePage3Question2 = 'No';
 
   // List to store answers
   List<String> answers = ['', '', '', '', '', '', '', '', ''];
@@ -68,15 +76,41 @@ class SurveyPageTestState extends State<SurveyPageTest> {
   void initState() {
     super.initState();
     // Set initial values for text fields
-    textFieldControllerPage1Question1.text = '';
-    textFieldControllerPage1Question2.text = '';
-    textFieldControllerPage1Question4.text = '';
-    textFieldControllerPage3.text = '';
+    careerPosition.text = '';
+    careerLength.text = '';
+    reasons.text = '';
+    phoneNumber.text = '';
+    phoneNumber.addListener(_formatPhoneNumberOnType);
+    notificationTime.text = '';
+  }
+
+  void showToasty(msg, bool success, BuildContext context) {
+    print('calling toast widget');
+    toast.successOrError(context, msg, success);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, _) {
+      ref.watch(surveyPageControllerProvider).when(
+            loading: () => CircularProgressIndicator(),
+            error: (error, stackTrace) {
+              Future.delayed(Duration.zero, () {
+                showToasty(error.toString(), false, context);
+              });
+            },
+            data: (response) async {
+              if (response is GeoPoint) {
+                print('User Location : $response');
+                userLocation = response;
+                return;
+              }
+              print("What is the response survey: $response");
+              WidgetsBinding.instance?.addPostFrameCallback((_) {
+                GoRouter.of(context).go(response);
+              });
+            },
+          );
       return SafeArea(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -155,7 +189,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: TextField(
-                                controller: textFieldControllerPage1Question1,
+                                controller: careerPosition,
                                 onChanged: (newValue) {
                                   setState(() {
                                     answers[0] = newValue;
@@ -196,7 +230,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                               child: TextField(
-                                controller: textFieldControllerPage1Question2,
+                                controller: careerLength,
                                 onChanged: (newValue) {
                                   setState(() {
                                     answers[1] = newValue;
@@ -261,7 +295,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 children: [
                                   Expanded(
                                     child: DropdownButton<String>(
-                                      value: selectedValuePage1,
+                                      value: currentCommunity,
                                       items: careerDropdownValues
                                           .map<DropdownMenuItem<String>>(
                                               (String value) {
@@ -283,7 +317,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       }).toList(),
                                       onChanged: (newValue) {
                                         setState(() {
-                                          selectedValuePage1 = newValue!;
+                                          currentCommunity = newValue!;
                                           answers[2] = newValue!;
                                         });
                                       },
@@ -331,7 +365,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       horizontal: 4.0, vertical: 1.0),
                                   border: InputBorder.none,
                                 ),
-                                controller: textFieldControllerPage1Question4,
+                                controller: reasons,
                                 onChanged: (newValue) {
                                   setState(() {
                                     answers[3] = newValue;
@@ -392,7 +426,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 children: [
                                   Expanded(
                                     child: DropdownButton<String>(
-                                      value: selectedValuePage2Question1,
+                                      value: shareEntries,
                                       items: yesNoDropdownValues
                                           .map((String value) {
                                         return DropdownMenuItem<String>(
@@ -411,8 +445,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       }).toList(),
                                       onChanged: (newValue) {
                                         setState(() {
-                                          selectedValuePage2Question1 =
-                                              newValue!;
+                                          shareEntries = newValue!;
                                           answers[4] = newValue!;
                                         });
                                       },
@@ -463,7 +496,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 children: [
                                   Expanded(
                                     child: DropdownButton<String>(
-                                      value: selectedValuePage2Question2,
+                                      value: shareLocation,
                                       items: yesNoDropdownValues
                                           .map((String value) {
                                         return DropdownMenuItem<String>(
@@ -484,8 +517,13 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       }).toList(),
                                       onChanged: (newValue) {
                                         setState(() {
-                                          selectedValuePage2Question2 =
-                                              newValue!;
+                                          if (newValue == "Yes")
+                                            ref
+                                                .read(
+                                                    surveyPageControllerProvider
+                                                        .notifier)
+                                                .getLocation();
+                                          shareLocation = newValue!;
                                           answers[5] = newValue!;
                                         });
                                       },
@@ -549,7 +587,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                 children: [
                                   Expanded(
                                     child: DropdownButton<String>(
-                                      value: selectedValuePage3Question1,
+                                      value: allowNotifications,
                                       items: yesNoDropdownValues
                                           .map((String value) {
                                         return DropdownMenuItem<String>(
@@ -571,8 +609,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       }).toList(),
                                       onChanged: (newValue) {
                                         setState(() {
-                                          selectedValuePage3Question1 =
-                                              newValue!;
+                                          allowNotifications = newValue!;
                                           answers[6] = newValue!;
                                         });
                                       },
@@ -594,7 +631,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                               height: 20,
                             ),
                             Visibility(
-                              visible: selectedValuePage3Question1 ==
+                              visible: allowNotifications ==
                                   'Yes', // Set this to true when 'Yes' is selected
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,12 +655,7 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                       borderRadius: BorderRadius.circular(5.0),
                                     ),
                                     child: TextField(
-                                      controller: textFieldControllerPage3,
-                                      onChanged: (newValue) {
-                                        setState(() {
-                                          answers[7] = newValue;
-                                        });
-                                      },
+                                      controller: phoneNumber,
                                       keyboardType: TextInputType.phone,
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.zero,
@@ -632,8 +664,9 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                                             .none, // Hide the default border
                                         hintText: '(999)-999-9999',
                                         hintStyle: GoogleFonts.tinos(
-                                            textStyle:
-                                                TextStyle(color: Colors.black)),
+                                          textStyle:
+                                              TextStyle(color: Colors.black),
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -686,11 +719,48 @@ class SurveyPageTestState extends State<SurveyPageTest> {
                               child: Container(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed: () => {
-                                    for (int i = 0; i < answers.length; i++)
-                                      {
-                                        print('Answer ${i + 1}: ${answers[i]}'),
-                                      }
+                                  onPressed: () async {
+                                    for (int i = 0; i < answers.length; i++) {
+                                      print('Answer ${i + 1}: ${answers[i]}');
+                                    }
+                                    ;
+                                    print(careerPosition.text);
+                                    print(careerLength.text);
+                                    print(currentCommunity);
+                                    print(reasons.text);
+                                    print(shareEntries);
+                                    print(shareLocation);
+                                    print(allowNotifications);
+                                    print(phoneNumber.text);
+                                    print(notificationTime.text);
+                                    print(userLocation.toString());
+
+                                    if (careerPosition.text == "" ||
+                                        careerLength.text == "" ||
+                                        currentCommunity.isEmpty ||
+                                        reasons.text == "") return;
+
+                                    ref
+                                        .read(surveyPageControllerProvider
+                                            .notifier)
+                                        .surveyInfo(
+                                            careerPosition.text,
+                                            careerLength.text,
+                                            currentCommunity,
+                                            reasons.text,
+                                            shareEntries == "Yes"
+                                                ? true
+                                                : false,
+                                            shareLocation == "Yes"
+                                                ? true
+                                                : false,
+                                            allowNotifications == "Yes"
+                                                ? true
+                                                : false,
+                                            phoneNumber.text,
+                                            notificationTime.text,
+                                            phoneVerified,
+                                            userLocation!);
                                   },
                                   child: Text('Submit'),
                                   style: ElevatedButton.styleFrom(
@@ -737,6 +807,27 @@ class SurveyPageTestState extends State<SurveyPageTest> {
     });
   }
 
+  void _formatPhoneNumberOnType() {
+    final newValue = phoneNumber.text.replaceAll(RegExp(r'\D'), '');
+    final formattedValue = _formatPhoneNumber(newValue);
+    setState(() {
+      phoneNumber.value = phoneNumber.value.copyWith(
+        text: formattedValue,
+        selection: TextSelection.collapsed(offset: formattedValue.length),
+      );
+    });
+  }
+
+  String _formatPhoneNumber(String input) {
+    if (input.length <= 3) {
+      return input;
+    } else if (input.length <= 6) {
+      return '${input.substring(0, 3)}-${input.substring(3)}';
+    } else {
+      return '${input.substring(0, 3)}-${input.substring(3, 6)}-${input.substring(6, 10)}';
+    }
+  }
+
   Future<void> _selectTime(BuildContext context) async {
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
@@ -745,8 +836,12 @@ class SurveyPageTestState extends State<SurveyPageTest> {
 
     if (pickedTime != null && pickedTime != selectedTime) {
       setState(() {
+        print(pickedTime.format(context));
+        String timey = pickedTime.format(context).toString();
         selectedTime = pickedTime;
         answers[8] =
+            '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+        notificationTime.text =
             '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
       });
     }
@@ -755,10 +850,10 @@ class SurveyPageTestState extends State<SurveyPageTest> {
   @override
   void dispose() {
     // Dispose the controllers to avoid memory leaks
-    textFieldControllerPage1Question1.dispose();
-    textFieldControllerPage1Question1.dispose();
-    textFieldControllerPage1Question4.dispose();
-    textFieldControllerPage3.dispose();
+    careerPosition.dispose();
+    careerLength.dispose();
+    reasons.dispose();
+    phoneNumber.dispose();
     _pageController.dispose();
     super.dispose();
   }

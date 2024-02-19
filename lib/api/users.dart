@@ -135,7 +135,9 @@ class Users {
       bool shareLocation,
       bool allowNotifications,
       String phoneNumber,
-      String notificationTime) async {
+      String notificationTime,
+      bool phoneVerified,
+      GeoPoint userLocation) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -145,17 +147,6 @@ class Users {
         "currentPosition": currentPosition,
         "careerLength": careerLength
       };
-
-      dynamic userLocation;
-      if (shareLocation) {
-        dynamic res = await addUserLocation();
-        if (res["Success"]) {
-          print("User location acquired ${res["response"]}");
-          userLocation = res["response"];
-        } else {
-          print("User location couldn't be acquired try again later");
-        }
-      }
 
       final userObject = {
         "currentCommunity": currentCommunity,
@@ -167,15 +158,17 @@ class Users {
       final notificationPreferences = {
         "allowNotifications": allowNotifications,
         "notificationTime": notificationTime,
-        "fcmToken": null
+        "fcmToken": null,
+        "phoneVerified": phoneVerified
       };
       userObject["careerInfo"] = careerInfo;
       userObject["notificationPreferences"] = notificationPreferences;
-      userObject["quadrantUsedData"] = quadrantLists[currentCommunity];
+      userObject["quadrantUsedData"] = quadrantLists[currentCommunity]!;
 
       await usersCollectionRef
-          .doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2")
+          .doc(user.uid)
           .set(userObject, SetOptions(merge: true));
+      return {'Success': true, 'response': "Added profile info"};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
     }
@@ -262,15 +255,19 @@ class Users {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
-      // if (user == null) {
-      //   return Future.error({'Success': false, 'Error': "User not found"});
-      // }
+      if (user == null) {
+        return {'Success': false, 'Error': 'No user found'};
+      }
       print('called getUseriNFIO');
       DocumentSnapshot documentSnapshot =
           await usersCollectionRef.doc(user?.uid).get();
-      final userInfo = documentSnapshot.data() as Map<String, dynamic>;
-      // print(userInfo);
-      return {'Success': true, "response": userInfo};
+      print('User Info snapshot: ${documentSnapshot.exists}');
+      if (documentSnapshot.exists) {
+        final userInfo = documentSnapshot.data() as Map<String, dynamic>;
+
+        return {'Success': true, "response": userInfo};
+      }
+      return {'Success': false, "Error": 'User not found in Users collection'};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
     }
