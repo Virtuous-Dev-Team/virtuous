@@ -807,6 +807,7 @@ class SurveyPageState extends State<SurveyPage> {
                                                               .text)
                                                       .then((value) {
                                                     if (value == "Success") {
+                                                      phoneVerified = true;
                                                       Navigator.pop(context);
                                                       print(
                                                           "Phone number verified");
@@ -835,7 +836,9 @@ class SurveyPageState extends State<SurveyPage> {
                             });
                       }
                     },
-                    child: Text("Verify"),
+                    child: Center(
+                      child: Text('Verify'),
+                    ),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
                         foregroundColor: Colors.white),
