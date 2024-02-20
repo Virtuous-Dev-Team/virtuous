@@ -5,14 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Communities {
+  final communityCollectionRef =
+      FirebaseFirestore.instance.collection('Communities');
   Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       // if (user == null) {
       //   return {'Success': false, 'Error': "User not found"};
       // }
-      final communityCollectionRef =
-          FirebaseFirestore.instance.collection('Communities');
 
       // Query all documents in the community collection and search for specific community
       QuerySnapshot querySnapshot = await communityCollectionRef

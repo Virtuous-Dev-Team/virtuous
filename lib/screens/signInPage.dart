@@ -239,12 +239,17 @@ class SignInPage extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text('Forgot Password?',
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.black)),
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        GoRouter.of(context).go('/signIn/forgotPassword');
+                      },
+                      child: Text('Forgot Password?',
+                          style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black)),
+                    )
                   ],
                 ),
               ),
@@ -359,13 +364,7 @@ class SignInPage extends ConsumerWidget {
                             color: Colors.black,
                             fontWeight: FontWeight.w400)),
                     onPressed: () {
-                      // Redirect to Sign Up page
-                      // Navigator.pushReplacement(
-                      //   context,
-                      //   CupertinoPageRoute(builder: (context) => SignUpPage()),
-                      // );
                       GoRouter.of(context).go('/signIn/signUp');
-                      // ref.read(AppNavigation.router).go('/signIn/signUp');
                     },
                   ),
                 ],

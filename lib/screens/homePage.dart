@@ -130,7 +130,6 @@ class BuildRecentEntriesList extends StatelessWidget {
                 itemBuilder: (BuildContext context, index) {
                   final Map<String, dynamic> item =
                       listy![index] as Map<String, dynamic>;
-                  print('item : $item');
                   return RecentEntryWidget(
                       quadrantName: item['quadrantUsed'],
                       quadrantColor:
