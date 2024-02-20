@@ -17,7 +17,7 @@ class _NavControllerPageState extends State<NavControllerPage> {
     HomePage(),
     AnalysisPage(),
     NearbyPage(),
-    ResourcePage()
+    //ResourcePage()
   ];
   int currentIndex = 0; // used to keep track of which page is currently displayed
   void onTap(int index){

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
+import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'firebase_options.dart';
@@ -18,7 +20,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -47,7 +49,7 @@ class MyApp extends StatelessWidget {
       //home: GridPage(), // closed for testing
       //home: SurveyPage(),
       //home: TutorialPage(),
-      home: ForgotPasswordPage(),
+      home: ResourcePage(),
     );
   }
 }
