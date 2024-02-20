@@ -1106,10 +1106,8 @@ packages:
     description:
       name: test_api
       sha256: "5c2f730018264d276c20e4f1503fd1308dfbbae39ec8ee63c5236311ac06954b"
-      sha256: "5c2f730018264d276c20e4f1503fd1308dfbbae39ec8ee63c5236311ac06954b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.6.1"
     version: "0.6.1"
   timing:
     dependency: transitive
@@ -1164,10 +1162,8 @@ packages:
     description:
       name: web
       sha256: afe077240a270dcfd2aafe77602b4113645af95d0ad31128cc02bce5ac5d5152
-      sha256: afe077240a270dcfd2aafe77602b4113645af95d0ad31128cc02bce5ac5d5152
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
     version: "0.3.0"
   web_socket_channel:
     dependency: transitive

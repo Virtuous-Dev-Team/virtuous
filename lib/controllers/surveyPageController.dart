@@ -75,4 +75,38 @@ class SurveyPageController extends _$SurveyPageController {
       state = AsyncError(error, StackTrace.current);
     }
   }
+
+  Future<void> sendOtp({
+    required String phone,
+    required Function errorStep,
+    required Function nextStep,
+  }) async {
+    try {
+      final userRepository = ref.read(usersRepositoryProvider);
+      state = const AsyncLoading();
+      final result = await AsyncValue.guard(() => userRepository.sendOtp(
+          phone: phone, errorStep: errorStep, nextStep: nextStep));
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> confrimOtp({
+    required String otp,
+  }) async {
+    try {
+      final userRepository = ref.read(usersRepositoryProvider);
+      state = const AsyncLoading();
+      final result =
+          await AsyncValue.guard(() => userRepository.confirmOtp(otp: otp));
+
+      if (result.value['Success']) {
+        state = AsyncData(true);
+      } else {
+        state = AsyncError(result.value['Error'], StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
 }

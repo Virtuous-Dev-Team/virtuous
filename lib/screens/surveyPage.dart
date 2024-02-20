@@ -114,6 +114,12 @@ class SurveyPageState extends State<SurveyPage> {
                 userLocation = response;
                 return;
               }
+              // If response is bool, then must be phone verification, and phone verification worked
+              if (response is bool) {
+                print('Phone verified: $response');
+                phoneVerified = true;
+                return;
+              }
               print("What is the response survey: $response");
               // If user has now been created in Users collection then go to Tutorial Page
               WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -749,6 +755,8 @@ class SurveyPageState extends State<SurveyPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
+                        // call send Otop
+                        ref.read(surveyPageControllerProvider.notifier);
                         Users().sendOtp(
                             phone: _phoneController.text,
                             errorStep: () => ScaffoldMessenger.of(context)
@@ -801,6 +809,10 @@ class SurveyPageState extends State<SurveyPage> {
                                               onPressed: () {
                                                 if (_formKey1.currentState!
                                                     .validate()) {
+                                                  // call confirm Otp
+                                                  ref.read(
+                                                      surveyPageControllerProvider
+                                                          .notifier);
                                                   Users()
                                                       .confirmOtp(
                                                           otp: _otpController

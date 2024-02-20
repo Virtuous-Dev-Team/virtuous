@@ -14,7 +14,12 @@ class NavControllerPage extends StatefulWidget {
 }
 
 class _NavControllerPageState extends State<NavControllerPage> {
-  List pages = [HomePage(), AnalysisPage(), NearbyPage(), ResourcePage()];
+  List pages = [
+    HomePage(),
+    AnalysisPage(),
+    NearbyPage(),
+    //ResourcePage()
+  ];
   int currentIndex =
       0; // used to keep track of which page is currently displayed
   void onTap(int index) {
