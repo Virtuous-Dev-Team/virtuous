@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
 
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
       //home: GridPage(), // closed for testing
       //home: SurveyPage(),
       //home: TutorialPage(),
-      home: ResourcePage(),
+      home: NearbyPage(),
     );
   }
 }
