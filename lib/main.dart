@@ -5,6 +5,7 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/settings.dart';
 import 'package:virtuetracker/api/stats.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
@@ -15,6 +16,7 @@ import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
+import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/widgets/Calendar.dart';
@@ -116,7 +118,7 @@ class MyApp extends StatelessWidget {
 
       // routerConfig: AppRouter.router,
       // home: HomePage(), // closed for testing
-      home: SurveyPage(),
+      home: ResourcePage(),
     );
   }
 }

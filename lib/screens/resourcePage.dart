@@ -5,10 +5,37 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/apptheme.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 
-import '../widgets/appBarWidget.dart';
+//import '../widgets/appBarWidget.dart';
+
+// Color palette
+const Color appBarColor = Color(0xFFC4DFD3);
+const Color mainBackgroundColor = Color(0xFFF3E8D2);
+const Color buttonColor = Color(0xFFCEC0A1);
+const Color bottomNavBarColor = Color(0xFFA6A1CC);
+const Color iconColor = Color(0xFF000000);
+const Color textColor = Colors.white;
+
+void main() {
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Your App Title',
+      home: ResourcePage(),
+    );
+  }
+}
 
 class ResourcePage extends StatefulWidget {
   const ResourcePage({Key? key}) : super(key: key);
@@ -41,7 +68,21 @@ class _ResourcePageState extends State<ResourcePage>
       return SafeArea(
           child: Scaffold(
               backgroundColor: Color(0xFFEFE5CC),
-              appBar: AppBarWidget('regular'),
+              //appBar: AppBarWidget('regular'),
+              appBar: AppBar(
+                backgroundColor: appBarColor,
+                elevation: 0,
+                actions: [
+                  IconButton(
+                    icon:
+                        Icon(Icons.account_circle, size: 30, color: iconColor),
+                    onPressed: () {
+                      // TODO: Implement profile icon functionality.
+                    },
+                  ),
+                  SizedBox(width: 12),
+                ],
+              ),
               body: Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFFDF9),
@@ -125,20 +166,29 @@ class _ResourcePageState extends State<ResourcePage>
             Padding(
               padding: EdgeInsets.only(top: screenHeight / 60),
               child: Container(
-                  width: screnWidth / 3,
-                  constraints: BoxConstraints(maxWidth: screnWidth),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colours.swatch("#FAD4E3")),
-                  child: Center(
-                    child: Text("Why use virtues?",
-                        style: TextStyle(
+                width: double.infinity,
+                constraints: BoxConstraints(maxWidth: screnWidth),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colours.swatch("#FAD4E3")),
+                child: Center(
+                  child: Align(
+                    alignment: Alignment.centerLeft, // Align text to the left
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        "Why use virtues?",
+                        style: GoogleFonts.tinos(
+                          textStyle: TextStyle(),
                           fontSize: 20,
-                          fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.normal,
                           color: Colours.swatch(clrBlack),
-                        )),
-                  )),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(top: screenHeight / 60),
@@ -152,7 +202,8 @@ class _ResourcePageState extends State<ResourcePage>
                   child: Center(
                     child: Text(
                         "Using virtues can have a positive impact on one’s mental state. Focusing on the positive aspects of life greatly increases one’s outlook and mood. and stuff",
-                        style: TextStyle(
+                        style: GoogleFonts.tinos(
+                          textStyle: TextStyle(),
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
                           color: Colours.swatch(clrBlack),
@@ -204,39 +255,51 @@ class _ResourcePageState extends State<ResourcePage>
                   Padding(
                     padding: EdgeInsets.only(top: screenHeight / 60),
                     child: Container(
-                        width: screnWidth / 1.5,
-                        constraints: BoxConstraints(maxWidth: screnWidth),
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: Colours.swatch("#D7F1F7")),
-                        child: Center(
-                          child:
-                              Text("Why are virtues important in my community?",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontStyle: FontStyle.italic,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colours.swatch(clrBlack),
-                                  )),
-                        )),
+                      width: double.infinity,
+                      constraints: BoxConstraints(maxWidth: screnWidth),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: Colours.swatch("#D7F1F7")),
+                      child: Center(
+                        child: Align(
+                          alignment: Alignment.center, // Align text to the left
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              "Why are virtues important in my community?",
+                              style: GoogleFonts.tinos(
+                                textStyle: TextStyle(),
+                                fontSize: 18,
+                                fontWeight: FontWeight.normal,
+                                color: Colours.swatch(clrBlack),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: screenHeight / 60),
                     child: Container(
-                        // width: screnWidth/3,
-                        constraints: BoxConstraints(maxWidth: screnWidth),
-                        // decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(5),
-                        //     color: Colours.swatch("#FAD4E3")
-                        // ),
-                        child: Center(
-                          child: Text("communityDescription",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal,
-                                color: Colours.swatch(clrBlack),
-                              )),
-                        )),
+                      // width: screnWidth/3,
+                      // constraints: BoxConstraints(maxWidth: screnWidth),
+                      // decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(5),
+                      //     color: Colours.swatch("#FAD4E3")
+                      // ),
+                      child: Text(
+                          "The legal community has seen an increase in"
+                          "corruption. Using virtues ensures that those"
+                          "who practice law use their knowledge for "
+                          "noble purposes.",
+                          style: GoogleFonts.tinos(
+                            textStyle: TextStyle(),
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colours.swatch(clrBlack),
+                          )),
+                    ),
                   ),
                 ],
               ),
@@ -252,16 +315,17 @@ class _ResourcePageState extends State<ResourcePage>
                   Padding(
                     padding: EdgeInsets.only(top: screenHeight / 60),
                     child: Container(
-                      width: screnWidth / 3,
+                      width: screnWidth / 2.3,
                       constraints: BoxConstraints(maxWidth: screnWidth),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          color: Colours.swatch("#FAD4E3")),
-                      child: Center(
+                          color: Colours.swatch("#DEBFF5")),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: Text("About my virtues:",
-                            style: TextStyle(
+                            style: GoogleFonts.tinos(
+                              textStyle: TextStyle(),
                               fontSize: 20,
-                              fontStyle: FontStyle.italic,
                               fontWeight: FontWeight.normal,
                               color: Colours.swatch(clrBlack),
                             )),
@@ -269,29 +333,25 @@ class _ResourcePageState extends State<ResourcePage>
                     ),
                   ),
                   SizedBox(
-                    height: screenHeight,
-                    child: virtues.isEmpty
-                        ? Text("Couldn't find resources, try again later :(")
-                        : ListView.builder(
-                            itemCount: virtues.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: Icon(
-                                  Icons.circle,
-                                  size: 10,
-                                ), // You can replace this icon with a bullet point icon
-                                title: Text(virtues[index],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colours.swatch(clrBlack),
-                                    )),
-                              );
-                            },
-                          ),
-                  )
+                    height: 5,
+                  ),
+                  Text(
+                    "\u2022 Honesty is being truthful and sincere in both words and actions, without deceit or deception.\n"
+                    "\u2022 Courage is the willingness to face fear, danger, or challenges with bravery and determination.\n"
+                    "\u2022 Compassion is caring for others and wanting to help them when they are going through difficult times.\n"
+                    "\u2022 Generosity is the act of giving or sharing with others, often without expecting anything in return.\n"
+                    "\u2022 Fairness is treating people justly, not letting your personal feelings bias your decisions about others.\n"
+                    "\u2022 Integrity is the practice of being honest and showing a consistent and uncompromising adherence to strong moral and ethical principles and values.\n"
+                    "\u2022 Fidelity is faithfulness, loyalty, and the commitment to keeping promises and maintaining trust in a relationship or duty.\n",
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(),
+                      fontSize: 15,
+                      fontWeight: FontWeight.normal,
+                      color: Colours.swatch(clrBlack),
+                    ),
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),

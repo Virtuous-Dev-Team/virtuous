@@ -11,7 +11,7 @@ class Users {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static String verifyId = "";
 
-  // Add different communities quadrant list, and write getter function per commmunity.
+  // Add different communitiesst, and write getter function per commmunity.
 
   final quadrantLists = {
     "legal": {
@@ -181,49 +181,50 @@ class Users {
     required String phone,
     required Function errorStep,
     required Function nextStep,
-
-    }) async {
-      await _firebaseAuth.verifyPhoneNumber(
-        timeout: Duration(seconds: 60),
-        phoneNumber: "+1$phone",
-        verificationCompleted: (phoneAuthCredential) async {
-          return ;
-          }, 
-        verificationFailed: (error) async {
-            return;
-          }, 
-        codeSent: (verificationId, forceResendingToken) async {
-            verifyId = verificationId;
-            nextStep();
-          }, 
-        codeAutoRetrievalTimeout: (verificationId) async {
-            return;
-          },
-      ).onError((error, stackTrace) {
-        errorStep();
-      });
+  }) async {
+    await _firebaseAuth
+        .verifyPhoneNumber(
+      timeout: Duration(seconds: 60),
+      phoneNumber: "+1$phone",
+      verificationCompleted: (phoneAuthCredential) async {
+        return;
+      },
+      verificationFailed: (error) async {
+        return;
+      },
+      codeSent: (verificationId, forceResendingToken) async {
+        verifyId = verificationId;
+        nextStep();
+      },
+      codeAutoRetrievalTimeout: (verificationId) async {
+        return;
+      },
+    )
+        .onError((error, stackTrace) {
+      errorStep();
+    });
   }
 
   // verify otp code
   Future<dynamic> confirmOtp({required String otp}) async {
-    final cred = PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
+    final cred =
+        PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
     User? currentUser = await _firebaseAuth.currentUser!;
-    
 
     // instead of signing in with credential, link credential to signed in user account
     try {
-        currentUser.linkWithCredential(cred).then((value) {
-          // Verfied now perform something or exit.
-          print("credential linked");
-          return "Success";
-        }).catchError((e) {
-          // An error occured while linking
-          return "error linking credential";
-        });
-      } catch (e) {
-        // General error
-        return "error";
-      }
+      currentUser.linkWithCredential(cred).then((value) {
+        // Verfied now perform something or exit.
+        print("credential linked");
+        return {"Success": true, "response": "User phone number verified"};
+      }).catchError((e) {
+        // An error occured while linking
+        return {"Success": false, "Error": "error linking credential"};
+      });
+    } catch (e) {
+      // General error
+      return {"Success": false, "Error": e};
+    }
 
     // try {
     //   final user = await _firebaseAuth.signInWithCredential(cred);
@@ -232,14 +233,13 @@ class Users {
     //   } else {
     //     return "error in OTP verification";
     //   }
-    // } 
+    // }
     // on FirebaseAuthException catch(e) {
     //   return e.message.toString();
     // }
     // catch(e) {
     //   return e.toString();
     // }
-
   }
 
   // Used whenever we need to to ask for user permissions for location
@@ -343,14 +343,26 @@ class Users {
 
   Future<dynamic> findUsersNear() async {
     // Target location
-    GeoPoint targetLocation = GeoPoint(37.7749, -122.4194);
+    GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
+    final double earthRadius = 6371; // Radius of the Earth in kilometers
+    double radiusInKm = 10;
+    // Convert radius from kilometers to degrees
+    double radiusInDegrees = radiusInKm / earthRadius;
+    double minLat = targetLocation.latitude - radiusInDegrees;
+    double maxLat = targetLocation.latitude + radiusInDegrees;
+    double minLon = targetLocation.longitude - radiusInDegrees;
+    double maxLon = targetLocation.longitude + radiusInDegrees;
+
+    GeoPoint max = new GeoPoint(maxLat, maxLon);
+    GeoPoint min = new GeoPoint(minLat, minLon);
+
+    print('Max: $max, min: $min');
 
 // Query documents within a certain radius
-    double radiusInKm = 10.0;
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('locations')
-        .where('location', isLessThanOrEqualTo: targetLocation)
-        .where('location', isGreaterThanOrEqualTo: targetLocation)
+        .collection('CommunitySharedData')
+        .where('userLocation', isLessThanOrEqualTo: max)
+        .where('userLocation', isGreaterThanOrEqualTo: min)
         .get();
   }
 }
