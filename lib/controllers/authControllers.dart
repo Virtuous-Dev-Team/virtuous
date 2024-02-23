@@ -28,6 +28,8 @@ part 'authControllers.g.dart';
 // }
 
 class AuthController extends _$AuthController {
+  bool errorFlag = false;
+
   @override
   FutureOr<dynamic> build() async {
     // return a value (or do nothing if the return type is void)
@@ -58,7 +60,8 @@ class AuthController extends _$AuthController {
         //     "returning list from recen entries controller ${result.value['response']}");
       } else {
         print("faild sign in ${result.value['Error']}");
-        state = AsyncError(result.value['Error'], StackTrace.current);
+        final error = {'Function': 'signIn', 'msg': result.value['Error']};
+        state = AsyncError(error, StackTrace.current);
       }
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -77,7 +80,8 @@ class AuthController extends _$AuthController {
         state = AsyncData('/signIn');
       } else {
         print("failed sign out ${result.value['Error']}");
-        state = AsyncError(result.value['Error'], StackTrace.current);
+        final error = {'Function': 'signOut', 'msg': result.value['Error']};
+        state = AsyncError(error, StackTrace.current);
       }
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -94,11 +98,42 @@ class AuthController extends _$AuthController {
           () => authRepository.createAccount(email, password, fullName));
       print(result);
       if (result.value['Success']) {
-        print('trying to create out withing controller');
         state = AsyncData('/signIn');
       } else {
         print("failed create accout ${result.value['Error']}");
-        state = AsyncError(result.value['Error'], StackTrace.current);
+        final error = {
+          'Function': 'createAccount',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> forgotPassword(
+    String email,
+  ) async {
+    try {
+      final authRepository = ref.read(authRepositoryProvider);
+
+      state = const AsyncLoading();
+      final result =
+          await AsyncValue.guard(() => authRepository.forgotPassword(email));
+      print(result);
+      if (result.value['Success']) {
+        print('trying to create out withing controller');
+        state = AsyncData(true);
+      } else {
+        print("failed sendinf email link ${result.value['Error']}");
+        final error = {
+          'Function': 'forgotPassword',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
       }
     } catch (error) {
       state = AsyncError(error, StackTrace.current);

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:virtuetracker/api/users.dart';
 
@@ -120,3 +121,7 @@ class Settings {
     }
   }
 }
+
+final settingsRepositoryProvider = Provider<Settings>((ref) {
+  return Settings();
+});

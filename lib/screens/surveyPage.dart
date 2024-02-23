@@ -48,7 +48,7 @@ class SurveyPageState extends State<SurveyPage> {
   // Phone verification
   bool phoneVerified = false;
   // Location of user
-  GeoPoint? userLocation;
+  dynamic userLocation = null;
   // Selected values for dropdowns
   String currentCommunity = 'Legal';
   String shareEntries = 'No';
@@ -92,7 +92,7 @@ class SurveyPageState extends State<SurveyPage> {
   }
 
   void showToasty(msg, bool success, BuildContext context) {
-    print('calling toast widget');
+    print('calling toast widget in survey page');
     toast.successOrError(context, msg, success);
   }
 
@@ -104,6 +104,8 @@ class SurveyPageState extends State<SurveyPage> {
             loading: () => CircularProgressIndicator(),
             error: (error, stackTrace) {
               Future.delayed(Duration.zero, () {
+                ref.read(surveyPageControllerProvider.notifier).state =
+                    AsyncLoading();
                 showToasty(error.toString(), false, context);
               });
             },
@@ -122,7 +124,7 @@ class SurveyPageState extends State<SurveyPage> {
               }
               print("What is the response survey: $response");
               // If user has now been created in Users collection then go to Tutorial Page
-              WidgetsBinding.instance?.addPostFrameCallback((_) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 GoRouter.of(context).go(response);
               });
             },
@@ -366,7 +368,7 @@ class SurveyPageState extends State<SurveyPage> {
                     onChanged: (newValue) {
                       setState(() {
                         currentCommunity = newValue!;
-                        answers[2] = newValue!;
+                        answers[2] = newValue;
                       });
                     },
                     dropdownColor: Colors
@@ -493,7 +495,7 @@ class SurveyPageState extends State<SurveyPage> {
                     onChanged: (newValue) {
                       setState(() {
                         shareEntries = newValue!;
-                        answers[4] = newValue!;
+                        answers[4] = newValue;
                       });
                     },
                     dropdownColor: Colors
@@ -566,7 +568,7 @@ class SurveyPageState extends State<SurveyPage> {
                               .read(surveyPageControllerProvider.notifier)
                               .getLocation();
                         shareLocation = newValue!;
-                        answers[5] = newValue!;
+                        answers[5] = newValue;
                       });
                     },
                     dropdownColor: Colors
@@ -652,7 +654,7 @@ class SurveyPageState extends State<SurveyPage> {
                     onChanged: (newValue) {
                       setState(() {
                         allowNotifications = newValue!;
-                        answers[6] = newValue!;
+                        answers[6] = newValue;
                       });
                     },
                     dropdownColor: Colors
@@ -735,7 +737,7 @@ class SurveyPageState extends State<SurveyPage> {
                     child: Form(
                       key: _formKey,
                       child: TextFormField(
-                        controller: _phoneController,
+                        controller: phoneNumber,
                         keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
                             prefixText: "+1 ",
@@ -932,7 +934,7 @@ class SurveyPageState extends State<SurveyPage> {
                         phoneNumber.text,
                         notificationTime.text,
                         phoneVerified,
-                        userLocation!);
+                        userLocation);
                   }
                 },
                 child: Text('Submit'),

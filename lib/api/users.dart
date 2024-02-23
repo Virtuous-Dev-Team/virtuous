@@ -139,11 +139,11 @@ class Users {
       String phoneNumber,
       String notificationTime,
       bool phoneVerified,
-      GeoPoint userLocation) async {
+      dynamic userLocation) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        return Future.error({'Success': false, 'Error': 'User not found'});
+        return {'Success': false, 'Error': 'User not found'};
       }
       final careerInfo = {
         "currentPosition": currentPosition,
@@ -165,7 +165,8 @@ class Users {
       };
       userObject["careerInfo"] = careerInfo;
       userObject["notificationPreferences"] = notificationPreferences;
-      userObject["quadrantUsedData"] = quadrantLists[currentCommunity]!;
+      userObject["quadrantUsedData"] =
+          quadrantLists[currentCommunity.toLowerCase()] ?? 'Error';
 
       await usersCollectionRef
           .doc(user.uid)
@@ -173,6 +174,8 @@ class Users {
       return {'Success': true, 'response': "Added profile info"};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
+    } catch (e) {
+      print('Error in survey api $e');
     }
   }
 
@@ -328,7 +331,7 @@ class Users {
       }
       print('called getUseriNFIO');
       DocumentSnapshot documentSnapshot =
-          await usersCollectionRef.doc(user?.uid).get();
+          await usersCollectionRef.doc(user.uid).get();
       print('User Info snapshot: ${documentSnapshot.exists}');
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;

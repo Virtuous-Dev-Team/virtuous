@@ -19,7 +19,7 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
   final String appBarChoice;
   void showToasty(String msg, bool success, BuildContext context) {
     ToastNotificationWidget toast = new ToastNotificationWidget();
-    print('calling toast widget');
+    print('calling toast widget in app bar widget');
     toast.successOrError(context, msg, success);
   }
 
@@ -28,7 +28,13 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
     ref.watch(authControllerProvider).when(
         loading: () => CircularProgressIndicator(),
         error: (error, stackTrace) {
-          showToasty(error.toString(), false, context);
+          Future.delayed(Duration.zero, () {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              dynamic errorType = error;
+              if (errorType['Function'] == 'signOut')
+                showToasty(errorType['msg'], false, context);
+            });
+          });
         },
         data: (response) {
           print('going to sign in page, after signing out ');

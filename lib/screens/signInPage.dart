@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, avoid_print, non_constant_identifier_names
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,11 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
-import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/controllers/authControllers.dart';
-import 'package:virtuetracker/firebase_options.dart';
-import 'package:virtuetracker/screens/homePage.dart';
-import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 final Auth auth = Auth();
@@ -58,7 +53,7 @@ Future<dynamic> getUserInfo(ref) async {
   // final info = await ref.watch(currentUserInfo);
   final info = await users.getUserInfo();
 
-  print('info in sign in page ${info}');
+  print('info in sign in page $info');
   return info;
 }
 
@@ -86,8 +81,14 @@ class SignInPage extends ConsumerWidget {
   }
 
   void showToasty(msg, bool success, BuildContext context) {
-    print('calling toast widget');
-    toast.successOrError(context, msg, success);
+    print('calling toast widget in sign in page');
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ToastNotificationWidget().successOrError(
+        context,
+        msg,
+        success,
+      );
+    });
   }
 
   @override
@@ -96,12 +97,19 @@ class SignInPage extends ConsumerWidget {
           loading: () => CircularProgressIndicator(),
           error: (error, stackTrace) {
             Future.delayed(Duration.zero, () {
-              showToasty(error.toString(), false, context);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // ref.read(authControllerProvider.notifier).state =
+                //     AsyncLoading();
+                dynamic errorType = error;
+                if (errorType['Function'] == 'signIn') {
+                  showToasty(errorType['msg'], false, context);
+                }
+              });
             });
           },
           data: (response) async {
             print("What is the response in sign in: $response");
-            WidgetsBinding.instance?.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               GoRouter.of(context).go(response);
             });
           },
@@ -207,6 +215,7 @@ class SignInPage extends ConsumerWidget {
                           ref.read(authControllerProvider.notifier);
 
                       await authController.signIn(email.text, password.text);
+                      ref.invalidate(authControllerProvider);
                     } catch (e) {
                       print('Error in sig in btn container $e');
                     }

@@ -49,6 +49,8 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
+  // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
+  // await u.findUsersNear().catchError((e) => print(e));
 
   // await settings
   //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
@@ -105,38 +107,38 @@ Future testingApi() async {
 }
 
 // Test screens and widgets with this
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-
-      // routerConfig: AppRouter.router,
-      // home: HomePage(), // closed for testing
-      home: ResourcePage(),
-    );
-  }
-}
-
-// This widget has the navigation with routes
-// class MyApp extends ConsumerWidget {
-//   const MyApp({super.key});
+// class MyApp extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final goRouter = ref.watch(goRouterProvider);
-//     final goRouter = ref.watch(AppNavigation.router);
-
-//     return MaterialApp.router(
-//       routerConfig: goRouter,
-//       title: 'Virtue Tacker',
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
+
+//       // routerConfig: AppRouter.router,
+//       // home: HomePage(), // closed for testing
+//       home: ForgotPasswordPage(),
 //     );
 //   }
 // }
+
+// This widget has the navigation with routes
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final goRouter = ref.watch(goRouterProvider);
+    final goRouter = ref.watch(AppNavigation.router);
+
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      title: 'Virtue Tacker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
+}

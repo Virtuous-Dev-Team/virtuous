@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/apptheme.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
+import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 //import '../widgets/appBarWidget.dart';
 
@@ -68,21 +69,7 @@ class _ResourcePageState extends State<ResourcePage>
       return SafeArea(
           child: Scaffold(
               backgroundColor: Color(0xFFEFE5CC),
-              //appBar: AppBarWidget('regular'),
-              appBar: AppBar(
-                backgroundColor: appBarColor,
-                elevation: 0,
-                actions: [
-                  IconButton(
-                    icon:
-                        Icon(Icons.account_circle, size: 30, color: iconColor),
-                    onPressed: () {
-                      // TODO: Implement profile icon functionality.
-                    },
-                  ),
-                  SizedBox(width: 12),
-                ],
-              ),
+              appBar: AppBarWidget('regular'),
               body: Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFFFFDF9),
