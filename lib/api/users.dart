@@ -53,7 +53,6 @@ class Users {
 
       // Maybe add a check to see if it completed
       await updateQuadrantsUsed(currentCommunity, quadrantUsed);
-      print("unn");
       if (shareLocation && shareEntries) {
         final CommunityShared communitySharedApi = CommunityShared();
         await communitySharedApi
@@ -83,6 +82,7 @@ class Users {
         'quadrantUsedData.${communityName}.${quadrantUsed}':
             FieldValue.increment(1),
       });
+      print('Updated quadrant Used');
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
     }
@@ -329,10 +329,8 @@ class Users {
       if (user == null) {
         return {'Success': false, 'Error': 'No user found'};
       }
-      print('called getUseriNFIO');
       DocumentSnapshot documentSnapshot =
           await usersCollectionRef.doc(user.uid).get();
-      print('User Info snapshot: ${documentSnapshot.exists}');
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;
 

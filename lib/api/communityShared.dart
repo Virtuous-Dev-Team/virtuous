@@ -25,6 +25,8 @@ class CommunityShared {
       return {"Success": true, "response": "Submitted in shared database"};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
+    } catch (e) {
+      print('Couldnt add shared virtue entry $e');
     }
   }
 }

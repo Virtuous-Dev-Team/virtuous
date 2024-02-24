@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../App_Configuration/apptheme.dart';
-import '../Models/CalendarModel.dart';
+import '../Models/LegalCalendarModel.dart';
 import '../Models/ChartDataModel.dart';
 import '../widgets/Calendar.dart';
 import '../widgets/appBarWidget.dart';
@@ -14,13 +14,15 @@ class AnalysisPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Pie Chart
     final List<ChartData> chartData = [
       ChartData('David', 25),
       ChartData('Steve', 38),
       ChartData('Jack', 34),
       ChartData('Others', 52)
     ];
-    List<CalendarModel> calendarData = [];
+    // Calendar
+    List<LegalCalendarModel> calendarData = [];
     List<DateTime> HonestyDates = [
       DateTime(2024, 02, 1),
       DateTime(2024, 02, 3),
@@ -66,7 +68,7 @@ class AnalysisPage extends StatelessWidget {
       DateTime(2024, 02, 24),
       DateTime(2024, 02, 26),
     ];
-    calendarData.add(CalendarModel(
+    calendarData.add(LegalCalendarModel(
         CompassionList: CompassionDates,
         CourageList: CourageDates,
         FairnessList: FairnessDates,
