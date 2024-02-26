@@ -28,10 +28,12 @@ class SurveyPageController extends _$SurveyPageController {
       String phoneNumber,
       String notificationTime,
       bool phoneVerified,
-      GeoPoint userLocation) async {
+      dynamic userLocation) async {
     try {
       final userRepository = ref.read(usersRepositoryProvider);
       state = const AsyncLoading();
+      print('calling survey page ');
+
       final result = await AsyncValue.guard(() => userRepository.surveyInfo(
           currentPosition,
           careerLength,
@@ -44,7 +46,11 @@ class SurveyPageController extends _$SurveyPageController {
           notificationTime,
           phoneVerified,
           userLocation));
+      print('calling survey page controller $result');
+      // print(
+      //     '$currentPosition + $careerLength + $currentCommunity + $reason + $shareEntries + $shareLocation + $allowNotifications + $phoneNumber + $notificationTime + $phoneVerified + $userLocation');
       if (result.value['Success']) {
+        print('success acount creation');
         state = AsyncData('/survey/tutorial');
       }
 
@@ -55,6 +61,7 @@ class SurveyPageController extends _$SurveyPageController {
         state = AsyncError(result.value['Error'], StackTrace.current);
       }
     } catch (error) {
+      print('messed up survey controller herer');
       state = AsyncError(error, StackTrace.current);
     }
   }

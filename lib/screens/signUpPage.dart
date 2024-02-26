@@ -77,18 +77,36 @@ class SignUpPage extends ConsumerWidget {
 
   ToastNotificationWidget toast = ToastNotificationWidget();
   void showToasty(msg, success, context) {
+    print('calling toast widget in sign up page');
     toast.successOrError(context, msg, success);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // ToastNotificationWidget toast = ToastNotificationWidget();
+    void showToasty(msg, success, context2) {
+      print('calling toast widget in sign up page');
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        ToastNotificationWidget().successOrError(
+          context,
+          msg,
+          success,
+        );
+      });
+    }
 
     final formGlobalKey = GlobalKey<FormState>();
     ref.watch(authControllerProvider).when(
         loading: () => CircularProgressIndicator(),
         error: (error, stackTrace) {
-          showToasty(error.toString(), false, context);
+          Future.delayed(Duration.zero, () {
+            WidgetsBinding.instance?.addPostFrameCallback((_) {
+              // ref.read(authControllerProvider.notifier).state = AsyncLoading();
+              dynamic errorType = error;
+              if (errorType['Function'] == 'createAccount')
+                showToasty(errorType['msg'], false, context);
+            });
+          });
         },
         data: (response) {
           print('going to sign in page, after signing out ');
@@ -223,6 +241,7 @@ class SignUpPage extends ConsumerWidget {
                         // Redirect to Survey or Verify Email page after calling function
                         ref.read(authControllerProvider.notifier).createAccount(
                             email.text, password.text, fullName.text);
+                        ref.invalidate(authControllerProvider);
                       } catch (e) {
                         print(e);
                       }

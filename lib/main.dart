@@ -49,6 +49,14 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
+  // await stats
+  //     .getQuadrantsUsedList("legal")
+  //     .then((value) => print('main: $value'));
+  await stats
+      .buildCalendar()
+      .then((value) => print(value['response'].toString()));
+  // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
+  // await u.findUsersNear().catchError((e) => print(e));
 
   // await settings
   //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
@@ -63,7 +71,7 @@ Future testingApi() async {
 
   // Finished Testing addVirtue api
   // u
-  //     .addVirtueEntry("legal", "Honesty", "0xFFF3A3CA",
+  //     .addVirtueEntry("legal", "Integrity", "0xFFF3A3CA",
   //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true, true)
   //     .then((value) => {print(value["Success"])})
   //     .catchError((error) => {print('error in main: $error')});
@@ -87,9 +95,10 @@ Future testingApi() async {
   //     .getUpdatedLocation(true)
   //     .then((value) => print(value))
   //     .catchError((e) => print(e));
-  // u.addUserLocation().then((value) => print(value));
-  // shared
-  //     .addSharedVirtueEntry("a", "a", true, "legal")
+  // await u.addUserLocation().then((value) => print(value));
+  // await shared
+  //     .addSharedVirtueEntry("Honesty", "0xFFF3A3CA", true, "legal")
+  //     .then((val) => print(val))
   //     .catchError((e) => print(e));
   // u.getUserLocation();
   // u.getMostRecentEntries("legal");
@@ -98,7 +107,7 @@ Future testingApi() async {
   // print(userObject);
 
   // Tested and working
-  // u.updateQuadrantsUsed("legal", "Compassion");
+  // await u.updateQuadrantsUsed("legal", "Compassion");
   // auth.signOutUser();
 
   // stats.getQuadrantsUsedList("legal");
@@ -106,38 +115,38 @@ Future testingApi() async {
 }
 
 // Test screens and widgets with this
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-
-      // routerConfig: AppRouter.router,
-      // home: HomePage(), // closed for testing
-      home: ResourcePage(),
-    );
-  }
-}
-
-// This widget has the navigation with routes
-// class MyApp extends ConsumerWidget {
-//   const MyApp({super.key});
+// class MyApp extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final goRouter = ref.watch(goRouterProvider);
-//     final goRouter = ref.watch(AppNavigation.router);
-
-//     return MaterialApp.router(
-//       routerConfig: goRouter,
-//       title: 'Virtue Tacker',
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
+
+//       // routerConfig: AppRouter.router,
+//       // home: HomePage(), // closed for testing
+//       home: ForgotPasswordPage(),
 //     );
 //   }
 // }
+
+// This widget has the navigation with routes
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final goRouter = ref.watch(goRouterProvider);
+    final goRouter = ref.watch(AppNavigation.router);
+
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      title: 'Virtue Tacker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
+}

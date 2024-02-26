@@ -20,7 +20,7 @@ class ResourcesController extends _$ResourcesController {
       final result = await AsyncValue.guard(
           () => resourcesRepo.resourcesMyCommunityInfo(communityName));
       if (result.value['Success']) {
-        print('caloled resources controller, result: $result');
+        print('called resources controller, result: $result');
         final Map<String, dynamic> mappy = result.value['response'];
         // state = AsyncData(result.value['response']);
         state = AsyncData(mappy);

@@ -55,8 +55,14 @@ class Auth {
           email: email, password: password);
 
       return {'Success': true, "response": response};
-    } on FirebaseAuthException catch (error) {
-      return {'Success': false, 'Error': error.message};
+    } on FirebaseAuthException catch (e) {
+      String? msg = e.message;
+      if (e.code == 'user-not-found') {
+        msg = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        msg = 'Wrong password provided for that user.';
+      }
+      return {'Success': false, 'Error': msg};
     }
   }
 
@@ -83,8 +89,13 @@ class Auth {
     );
   }
 
-  Future forgotPassword() async {
-    try {} catch (error) {
+  Future forgotPassword(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      return {'Success': true, 'response': 'Email link sent'};
+    } on FirebaseAuthException catch (error) {
+      return {'Success': false, 'Error': error.message};
+    } catch (error) {
       return {'Success': false, 'Error': error};
     }
   }

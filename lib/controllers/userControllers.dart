@@ -15,7 +15,6 @@ class UserRecentEntriesController
   Future<void> getMostRecentEntries(String communityName) async {
     try {
       final userRepo = ref.read(usersRepositoryProvider);
-      print('calling get controllers');
       state = const AsyncLoading();
       final result = await AsyncValue.guard(
           () => userRepo.getMostRecentEntries(communityName));

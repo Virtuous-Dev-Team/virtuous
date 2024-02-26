@@ -30,7 +30,6 @@ class HomePage extends ConsumerWidget {
     //     UserRecentEntriesController().getMostRecentEntries("communityName"));
 
     // print('testing homepage: $a');
-    print('Fetching user recent entries ${response}');
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
@@ -48,7 +47,6 @@ class HomePage extends ConsumerWidget {
             child: Column(
               children: [
                 SizedBox(height: 10),
-                
                 ElevatedButton(
                   onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
                   child: Text(

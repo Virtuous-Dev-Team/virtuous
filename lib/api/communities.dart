@@ -10,9 +10,9 @@ class Communities {
   Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      // if (user == null) {
-      //   return {'Success': false, 'Error': "User not found"};
-      // }
+      if (user == null) {
+        return {'Success': false, 'Error': "User not found"};
+      }
 
       // Query all documents in the community collection and search for specific community
       QuerySnapshot querySnapshot = await communityCollectionRef

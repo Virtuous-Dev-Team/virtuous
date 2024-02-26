@@ -6,11 +6,12 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
-import '../../Models/CalendarModel.dart';
+import '../Models/LegalCalendarModel.dart';
 import '../App_Configuration/apptheme.dart';
 
 class CustomCalender {
-  Widget customCalender(BuildContext context, List<CalendarModel> markers) {
+  Widget customCalender(
+      BuildContext context, List<LegalCalendarModel> markers) {
     addListToCalender(markers);
     return Container(
       decoration: BoxDecoration(
@@ -52,6 +53,9 @@ class CustomCalender {
         markedDateIconMaxShown: 1,
 
         disableDayPressed: false,
+        onDayPressed: (p0, p1) {
+          print('day pressed ${p1.toString()}');
+        },
 
         weekdayTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
         daysTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
@@ -69,7 +73,7 @@ class CustomCalender {
     events: {},
   );
 
-  addListToCalender(List<CalendarModel> markers) {
+  addListToCalender(List<LegalCalendarModel> markers) {
     for (int i = 0; i < markers.length; i++) {
       if (markers[i].HonestyList!.isNotEmpty) {
         for (int listLength = 0;
