@@ -746,7 +746,7 @@ class SurveyPageState extends State<SurveyPage> {
                             border: InputBorder.none, // Hide the default border
                             hintText: '(999)-999-9999'),
                         validator: (value) {
-                          if (value!.length != 10)
+                          if (value!.length != 12)
                             return "Invalid phone number";
                           return null;
                         },
@@ -759,8 +759,9 @@ class SurveyPageState extends State<SurveyPage> {
                       if (_formKey.currentState!.validate()) {
                         // call send Otop
                         ref.read(surveyPageControllerProvider.notifier);
+                        print("phone number no parse: ${phoneNumber.text}");
                         Users().sendOtp(
-                            phone: _phoneController.text,
+                            phone: phoneNumber.text.replaceAll(RegExp('[^0-9]'), ''),
                             errorStep: () => ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: Text(
