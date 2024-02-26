@@ -758,7 +758,7 @@ class SurveyPageState extends State<SurveyPage> {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // call send Otop
-                        ref.read(surveyPageControllerProvider.notifier);
+                        // ref.read(surveyPageControllerProvider.notifier);
                         Users().sendOtp(
                             phone: _phoneController.text,
                             errorStep: () => ScaffoldMessenger.of(context)
@@ -812,15 +812,15 @@ class SurveyPageState extends State<SurveyPage> {
                                                 if (_formKey1.currentState!
                                                     .validate()) {
                                                   // call confirm Otp
-                                                  ref.read(
-                                                      surveyPageControllerProvider
-                                                          .notifier);
+                                                  // ref.read(
+                                                  //     surveyPageControllerProvider
+                                                  //         .notifier);
                                                   Users()
                                                       .confirmOtp(
                                                           otp: _otpController
                                                               .text)
                                                       .then((value) {
-                                                    if (value == "Success") {
+                                                    if (value['Success']) {
                                                       phoneVerified = true;
                                                       Navigator.pop(context);
                                                       print(
