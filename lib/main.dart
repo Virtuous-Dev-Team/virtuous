@@ -24,6 +24,7 @@ import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:geolocator/geolocator.dart';
@@ -126,7 +127,7 @@ class MyApp extends StatelessWidget {
 
       // routerConfig: AppRouter.router,
       // home: HomePage(), // closed for testing
-      home: SurveyPage(),
+      home: NearbyPage(),
     );
   }
 }
