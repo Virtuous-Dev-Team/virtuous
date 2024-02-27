@@ -81,11 +81,15 @@ class SettingsController extends _$SettingsController {
     }
   }
 
-  Future<void> updatePhoneNumber(String newPhoneNumber) async {
+  Future<void> updatePhoneNumber(
+      String newPhoneNumber, Function errorStep, Function nextStep) async {
     try {
       final settingsRepo = ref.read(settingsRepositoryProvider);
-      final result = await AsyncValue.guard(
-          () => settingsRepo.updatePhoneNumber(newPhoneNumber));
+      final result = await AsyncValue.guard(() =>
+          settingsRepo.updatePhoneNumber(
+              newPhoneNumber: newPhoneNumber,
+              errorStep: errorStep,
+              nextStep: nextStep));
 
       if (result.value['Success']) {
         state = AsyncData('Phone number updated successfully');

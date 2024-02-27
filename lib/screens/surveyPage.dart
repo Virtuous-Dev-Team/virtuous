@@ -746,21 +746,26 @@ class SurveyPageState extends State<SurveyPage> {
                             border: InputBorder.none, // Hide the default border
                             hintText: '(999)-999-9999'),
                         validator: (value) {
-                          if (value!.length != 10)
+                          if (value!.length != 12)
                             return "Invalid phone number";
                           return null;
                         },
                       ),
                     )),
                 SizedBox(
-                  height: 20,
+                  height: 10,
+                ),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // call send Otop
-                        // ref.read(surveyPageControllerProvider.notifier);
+                        ref.read(surveyPageControllerProvider.notifier);
+                        print("phone number no parse: ${phoneNumber.text}");
                         Users().sendOtp(
-                            phone: _phoneController.text,
+                            phone: phoneNumber.text
+                                .replaceAll(RegExp('[^0-9]'), ''),
                             errorStep: () => ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: Text(
@@ -876,7 +881,7 @@ class SurveyPageState extends State<SurveyPage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.amber,
+                        primary: buttonColor,
                       ),
                     ),
                   ),
@@ -904,45 +909,45 @@ class SurveyPageState extends State<SurveyPage> {
             child: Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  print(careerPosition.text);
-                  print(careerLength.text);
-                  print(currentCommunity);
-                  print(reasons.text);
-                  print(shareEntries);
-                  print(shareLocation);
-                  print(allowNotifications);
-                  print(phoneNumber.text);
-                  print(notificationTime.text);
-                  print(userLocation.toString());
+                  onPressed: () async {
+                    print(careerPosition.text);
+                    print(careerLength.text);
+                    print(currentCommunity);
+                    print(reasons.text);
+                    print(shareEntries);
+                    print(shareLocation);
+                    print(allowNotifications);
+                    print(phoneNumber.text);
+                    print(notificationTime.text);
+                    print(userLocation.toString());
 
-                  if (careerPosition.text == "" ||
-                      careerLength.text == "" ||
-                      currentCommunity.isEmpty ||
-                      reasons.text == "") {
-                    print('Fields missing');
-                    return;
-                  } else {
-                    ref.read(surveyPageControllerProvider.notifier).surveyInfo(
-                        careerPosition.text,
-                        careerLength.text,
-                        currentCommunity,
-                        reasons.text,
-                        shareEntries == "Yes" ? true : false,
-                        shareLocation == "Yes" ? true : false,
-                        allowNotifications == "Yes" ? true : false,
-                        phoneNumber.text,
-                        notificationTime.text,
-                        phoneVerified,
-                        userLocation);
-                  }
-                },
-                child: Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.amber,
-                  // Change button color to beige
-                ),
-              ),
+                    if (careerPosition.text == "" ||
+                        careerLength.text == "" ||
+                        currentCommunity.isEmpty ||
+                        reasons.text == "") {
+                      print('Fields missing');
+                      return;
+                    } else {
+                      ref
+                          .read(surveyPageControllerProvider.notifier)
+                          .surveyInfo(
+                              careerPosition.text,
+                              careerLength.text,
+                              currentCommunity,
+                              reasons.text,
+                              shareEntries == "Yes" ? true : false,
+                              shareLocation == "Yes" ? true : false,
+                              allowNotifications == "Yes" ? true : false,
+                              phoneNumber.text,
+                              notificationTime.text,
+                              phoneVerified,
+                              userLocation);
+                    }
+                  },
+                  child: Text('Submit'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFbab7d4),
+                      foregroundColor: Colors.black)),
             ),
           ),
         ],

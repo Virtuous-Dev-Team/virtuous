@@ -185,27 +185,36 @@ class Users {
     required Function errorStep,
     required Function nextStep,
   }) async {
-    await _firebaseAuth
-        .verifyPhoneNumber(
-      timeout: Duration(seconds: 60),
-      phoneNumber: "+1$phone",
-      verificationCompleted: (phoneAuthCredential) async {
-        return;
-      },
-      verificationFailed: (error) async {
-        return;
-      },
-      codeSent: (verificationId, forceResendingToken) async {
-        verifyId = verificationId;
-        nextStep();
-      },
-      codeAutoRetrievalTimeout: (verificationId) async {
-        return;
-      },
-    )
-        .onError((error, stackTrace) {
+    try {
+      await _firebaseAuth
+          .verifyPhoneNumber(
+        timeout: Duration(seconds: 60),
+        phoneNumber: "+1$phone",
+        verificationCompleted: (phoneAuthCredential) async {
+          return;
+        },
+        verificationFailed: (error) async {
+          return;
+        },
+        codeSent: (verificationId, forceResendingToken) async {
+          verifyId = verificationId;
+          nextStep();
+        },
+        codeAutoRetrievalTimeout: (verificationId) async {
+          return;
+        },
+      )
+          .onError((error, stackTrace) {
+        print('error in onError');
+
+        errorStep();
+      });
+    } on FirebaseAuthException catch (e) {
+      print('firebase auth exception $e');
+    } catch (error) {
+      print('error in catch');
       errorStep();
-    });
+    }
   }
 
   // verify otp code
