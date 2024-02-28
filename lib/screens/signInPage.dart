@@ -208,8 +208,9 @@ class SignInPage extends ConsumerWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () async {
+                    GoRouter.of(context).go('/home');
                     // if (formGlobalKey.currentState!.validate()) {
-                    print('Fields pass validation');
+                 /*   print('Fields pass validation');
                     try {
                       final authController =
                           ref.read(authControllerProvider.notifier);
@@ -218,7 +219,7 @@ class SignInPage extends ConsumerWidget {
                       ref.invalidate(authControllerProvider);
                     } catch (e) {
                       print('Error in sig in btn container $e');
-                    }
+                    }*/
                     // } else {
                     //   print('Fields not passing validation');
                     //   return;

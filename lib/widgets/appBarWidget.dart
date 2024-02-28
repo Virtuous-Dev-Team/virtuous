@@ -112,6 +112,12 @@ class PopOutMenuWidget extends StatelessWidget {
           print('sign out plz');
           ref.read(authControllerProvider.notifier).signOut();
         }
+        else if(value == 'settings')
+          {
+
+            GoRouter.of(context).go('/SettingsPage');
+
+          }
         // TODO: Handle other menu items if needed
       },
 

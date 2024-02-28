@@ -12,3 +12,4 @@ String clrPrudence="#7FA881";
 String clrBlack="#000000";
 String clrBackground="C5B898";
 String clrWhite="#FFFFFF";
+String clrText="#534D3F";
