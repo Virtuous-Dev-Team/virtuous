@@ -97,26 +97,6 @@ class BuildRecentEntriesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('Recent entries in HomePage: $listy');
-    final List<dynamic> list = [
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-    ];
 
     return listy == null
         ? Center(

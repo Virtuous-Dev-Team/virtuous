@@ -115,38 +115,38 @@ Future testingApi() async {
 }
 
 // Test screens and widgets with this
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-
-      // routerConfig: AppRouter.router,
-      // home: HomePage(), // closed for testing
-      home: NearbyPage(),
-    );
-  }
-}
-
-// This widget has the navigation with routes
-// class MyApp extends ConsumerWidget {
-//   const MyApp({super.key});
+// class MyApp extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final goRouter = ref.watch(goRouterProvider);
-//     final goRouter = ref.watch(AppNavigation.router);
-
-//     return MaterialApp.router(
-//       routerConfig: goRouter,
-//       title: 'Virtue Tacker',
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
+
+//       // routerConfig: AppRouter.router,
+//       // home: HomePage(), // closed for testing
+//       home: NearbyPage(),
 //     );
 //   }
 // }
+
+// This widget has the navigation with routes
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final goRouter = ref.watch(goRouterProvider);
+    final goRouter = ref.watch(AppNavigation.router);
+
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      title: 'Virtue Tacker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
+}
