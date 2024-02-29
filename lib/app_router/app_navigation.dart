@@ -4,29 +4,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
-import 'package:virtuetracker/screens/changepassword.dart';
-import 'package:virtuetracker/screens/editprofile.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
-import 'package:virtuetracker/screens/gridPage2.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
-import 'package:virtuetracker/screens/settings.dart';
+import 'package:virtuetracker/screens/settingsScreen/settings.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
 
-import '../screens/notifications.dart';
-import '../screens/privacy.dart';
-import '../screens/privacypolicy.dart';
-import '../screens/termofuse.dart';
+import '../screens/settingsScreen/notifications.dart';
+import '../screens/settingsScreen/privacy.dart';
+import '../screens/settingsScreen/privacypolicy.dart';
+import '../screens/settingsScreen/termofuse.dart';
 
 String initial(ref) {
   try {
@@ -185,42 +184,42 @@ class AppNavigation {
                     ),
                   ],
                 ),
-                // GoRoute(
-                //     path: '/SettingsPage',
-                //     name: 'SettingsPage',
-                //     builder: (context, state) => SettingsPage(),
-                //     routes: [
-                //       GoRoute(
-                //         path: 'EditProfilePage',
-                //         name: 'EditProfilePage',
-                //         builder: (context, state) => EditProfilePage(),
-                //       ),
-                //       GoRoute(
-                //         path: 'NotificationsPage',
-                //         name: 'NotificationsPage',
-                //         builder: (context, state) => NotificationsPage(),
-                //       ),
-                //       GoRoute(
-                //         path: 'ChangePasswordPage',
-                //         name: 'ChangePasswordPage',
-                //         builder: (context, state) => ChangePasswordPage(),
-                //       ),
-                //       GoRoute(
-                //         path: 'PrivacyPage',
-                //         name: 'PrivacyPage',
-                //         builder: (context, state) => PrivacyPage(),
-                //       ),
-                //       GoRoute(
-                //         path: 'TermOfUsePage',
-                //         name: 'TermOfUsePage',
-                //         builder: (context, state) => TermOfUsePage(),
-                //       ),
-                //       GoRoute(
-                //         path: 'PrivacyPolicyPage',
-                //         name: 'PrivacyPolicyPage',
-                //         builder: (context, state) => PrivacyPolicyPage(),
-                //       ),
-                //     ]),
+                GoRoute(
+                    path: '/SettingsPage',
+                    name: 'SettingsPage',
+                    builder: (context, state) => SettingsPage(),
+                    routes: [
+                      GoRoute(
+                        path: 'EditProfilePage',
+                        name: 'EditProfilePage',
+                        builder: (context, state) => EditProfilePage(),
+                      ),
+                      GoRoute(
+                        path: 'NotificationsPage',
+                        name: 'NotificationsPage',
+                        builder: (context, state) => NotificationsPage(),
+                      ),
+                      GoRoute(
+                        path: 'ChangePasswordPage',
+                        name: 'ChangePasswordPage',
+                        builder: (context, state) => ChangePasswordPage(),
+                      ),
+                      GoRoute(
+                        path: 'PrivacyPage',
+                        name: 'PrivacyPage',
+                        builder: (context, state) => PrivacyPage(),
+                      ),
+                      GoRoute(
+                        path: 'TermOfUsePage',
+                        name: 'TermOfUsePage',
+                        builder: (context, state) => TermOfUsePage(),
+                      ),
+                      GoRoute(
+                        path: 'PrivacyPolicyPage',
+                        name: 'PrivacyPolicyPage',
+                        builder: (context, state) => PrivacyPolicyPage(),
+                      ),
+                    ]),
               ],
             ),
 
@@ -270,104 +269,4 @@ class AppNavigation {
       ],
     );
   });
-
-  // // GoRouter configuration
-  // static final GoRouter router = GoRouter(
-  //   initialLocation: '/',
-  //   debugLogDiagnostics: true,
-  //   navigatorKey: _rootNavigatorKey,
-  //   routes: [
-  //     GoRoute(
-  //       path: '/',
-  //       name: 'LandingPage',
-  //       builder: (context, state) => LandingPage(),
-  //     ),
-  //     GoRoute(
-  //       path: '/signIn',
-  //       name: 'signIn',
-  //       builder: (context, state) => SignInPage(),
-  //     ),
-  //     GoRoute(
-  //       path: '/signUp',
-  //       name: 'signUp',
-  //       builder: (context, state) => SignUpPage(),
-  //     ),
-
-  //     /// MainWrapper
-  //     StatefulShellRoute.indexedStack(
-  //       builder: (context, state, navigationShell) {
-  //         return ScaffoldWithNavBar(navigationShell: navigationShell);
-  //       },
-  //       branches: <StatefulShellBranch>[
-  //         /// Brach Home
-  //         StatefulShellBranch(
-  //           navigatorKey: _shellNavigatorHome,
-  //           routes: <RouteBase>[
-  //             GoRoute(
-  //               path: "/home",
-  //               name: "Home",
-  //               builder: (BuildContext context, GoRouterState state) =>
-  //                   const HomePage(),
-  //               routes: [
-  //                 GoRoute(
-  //                   path: 'gridPage',
-  //                   name: 'GridPage',
-  //                   pageBuilder: (context, state) => CustomTransitionPage<void>(
-  //                     key: state.pageKey,
-  //                     child: GridPage(),
-  //                     transitionsBuilder:
-  //                         (context, animation, secondaryAnimation, child) =>
-  //                             FadeTransition(opacity: animation, child: child),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-
-  //         // Branch Analyze
-  //         StatefulShellBranch(
-  //           navigatorKey: _shellNavigatorAnalyze,
-  //           routes: <RouteBase>[
-  //             GoRoute(
-  //               path: "/analysis",
-  //               name: "Analysis",
-  //               builder: (BuildContext context, GoRouterState state) =>
-  //                   const AnalysisPage(),
-  //               routes: [],
-  //             ),
-  //           ],
-  //         ),
-
-  //         // Branch Nearby
-  //         StatefulShellBranch(
-  //           navigatorKey: _shellNavigatorNearby,
-  //           routes: <RouteBase>[
-  //             GoRoute(
-  //               path: "/nearby",
-  //               name: "Nearby",
-  //               builder: (BuildContext context, GoRouterState state) =>
-  //                   const NearbyPage(),
-  //               routes: [],
-  //             ),
-  //           ],
-  //         ),
-
-  //         /// Brach Resources
-  //         StatefulShellBranch(
-  //           navigatorKey: _shellNavigatorResources,
-  //           routes: <RouteBase>[
-  //             GoRoute(
-  //               path: "/resource",
-  //               name: "Resources",
-  //               builder: (BuildContext context, GoRouterState state) =>
-  //                   const ResourcePage(),
-  //               routes: [],
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   ],
-  // );
 }

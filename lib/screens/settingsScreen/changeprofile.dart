@@ -1,11 +1,9 @@
-
-
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../App_Configuration/apptheme.dart';
-import '../widgets/appBarWidget.dart';
+import '../../App_Configuration/apptheme.dart';
+import '../../widgets/appBarWidget.dart';
 
 class ChangeProfilePage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
@@ -14,26 +12,21 @@ class ChangeProfilePage extends StatefulWidget {
   _ChangeProfilePageState createState() => _ChangeProfilePageState();
 }
 
-class _ChangeProfilePageState extends State<ChangeProfilePage>
-{
-
-
+class _ChangeProfilePageState extends State<ChangeProfilePage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight=MediaQuery.of(context).size.height;
-    double screenWidth=MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return SafeArea(
         child: Scaffold(
             backgroundColor: Color(0xFFEFE5CC),
@@ -48,8 +41,12 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>
                       Radius.circular(20),
                     ),
                   ),
-                  padding:  EdgeInsets.only(top: screenHeight/50,bottom: screenHeight/50,
-                    left: screenWidth/30,right: screenWidth/30,),
+                  padding: EdgeInsets.only(
+                    top: screenHeight / 50,
+                    bottom: screenHeight / 50,
+                    left: screenWidth / 30,
+                    right: screenWidth / 30,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -64,15 +61,15 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>
                       ),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-
-                        ],),
+                        children: [],
+                      ),
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colours.swatch(clrBackground), // Dark purple color
-                            borderRadius:
-                            BorderRadius.circular(5), // Adjusted border radius
+                            color: Colours.swatch(
+                                clrBackground), // Dark purple color
+                            borderRadius: BorderRadius.circular(
+                                5), // Adjusted border radius
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
@@ -99,7 +96,6 @@ class _ChangeProfilePageState extends State<ChangeProfilePage>
                       ),
                     ],
                   ),
-
                 ),
               ),
             )));

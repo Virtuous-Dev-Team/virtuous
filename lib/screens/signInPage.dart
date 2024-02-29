@@ -208,7 +208,6 @@ class SignInPage extends ConsumerWidget {
                 ),
                 child: OutlinedButton(
                   onPressed: () async {
-                    GoRouter.of(context).go('/home');
                     // if (formGlobalKey.currentState!.validate()) {
                     print('Fields pass validation');
                     try {

@@ -1,45 +1,37 @@
-
-
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../App_Configuration/apptheme.dart';
-import '../App_Configuration/globalfunctions.dart';
-import '../widgets/appBarWidget.dart';
+import '../../App_Configuration/apptheme.dart';
+import '../../App_Configuration/globalfunctions.dart';
+import '../../widgets/appBarWidget.dart';
 
 class NotificationsPage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
-  bool cbenableNotifications=false;
+  bool cbenableNotifications = false;
   TimeOfDay _selectedTime = TimeOfDay.now();
   TextEditingController tfNotifTime = TextEditingController();
   @override
   _NotificationsPageState createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage>
-{
-
-
+class _NotificationsPageState extends State<NotificationsPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight=MediaQuery.of(context).size.height;
-    double screenWidth=MediaQuery.of(context).size.width;
-
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
         child: Scaffold(
@@ -55,8 +47,12 @@ class _NotificationsPageState extends State<NotificationsPage>
                       Radius.circular(20),
                     ),
                   ),
-                  padding:  EdgeInsets.only(top: screenHeight/50,bottom: screenHeight/50,
-                    left: screenWidth/30,right: screenWidth/30,),
+                  padding: EdgeInsets.only(
+                    top: screenHeight / 50,
+                    bottom: screenHeight / 50,
+                    left: screenWidth / 30,
+                    right: screenWidth / 30,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -73,8 +69,9 @@ class _NotificationsPageState extends State<NotificationsPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
-                            onTap: (){
-                              GoRouter.of(context).go('/SettingsPage/ChangePasswordPage');
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/ChangePasswordPage');
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,7 +84,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                                     color: Colors.black,
                                   ),
                                 ),
-                                Icon(Icons.arrow_right,size: 25,)
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
                               ],
                             ),
                           ),
@@ -104,43 +104,37 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 ),
                               ),
                               SizedBox(
-                                width: screenWidth/50,
+                                width: screenWidth / 50,
                               ),
                               Checkbox(
                                 visualDensity: VisualDensity.compact,
-
-
-                                fillColor: MaterialStateProperty
-                                    .resolveWith(getColor),
+                                fillColor:
+                                    MaterialStateProperty.resolveWith(getColor),
                                 side: BorderSide(
-                                  color: Colours.swatch(clrWhite),),
+                                  color: Colours.swatch(clrWhite),
+                                ),
                                 checkColor: Colors.white,
                                 value: widget.cbenableNotifications,
                                 onChanged: (bool? value) {
                                   print(value);
 
                                   setState(() {
-
-                                    widget.cbenableNotifications=value!;
+                                    widget.cbenableNotifications = value!;
                                   });
-
-
-
-
-                                },),
+                                },
+                              ),
                             ],
                           ),
                           InkWell(
-                            onTap: (){
-                              _selectTime(context,widget.tfNotifTime);
+                            onTap: () {
+                              _selectTime(context, widget.tfNotifTime);
                             },
                             child: Container(
-
                               decoration: BoxDecoration(
-                                color: Colours.swatch(clrBackground), // Dark purple color
-
+                                color: Colours.swatch(
+                                    clrBackground), // Dark purple color
                               ),
-                              width: screenWidth/1.1,
+                              width: screenWidth / 1.1,
                               height: 40,
                               child: Center(
                                 child: Text(
@@ -156,9 +150,8 @@ class _NotificationsPageState extends State<NotificationsPage>
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight/50,
+                            height: screenHeight / 50,
                           ),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,10 +165,10 @@ class _NotificationsPageState extends State<NotificationsPage>
                                 ),
                               ),
                               SizedBox(
-                                width: screenWidth/50,
+                                width: screenWidth / 50,
                               ),
                               Container(
-                                width: screenWidth/4,
+                                width: screenWidth / 4,
                                 padding: EdgeInsets.all(3.0),
                                 decoration: BoxDecoration(
                                   border: Border.all(
@@ -186,37 +179,36 @@ class _NotificationsPageState extends State<NotificationsPage>
                                   borderRadius: BorderRadius.circular(5.0),
                                 ),
                                 child:
-                                //textFieldTimeInput(context,tfNotifTime,"Start Time"),
-                                TextField(
+                                    //textFieldTimeInput(context,tfNotifTime,"Start Time"),
+                                    TextField(
                                   enabled: false,
                                   controller: widget.tfNotifTime,
                                   onChanged: (newValue) {
-                                    setState(() {
-
-                                    });
+                                    setState(() {});
                                   },
-
                                   decoration: InputDecoration(
                                     contentPadding: EdgeInsets.zero,
                                     isDense: true,
                                     hintText: '',
                                     hintStyle: GoogleFonts.tinos(
-                                        textStyle: TextStyle(color: Colors.black)),
-                                    border: InputBorder.none, // Hide the default border
+                                        textStyle:
+                                            TextStyle(color: Colors.black)),
+                                    border: InputBorder
+                                        .none, // Hide the default border
                                   ),
                                 ),
                               ),
                             ],
                           ),
-
-
-                        ],),
+                        ],
+                      ),
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colours.swatch(clrBackground), // Dark purple color
-                            borderRadius:
-                            BorderRadius.circular(5), // Adjusted border radius
+                            color: Colours.swatch(
+                                clrBackground), // Dark purple color
+                            borderRadius: BorderRadius.circular(
+                                5), // Adjusted border radius
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
@@ -243,23 +235,22 @@ class _NotificationsPageState extends State<NotificationsPage>
                       ),
                     ],
                   ),
-
                 ),
               ),
             )));
   }
 
-
-  Widget textFieldTimeInput(BuildContext context,TextEditingController controller,String hintText,[String? clrBasic,String? clrIcon,String? clrDivider]){
+  Widget textFieldTimeInput(
+      BuildContext context, TextEditingController controller, String hintText,
+      [String? clrBasic, String? clrIcon, String? clrDivider]) {
     return InkWell(
-      onTap: (){
-        _selectTime(context,controller);
+      onTap: () {
+        _selectTime(context, controller);
       },
-      child: SizedBox(width: MediaQuery.of(context).size.width/5,
+      child: SizedBox(
+          width: MediaQuery.of(context).size.width / 5,
           height: 40,
-          child:
-          TextFormField(
-
+          child: TextFormField(
             enabled: false,
             cursorColor: Colours.swatch(clrBlack),
             cursorRadius: const Radius.circular(0),
@@ -274,22 +265,26 @@ class _NotificationsPageState extends State<NotificationsPage>
               }
             },*/
 
-            style: TextStyle(color:clrBasic==null?Colours.swatch(clrWhite):Colours.swatch(clrBasic) ,fontFamily: "Poppins",fontSize: 16),
+            style: TextStyle(
+                color: clrBasic == null
+                    ? Colours.swatch(clrWhite)
+                    : Colours.swatch(clrBasic),
+                fontFamily: "Poppins",
+                fontSize: 16),
             decoration: InputDecoration(
               contentPadding: EdgeInsets.zero,
               isDense: true,
               hintText: '',
-              hintStyle: GoogleFonts.tinos(
-                  textStyle: TextStyle(color: Colors.black)),
+              hintStyle:
+                  GoogleFonts.tinos(textStyle: TextStyle(color: Colors.black)),
               border: InputBorder.none, // Hide the default border
             ),
-
           )),
     );
   }
 
-
-  Future<void> _selectTime(BuildContext context,TextEditingController controller) async {
+  Future<void> _selectTime(
+      BuildContext context, TextEditingController controller) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       builder: (context, child) {
         return Theme(
@@ -310,15 +305,15 @@ class _NotificationsPageState extends State<NotificationsPage>
           child: child!,
         );
       },
-      context: context, initialTime: TimeOfDay.now(),
-
+      context: context,
+      initialTime: TimeOfDay.now(),
     );
 
     if (pickedTime != null && pickedTime != widget._selectedTime) {
       setState(() {
         //widget._selectedTime = pickedTime;
 
-        widget.tfNotifTime.text=formatTime(pickedTime);
+        widget.tfNotifTime.text = formatTime(pickedTime);
       });
     }
   }
@@ -326,7 +321,8 @@ class _NotificationsPageState extends State<NotificationsPage>
   String formatTime(TimeOfDay timeOfDay) {
     // Use the format method of TimeOfDay to get a formatted string
     final now = DateTime.now();
-    final dateTime = DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
     final format = DateFormat('h:mm a');
     return format.format(dateTime);
   }

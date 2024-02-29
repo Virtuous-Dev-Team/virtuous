@@ -130,7 +130,6 @@ class _ResourcePageState extends State<ResourcePage>
                           physics: const NeverScrollableScrollPhysics(),
                           children: [
                             Vitruous(screenWidth, screenHeight),
-                            // MyCommunity(screenWidth, screenHeight),
                             resourcesController.when(
                                 loading: () => CircularProgressIndicator(),
                                 error: (error, stackTrace) =>

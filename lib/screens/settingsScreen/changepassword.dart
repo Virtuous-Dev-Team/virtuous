@@ -1,12 +1,10 @@
-
-
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../App_Configuration/apptheme.dart';
-import '../widgets/appBarWidget.dart';
+import '../../App_Configuration/apptheme.dart';
+import '../../widgets/appBarWidget.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
@@ -15,39 +13,33 @@ class ChangePasswordPage extends StatefulWidget {
   _ChangePasswordPageState createState() => _ChangePasswordPageState();
 }
 
-class _ChangePasswordPageState extends State<ChangePasswordPage>
-{
-
-
+class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight=MediaQuery.of(context).size.height;
-    double screenWidth=MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     TextEditingController tfNewPass = TextEditingController();
     TextEditingController tfCPass = TextEditingController();
-
 
     return SafeArea(
         child: Scaffold(
             backgroundColor: Color(0xFFEFE5CC),
             appBar: AppBarWidget('regular'),
             body: Center(
-              child:  SingleChildScrollView(
+              child: SingleChildScrollView(
                 child: Container(
                   width: screenWidth,
-                  height: screenHeight/1.2,
+                  height: screenHeight / 1.2,
                   decoration: BoxDecoration(
                     color: Color(0xFFFFFDF9),
                     border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
@@ -55,8 +47,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                       Radius.circular(20),
                     ),
                   ),
-                  padding:  EdgeInsets.only(top: screenHeight/50,bottom: screenHeight/50,
-                    left: screenWidth/30,right: screenWidth/30,),
+                  padding: EdgeInsets.only(
+                    top: screenHeight / 50,
+                    bottom: screenHeight / 50,
+                    left: screenWidth / 30,
+                    right: screenWidth / 30,
+                  ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -76,11 +72,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                           Text(
                             'Enter New Password',
                             style: GoogleFonts.adamina(
-                              textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight/70,
+                            height: screenHeight / 70,
                           ),
                           Container(
                             padding: EdgeInsets.all(3.0),
@@ -95,9 +92,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                             child: TextField(
                               controller: tfNewPass,
                               onChanged: (newValue) {
-                                setState(() {
-
-                                });
+                                setState(() {});
                               },
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.zero,
@@ -105,22 +100,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                                 hintText: 'Eg. abc@gmail.com',
                                 hintStyle: GoogleFonts.tinos(
                                     textStyle: TextStyle(color: Colors.black)),
-                                border: InputBorder.none, // Hide the default border
+                                border:
+                                    InputBorder.none, // Hide the default border
                               ),
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight/70,
+                            height: screenHeight / 70,
                           ),
                           Text(
                             'Confirm New Password',
                             style: GoogleFonts.adamina(
-                              textStyle: TextStyle(fontWeight: FontWeight.normal,fontSize: 14),
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
                             ),
                           ),
-
                           SizedBox(
-                            height: screenHeight/70,
+                            height: screenHeight / 70,
                           ),
                           Container(
                             padding: EdgeInsets.all(3.0),
@@ -132,13 +128,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5.0),
                             ),
-
                             child: TextField(
                               controller: tfCPass,
                               onChanged: (newValue) {
-                                setState(() {
-
-                                });
+                                setState(() {});
                               },
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.zero,
@@ -146,20 +139,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                                 hintText: 'Eg. john doe',
                                 hintStyle: GoogleFonts.tinos(
                                     textStyle: TextStyle(color: Colors.black)),
-                                border: InputBorder.none, // Hide the default border
+                                border:
+                                    InputBorder.none, // Hide the default border
                               ),
                             ),
                           ),
-                        ],),
+                        ],
+                      ),
                       SizedBox(
-                        height: screenHeight/70,
+                        height: screenHeight / 70,
                       ),
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colours.swatch(clrBackground), // Dark purple color
-                            borderRadius:
-                            BorderRadius.circular(5), // Adjusted border radius
+                            color: Colours.swatch(
+                                clrBackground), // Dark purple color
+                            borderRadius: BorderRadius.circular(
+                                5), // Adjusted border radius
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
@@ -184,10 +180,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage>
                           ),
                         ),
                       ),
-
                     ],
                   ),
-
                 ),
               ),
             )));

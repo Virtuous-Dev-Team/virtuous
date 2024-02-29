@@ -88,291 +88,295 @@ class AnalysisPage extends ConsumerWidget {
     CustomCalender calendar = CustomCalender();
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Color(0xFFEFE5CC),
-            appBar: AppBarWidget('regular'),
-            body: Container(
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFDF9),
-                border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(20),
+    return Consumer(builder: (context, ref, _) {
+      return SafeArea(
+          child: Scaffold(
+              backgroundColor: Color(0xFFEFE5CC),
+              appBar: AppBarWidget('regular'),
+              body: Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFFDF9),
+                  border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
+                  ),
                 ),
-              ),
-              padding: const EdgeInsets.all(0.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      color: Colours.white,
-                      child: Center(
-                          child: Expanded(
-                              child: calendar.customCalender(
-                                  context, calendarData))),
-                    ),
-                    // statsController.when(
-                    //     loading: () => CircularProgressIndicator(),
-                    //     error: (error, stackTrace) => Text('Error: $error'),
-                    //     data: (response) {
-                    //       if (response is Map<String, dynamic>) {
-                    //         List<ChartData> chart = response['pieChart'];
-                    //         if (chart.isNotEmpty) {
-                    //           return RenderPieChart(
-                    //             chartData: chart,
-                    //           );
-                    //         } else {
-                    //           return Text("Couldn't build pie chart");
-                    //         }
-                    //       } else {
-                    //         return Text('Error $response');
-                    //       }
-                    //     }),
-                    Divider(
-                      endIndent: 10,
-                      indent: 10,
-                      color: Colours.swatch("#534D3F"),
-                      height: MediaQuery.of(context).size.height / 35,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(bottom: screenHeight / 50),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: screenWidth / 3,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Top 3 Virtues",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colours.swatch(clrBlack),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      left: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrHonesty),
-                                      ),
-                                      Text("Honesty",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("10",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      left: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrCourage),
-                                      ),
-                                      Text("Courage",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("7",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      left: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrFairness),
-                                      ),
-                                      Text("Fairness",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("5",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: screenWidth / 2.5,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Bottom 3 Virtues",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                    fontStyle: FontStyle.italic,
-                                    color: Colours.swatch(clrBlack),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      right: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrGenerosity),
-                                      ),
-                                      Text("Generosity",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("1",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      right: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrFidelity),
-                                      ),
-                                      Text("Fidelity",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("2",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(
-                                      top: screenHeight / 50,
-                                      right: screenWidth / 50),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width: 25,
-                                        height: 25,
-                                        color: Colours.swatch(clrSelfControl),
-                                      ),
-                                      Text("Self-Control",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                      Text("3",
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.normal,
-                                            fontStyle: FontStyle.italic,
-                                            color: Colours.swatch(clrBlack),
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                padding: const EdgeInsets.all(0.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        color: Colours.white,
+                        child: Center(
+                            child: Expanded(
+                                child: calendar.customCalender(
+                                    context, calendarData))),
                       ),
-                    )
-                  ],
+                      // statsController.when(
+                      //     loading: () => CircularProgressIndicator(),
+                      //     error: (error, stackTrace) => Text('Error: $error'),
+                      //     data: (response) {
+                      //       if (response is Map<String, dynamic>) {
+                      //         List<ChartData> chart = response['pieChart'];
+                      //         if (chart.isNotEmpty) {
+                      //           return RenderPieChart(
+                      //             chartData: chart,
+                      //           );
+                      //         } else {
+                      //           return Text("Couldn't build pie chart");
+                      //         }
+                      //       } else {
+                      //         return Text('Error $response');
+                      //       }
+                      //     }),
+                      Divider(
+                        endIndent: 10,
+                        indent: 10,
+                        color: Colours.swatch("#534D3F"),
+                        height: MediaQuery.of(context).size.height / 35,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: screenHeight / 50),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: screenWidth / 3,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Top 3 Virtues",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colours.swatch(clrBlack),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        left: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrHonesty),
+                                        ),
+                                        Text("Honesty",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("10",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        left: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrCourage),
+                                        ),
+                                        Text("Courage",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("7",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        left: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrFairness),
+                                        ),
+                                        Text("Fairness",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("5",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: screenWidth / 2.5,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Bottom 3 Virtues",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colours.swatch(clrBlack),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        right: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrGenerosity),
+                                        ),
+                                        Text("Generosity",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("1",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        right: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrFidelity),
+                                        ),
+                                        Text("Fidelity",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("2",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: screenHeight / 50,
+                                        right: screenWidth / 50),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 25,
+                                          height: 25,
+                                          color: Colours.swatch(clrSelfControl),
+                                        ),
+                                        Text("Self-Control",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                        Text("3",
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.normal,
+                                              fontStyle: FontStyle.italic,
+                                              color: Colours.swatch(clrBlack),
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            )));
+              )));
+    });
   }
 }
 
