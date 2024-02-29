@@ -380,5 +380,7 @@ class Users {
 final usersRepositoryProvider = Provider<Users>((ref) {
   return Users();
 });
-final currentUserInfo =
-    StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+final currentUserInfo = StateProvider.autoDispose(
+    (ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfo =
+//     StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());

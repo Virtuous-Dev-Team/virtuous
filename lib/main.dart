@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/settings.dart';
@@ -39,6 +40,26 @@ Future<void> main() async {
   // await Geolocator.openAppSettings();
   // await Geolocator.openLocationSettings();
   testingApi();
+  setSharedPreferences();
+}
+
+Future setSharedPreferences() async {
+  final Users user = Users();
+  final result = await user.getUserInfo();
+  if (result['Success']) {
+    final userInfo = result['response'];
+    String currentCommunity = userInfo['currentCommunity'];
+    bool shareLocation = userInfo['shareLocation'];
+    bool shareEntries = userInfo['shareEntries'];
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentCommunity', currentCommunity);
+    await prefs.setBool('shareLocation', shareLocation);
+    await prefs.setBool('shareEntries', shareEntries);
+
+    print(
+        'main shared pref \n currentCommunity: $currentCommunity, shareLocation: $shareLocation, shareEntries: $shareEntries');
+  }
 }
 
 Future testingApi() async {

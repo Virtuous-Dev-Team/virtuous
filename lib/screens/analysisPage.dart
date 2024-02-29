@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:virtuetracker/controllers/pieChartController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 
 import '../App_Configuration/apptheme.dart';
@@ -16,17 +17,6 @@ class AnalysisPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final statsController = ref.watch(statsControllerProvider);
-    // ref.read(statsControllerProvider.notifier).getQuadrantsUsedList("legal");
-    // ref.read(statsControllerProvider.notifier).buildCalendar();
-
-    // Pie Chart
-    final List<ChartData> chartData = [
-      ChartData('David', 25),
-      ChartData('Steve', 38),
-      ChartData('Jack', 34),
-      ChartData('Others', 52)
-    ];
     // Calendar
     List<LegalCalendarModel> calendarData = [];
     List<DateTime> HonestyDates = [
@@ -112,266 +102,7 @@ class AnalysisPage extends ConsumerWidget {
                                 child: calendar.customCalender(
                                     context, calendarData))),
                       ),
-                      // statsController.when(
-                      //     loading: () => CircularProgressIndicator(),
-                      //     error: (error, stackTrace) => Text('Error: $error'),
-                      //     data: (response) {
-                      //       if (response is Map<String, dynamic>) {
-                      //         List<ChartData> chart = response['pieChart'];
-                      //         if (chart.isNotEmpty) {
-                      //           return RenderPieChart(
-                      //             chartData: chart,
-                      //           );
-                      //         } else {
-                      //           return Text("Couldn't build pie chart");
-                      //         }
-                      //       } else {
-                      //         return Text('Error $response');
-                      //       }
-                      //     }),
-                      Divider(
-                        endIndent: 10,
-                        indent: 10,
-                        color: Colours.swatch("#534D3F"),
-                        height: MediaQuery.of(context).size.height / 35,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: screenHeight / 50),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: screenWidth / 3,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Top 3 Virtues",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colours.swatch(clrBlack),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        left: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrHonesty),
-                                        ),
-                                        Text("Honesty",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("10",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        left: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrCourage),
-                                        ),
-                                        Text("Courage",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("7",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        left: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrFairness),
-                                        ),
-                                        Text("Fairness",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("5",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: screenWidth / 2.5,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Bottom 3 Virtues",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colours.swatch(clrBlack),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        right: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrGenerosity),
-                                        ),
-                                        Text("Generosity",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("1",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        right: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrFidelity),
-                                        ),
-                                        Text("Fidelity",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("2",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: screenHeight / 50,
-                                        right: screenWidth / 50),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: 25,
-                                          height: 25,
-                                          color: Colours.swatch(clrSelfControl),
-                                        ),
-                                        Text("Self-Control",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                        Text("3",
-                                            style: TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.normal,
-                                              fontStyle: FontStyle.italic,
-                                              color: Colours.swatch(clrBlack),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
+                      RenderBottom(),
                     ],
                   ),
                 ),
@@ -380,12 +111,46 @@ class AnalysisPage extends ConsumerWidget {
   }
 }
 
-class RenderPieChart extends StatelessWidget {
+class RenderBottom extends ConsumerWidget {
+  const RenderBottom({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state =
+        ref.watch(PieChartControllerProvider((communityName: "legal")));
+    return state.when(
+        data: (response) {
+          final pieChartData = response['pieChart'];
+          final topThreeVirtues = response['topThreeVirtues'];
+          final bottomThreeVirtues = response['bottomThreeVirtues'];
+          return Column(
+            children: [
+              RenderPieChart(chartData: pieChartData),
+              Divider(
+                endIndent: 10,
+                indent: 10,
+                color: Colours.swatch("#534D3F"),
+                height: MediaQuery.of(context).size.height / 35,
+              ),
+              RenderQuadrantUsedList(
+                topThreeVirtues: topThreeVirtues,
+                bottomThreeVirtues: bottomThreeVirtues,
+              )
+            ],
+          );
+        },
+        error: (error, st) {
+          return Text('ero $error');
+        },
+        loading: () => CircularProgressIndicator());
+  }
+}
+
+class RenderPieChart extends ConsumerWidget {
   const RenderPieChart({super.key, required this.chartData});
   final List<ChartData> chartData;
   @override
-  Widget build(BuildContext context) {
-    print('Analyze Pie ChART: $chartData');
+  Widget build(BuildContext context, WidgetRef ref) {
     return SfCircularChart(series: <CircularSeries>[
       // Render pie chart
       PieSeries<ChartData, String>(
@@ -394,5 +159,119 @@ class RenderPieChart extends StatelessWidget {
           xValueMapper: (ChartData data, _) => data.x,
           yValueMapper: (ChartData data, _) => data.y)
     ]);
+  }
+}
+
+class RenderQuadrantUsedList extends StatelessWidget {
+  const RenderQuadrantUsedList(
+      {super.key, this.topThreeVirtues, this.bottomThreeVirtues});
+  final Map<String, int>? topThreeVirtues;
+  final Map<String, int>? bottomThreeVirtues;
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+            child: Container(
+          padding: EdgeInsets.all(8),
+          child: Column(children: [
+            Center(
+              child: Text(
+                "Top 3 Virtues",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.italic,
+                  color: Colours.swatch(clrBlack),
+                ),
+              ),
+            ),
+            TopBottomVirtuesWidget(
+              virtueList: topThreeVirtues,
+            )
+          ]),
+        )),
+        Expanded(
+            child: Container(
+          padding: EdgeInsets.all(8),
+          child: Column(children: [
+            Center(
+              child: Text(
+                "Bottom 3 Virtues",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  fontStyle: FontStyle.italic,
+                  color: Colours.swatch(clrBlack),
+                ),
+              ),
+            ),
+            TopBottomVirtuesWidget(
+              virtueList: bottomThreeVirtues,
+            )
+          ]),
+        )),
+      ],
+    );
+  }
+}
+
+class TopBottomVirtuesWidget extends StatelessWidget {
+  const TopBottomVirtuesWidget({
+    super.key,
+    this.virtueList,
+  });
+
+  final Map<String, int>? virtueList;
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        final entry = virtueList!.entries.elementAt(index);
+        final key = entry.key;
+        final value = entry.value;
+        print('key: $key and val: $value');
+        return Container(
+            padding: EdgeInsets.only(top: 8, bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 30,
+                  width: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(1),
+                    color: Colours.swatch(clrCompassion),
+                  ),
+                ),
+                Expanded(
+                    child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(key,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.italic,
+                              color: Colours.swatch(clrBlack),
+                            ))),
+                    Text(value.toString(),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.normal,
+                          fontStyle: FontStyle.italic,
+                          color: Colours.swatch(clrBlack),
+                        ))
+                  ],
+                )),
+              ],
+            ));
+      },
+      itemCount: virtueList!.length,
+    );
   }
 }

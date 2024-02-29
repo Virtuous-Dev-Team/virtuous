@@ -32,13 +32,14 @@ class Stats {
         });
         List<MapEntry<String, int>> sortedList =
             quadrantsUsedList.entries.toList();
-        sortedList.sort((a, b) => a.value.compareTo(b.value));
-        Map<String, int> sortedMap = Map.fromEntries(sortedList);
+        sortedList.sort((a, b) => b.value.compareTo(a.value));
+        print('sorted list: $sortedList');
         Map<String, int> top3Map = Map.fromEntries(sortedList.take(3));
 
         // Get the bottom 3 entries
         Map<String, int> bottom3Map =
             Map.fromEntries(sortedList.skip(sortedList.length - 3));
+
         // Make an object for top 3 and bottom 3 and write method to sort them
 
         final response = {};
