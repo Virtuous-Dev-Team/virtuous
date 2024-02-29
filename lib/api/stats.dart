@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:virtuetracker/Models/LegalCalendarModel.dart';
 import 'package:virtuetracker/Models/ChartDataModel.dart';
 
@@ -50,6 +51,8 @@ class Stats {
       }
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
+    } catch (error) {
+      return {'Success': false, 'Error': error};
     }
   }
 
@@ -147,6 +150,10 @@ class Stats {
     }
   }
 }
+
+final statsRepositoryProvider = Provider<Stats>((ref) {
+  return Stats();
+});
 
 
 

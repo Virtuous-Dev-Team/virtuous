@@ -1,7 +1,9 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:virtuetracker/controllers/statsController.dart';
 
 import '../App_Configuration/apptheme.dart';
 import '../Models/LegalCalendarModel.dart';
@@ -9,11 +11,15 @@ import '../Models/ChartDataModel.dart';
 import '../widgets/Calendar.dart';
 import '../widgets/appBarWidget.dart';
 
-class AnalysisPage extends StatelessWidget {
+class AnalysisPage extends ConsumerWidget {
   const AnalysisPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final statsController = ref.watch(statsControllerProvider);
+    // ref.read(statsControllerProvider.notifier).getQuadrantsUsedList("legal");
+    // ref.read(statsControllerProvider.notifier).buildCalendar();
+
     // Pie Chart
     final List<ChartData> chartData = [
       ChartData('David', 25),
@@ -105,14 +111,23 @@ class AnalysisPage extends StatelessWidget {
                               child: calendar.customCalender(
                                   context, calendarData))),
                     ),
-                    SfCircularChart(series: <CircularSeries>[
-                      // Render pie chart
-                      PieSeries<ChartData, String>(
-                          dataSource: chartData,
-                          pointColorMapper: (ChartData data, _) => data.color,
-                          xValueMapper: (ChartData data, _) => data.x,
-                          yValueMapper: (ChartData data, _) => data.y)
-                    ]),
+                    statsController.when(
+                        loading: () => CircularProgressIndicator(),
+                        error: (error, stackTrace) => Text('Error: $error'),
+                        data: (response) {
+                          if (response is Map<String, dynamic>) {
+                            List<ChartData> chart = response['pieChart'];
+                            if (chart.isNotEmpty) {
+                              return RenderPieChart(
+                                chartData: chart,
+                              );
+                            } else {
+                              return Text("Couldn't build pie chart");
+                            }
+                          } else {
+                            return Text('Error $response');
+                          }
+                        }),
                     Divider(
                       endIndent: 10,
                       indent: 10,
@@ -343,5 +358,22 @@ class AnalysisPage extends StatelessWidget {
                 ),
               ),
             )));
+  }
+}
+
+class RenderPieChart extends StatelessWidget {
+  const RenderPieChart({super.key, required this.chartData});
+  final List<ChartData> chartData;
+  @override
+  Widget build(BuildContext context) {
+    print('Analyze Pie ChART: $chartData');
+    return SfCircularChart(series: <CircularSeries>[
+      // Render pie chart
+      PieSeries<ChartData, String>(
+          dataSource: chartData,
+          pointColorMapper: (ChartData data, _) => data.color,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.y)
+    ]);
   }
 }

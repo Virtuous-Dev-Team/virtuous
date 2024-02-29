@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:virtuetracker/controllers/authControllers.dart';
+import 'package:virtuetracker/controllers/statsController.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
-class ScaffoldWithNavBar extends StatelessWidget {
+class ScaffoldWithNavBar extends ConsumerWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
     required this.navigationShell,
@@ -15,7 +17,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     print('ScaffoldWithNavBar rebuild ${navigationShell.currentIndex}');
     return Scaffold(
       body: navigationShell,
@@ -47,7 +49,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
                   icon: Icon(Icons.library_books), label: 'Resources'),
             ],
             currentIndex: currentIndex,
-            onTap: (int index) => _onTap(context, index),
+            onTap: (int index) => _onTap(context, index, ref),
           );
         },
       ),
@@ -56,8 +58,23 @@ class ScaffoldWithNavBar extends StatelessWidget {
 
   /// Navigate to the current location of the branch at the provided index when
   /// tapping an item in the BottomNavigationBar.
-  void _onTap(BuildContext context, int index) {
+  void _onTap(BuildContext context, int index, ref) {
     print('from index: $index to: ${navigationShell.currentIndex}');
+    switch (index) {
+      case 0:
+        {}
+      case 1:
+        {
+          ref
+              .read(statsControllerProvider.notifier)
+              .getQuadrantsUsedList("legal");
+          ref.read(statsControllerProvider.notifier).buildCalendar();
+        }
+      case 2:
+        {}
+      case 3:
+        {}
+    }
     navigationShell.goBranch(
       index,
       initialLocation: index == navigationShell.currentIndex,

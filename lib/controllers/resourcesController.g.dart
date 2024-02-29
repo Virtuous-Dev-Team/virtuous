@@ -7,7 +7,7 @@ part of 'resourcesController.dart';
 // **************************************************************************
 
 String _$resourcesControllerHash() =>
-    r'97be301309480b443667cc964d672a78903df8f9';
+    r'd194a8899d0f5a98364a85bd8a41107e95f20968';
 
 /// See also [ResourcesController].
 @ProviderFor(ResourcesController)
