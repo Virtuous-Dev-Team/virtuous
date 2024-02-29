@@ -2,6 +2,7 @@ import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 import '../App_Configuration/apptheme.dart';
 //import '../widgets/appBarWidget.dart';
@@ -56,20 +57,20 @@ class _NearbyPageState extends State<NearbyPage>
     return SafeArea(
         child: Scaffold(
             backgroundColor: Color(0xFFEFE5CC),
-            //appBar: AppBarWidget('regular'),
-            appBar: AppBar(
-              backgroundColor: appBarColor,
-              elevation: 0,
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-                  onPressed: () {
-                    // TODO: Implement profile icon functionality.
-                  },
-                ),
-                SizedBox(width: 12),
-              ],
-            ),
+            appBar: AppBarWidget('regular'),
+            // appBar: AppBar(
+            //   backgroundColor: appBarColor,
+            //   elevation: 0,
+            //   actions: [
+            //     IconButton(
+            //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+            //       onPressed: () {
+            //         // TODO: Implement profile icon functionality.
+            //       },
+            //     ),
+            //     SizedBox(width: 12),
+            //   ],
+            // ),
             body: Container(
               child: Center(
                 child: Container(

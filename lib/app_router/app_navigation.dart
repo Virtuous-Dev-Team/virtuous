@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/screens/changepassword.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
@@ -14,11 +16,17 @@ import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
+import 'package:virtuetracker/screens/settings.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
+
+import '../screens/notifications.dart';
+import '../screens/privacy.dart';
+import '../screens/privacypolicy.dart';
+import '../screens/termofuse.dart';
 
 String initial(ref) {
   try {
@@ -112,6 +120,7 @@ class AppNavigation {
           name: 'signUps',
           builder: (context, state) => SignUpPage(),
         ),
+
         GoRoute(
             path: '/survey',
             name: 'SurveyPage',
@@ -176,6 +185,42 @@ class AppNavigation {
                     ),
                   ],
                 ),
+                // GoRoute(
+                //     path: '/SettingsPage',
+                //     name: 'SettingsPage',
+                //     builder: (context, state) => SettingsPage(),
+                //     routes: [
+                //       GoRoute(
+                //         path: 'EditProfilePage',
+                //         name: 'EditProfilePage',
+                //         builder: (context, state) => EditProfilePage(),
+                //       ),
+                //       GoRoute(
+                //         path: 'NotificationsPage',
+                //         name: 'NotificationsPage',
+                //         builder: (context, state) => NotificationsPage(),
+                //       ),
+                //       GoRoute(
+                //         path: 'ChangePasswordPage',
+                //         name: 'ChangePasswordPage',
+                //         builder: (context, state) => ChangePasswordPage(),
+                //       ),
+                //       GoRoute(
+                //         path: 'PrivacyPage',
+                //         name: 'PrivacyPage',
+                //         builder: (context, state) => PrivacyPage(),
+                //       ),
+                //       GoRoute(
+                //         path: 'TermOfUsePage',
+                //         name: 'TermOfUsePage',
+                //         builder: (context, state) => TermOfUsePage(),
+                //       ),
+                //       GoRoute(
+                //         path: 'PrivacyPolicyPage',
+                //         name: 'PrivacyPolicyPage',
+                //         builder: (context, state) => PrivacyPolicyPage(),
+                //       ),
+                //     ]),
               ],
             ),
 

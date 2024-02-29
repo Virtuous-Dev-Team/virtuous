@@ -6,7 +6,7 @@ import 'package:virtuetracker/controllers/statsController.dart';
 
 /// Builds the "shell" for the app by building a Scaffold with a
 /// BottomNavigationBar, where [child] is placed in the body of the Scaffold.
-class ScaffoldWithNavBar extends ConsumerWidget {
+class ScaffoldWithNavBar extends StatelessWidget {
   /// Constructs an [ScaffoldWithNavBar].
   const ScaffoldWithNavBar({
     required this.navigationShell,
@@ -17,7 +17,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(
+    BuildContext context,
+  ) {
     print('ScaffoldWithNavBar rebuild ${navigationShell.currentIndex}');
     return Scaffold(
       body: navigationShell,
@@ -49,7 +51,7 @@ class ScaffoldWithNavBar extends ConsumerWidget {
                   icon: Icon(Icons.library_books), label: 'Resources'),
             ],
             currentIndex: currentIndex,
-            onTap: (int index) => _onTap(context, index, ref),
+            onTap: (int index) => _onTap(context, index),
           );
         },
       ),
@@ -58,17 +60,20 @@ class ScaffoldWithNavBar extends ConsumerWidget {
 
   /// Navigate to the current location of the branch at the provided index when
   /// tapping an item in the BottomNavigationBar.
-  void _onTap(BuildContext context, int index, ref) {
+  void _onTap(
+    BuildContext context,
+    int index,
+  ) {
     print('from index: $index to: ${navigationShell.currentIndex}');
     switch (index) {
       case 0:
         {}
       case 1:
         {
-          ref
-              .read(statsControllerProvider.notifier)
-              .getQuadrantsUsedList("legal");
-          ref.read(statsControllerProvider.notifier).buildCalendar();
+          // ref
+          //     .read(statsControllerProvider.notifier)
+          //     .getQuadrantsUsedList("legal");
+          // ref.read(statsControllerProvider.notifier).buildCalendar();
         }
       case 2:
         {}

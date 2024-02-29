@@ -37,7 +37,7 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
           });
         },
         data: (response) {
-          print('going to sign in page, after signing out ');
+          // print('going to sign in page, after signing out ');
           WidgetsBinding.instance?.addPostFrameCallback((_) {
             GoRouter.of(context).go(response);
           });
@@ -111,6 +111,8 @@ class PopOutMenuWidget extends StatelessWidget {
         if (value == 'signOut') {
           print('sign out plz');
           ref.read(authControllerProvider.notifier).signOut();
+        } else if (value == 'settings') {
+          GoRouter.of(context).go('/SettingsPage');
         }
         // TODO: Handle other menu items if needed
       },

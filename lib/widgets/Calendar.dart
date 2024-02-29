@@ -1,4 +1,7 @@
+// import 'dart:js';
+
 import 'package:colours/colours.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
@@ -12,7 +15,7 @@ import '../App_Configuration/apptheme.dart';
 class CustomCalender {
   Widget customCalender(
       BuildContext context, List<LegalCalendarModel> markers) {
-    addListToCalender(markers);
+    addListToCalender(markers, context);
     return Container(
       decoration: BoxDecoration(
           color: Colours.swatch(clrBackground),
@@ -73,7 +76,7 @@ class CustomCalender {
     events: {},
   );
 
-  addListToCalender(List<LegalCalendarModel> markers) {
+  addListToCalender(List<LegalCalendarModel> markers, context) {
     for (int i = 0; i < markers.length; i++) {
       if (markers[i].HonestyList!.isNotEmpty) {
         for (int listLength = 0;
@@ -85,7 +88,7 @@ class CustomCalender {
               date: markers[i].HonestyList![listLength],
               title: 'Event Honesty',
               icon: _icon(markers[i].HonestyList![listLength].day.toString(),
-                  clrHonesty, clrBlack),
+                  clrHonesty, clrBlack, context),
             ),
           );
         }
@@ -101,7 +104,7 @@ class CustomCalender {
               date: markers[i].CourageList![listLength],
               title: 'Event Courage',
               icon: _icon(markers[i].CourageList![listLength].day.toString(),
-                  clrCourage, clrBlack),
+                  clrCourage, clrBlack, context),
             ),
           );
         }
@@ -117,7 +120,7 @@ class CustomCalender {
               date: markers[i].CompassionList![listLength],
               title: 'Event Compassion',
               icon: _icon(markers[i].CompassionList![listLength].day.toString(),
-                  clrCompassion, clrBlack),
+                  clrCompassion, clrBlack, context),
             ),
           );
         }
@@ -133,7 +136,7 @@ class CustomCalender {
               date: markers[i].GenerosityList![listLength],
               title: 'Event Generosity',
               icon: _icon(markers[i].GenerosityList![listLength].day.toString(),
-                  clrGenerosity, clrBlack),
+                  clrGenerosity, clrBlack, context),
             ),
           );
         }
@@ -148,7 +151,7 @@ class CustomCalender {
               date: markers[i].FidelityList![listLength],
               title: 'Event Fidelity',
               icon: _icon(markers[i].FidelityList![listLength].day.toString(),
-                  clrFidelity, clrBlack),
+                  clrFidelity, clrBlack, context),
             ),
           );
         }
@@ -163,7 +166,7 @@ class CustomCalender {
               date: markers[i].IntegrityList![listLength],
               title: 'Event Integrity',
               icon: _icon(markers[i].IntegrityList![listLength].day.toString(),
-                  clrIntegrity, clrBlack),
+                  clrIntegrity, clrBlack, context),
             ),
           );
         }
@@ -178,7 +181,7 @@ class CustomCalender {
               date: markers[i].FairnessList![listLength],
               title: 'Event Fairness',
               icon: _icon(markers[i].FairnessList![listLength].day.toString(),
-                  clrFairness, clrBlack),
+                  clrFairness, clrBlack, context),
             ),
           );
         }
@@ -195,7 +198,8 @@ class CustomCalender {
               icon: _icon(
                   markers[i].SelfControlList![listLength].day.toString(),
                   clrSelfControl,
-                  clrBlack),
+                  clrBlack,
+                  context),
             ),
           );
         }
@@ -210,7 +214,7 @@ class CustomCalender {
               date: markers[i].PrudenceList![listLength],
               title: 'Event Prudence',
               icon: _icon(markers[i].PrudenceList![listLength].day.toString(),
-                  clrPrudence, clrBlack),
+                  clrPrudence, clrBlack, context),
             ),
           );
         }
@@ -218,32 +222,265 @@ class CustomCalender {
     }
   }
 
-  static Widget _icon(String day, String color, String textColor) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colours.white,
-        ),
-        width: 20,
-        height: 20,
-        child: Column(
-          children: [
-            Text(
-              day,
-              style: TextStyle(
-                color: Colours.swatch(textColor),
-              ),
-            ),
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(color),
+  Widget _icon(
+          String day, String color, String textColor, BuildContext context) =>
+      InkWell(
+        onTap: () {
+          //here you have to pass the parameters which you need to send it from api according to the dates
+          _selectSubjectDialog(context);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colours.white,
+          ),
+          width: 20,
+          height: 20,
+          child: Column(
+            children: [
+              Text(
+                day,
+                style: TextStyle(
+                  color: Colours.swatch(textColor),
                 ),
-                width: 10,
-                height: 10,
               ),
-            )
-          ],
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: Colours.swatch(color),
+                  ),
+                  width: 10,
+                  height: 10,
+                ),
+              )
+            ],
+          ),
         ),
       );
+
+  Future<Future<String?>> _selectSubjectDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: Colours.swatch(clrWhite),
+
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(
+                    Icons.cancel_outlined,
+                    size: 25,
+                    color: Colours.black,
+                  )
+                ],
+              ),
+              content: SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colours.swatch(clrHonesty),
+                                    borderRadius: BorderRadius.circular(20)),
+                                width: 25,
+                                height: 25,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 50,
+                              ),
+                              Text(
+                                "Honesty",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "12:35 PM",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        endIndent: 0,
+                        indent: 0,
+                        height: MediaQuery.of(context).size.height / 30,
+                        color: Colours.swatch(clrText),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colours.swatch(clrFairness),
+                                    borderRadius: BorderRadius.circular(20)),
+                                width: 25,
+                                height: 25,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 50,
+                              ),
+                              Text(
+                                "Fairness",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "12:35 PM",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        endIndent: 0,
+                        indent: 0,
+                        height: MediaQuery.of(context).size.height / 30,
+                        color: Colours.swatch(clrText),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: Colours.swatch(clrSelfControl),
+                                    borderRadius: BorderRadius.circular(20)),
+                                width: 25,
+                                height: 25,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 50,
+                              ),
+                              Text(
+                                "Self-Control",
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "12:35 PM",
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        endIndent: 0,
+                        indent: 0,
+                        height: MediaQuery.of(context).size.height / 30,
+                        color: Colours.swatch(clrText),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              // you can use this for footer buttons if needed
+              /* actions: <Widget>[
+                    Divider(
+                      height: MediaQuery
+                          .of(context)
+                          .size
+                          .height / 40,
+                      thickness: 1,
+                      indent: 20,endIndent: 20,
+                      color: Colours.swatch(clrText),
+
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+
+
+
+                            },
+                            child: Container(
+                              height: 30, width: MediaQuery
+                                .of(context)
+                                .size
+                                .width / 3.5,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: Colours.swatch(clrWhite)
+
+                              )
+                              ,
+                              // color:Colours.swatch(Clr_Dialog_Btn_Ok),
+                              child: Center(child: Text('Cancel', style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: "Poppins",
+                                  color: Colours.swatch(clrBlack))),
+                              ),
+                            )),
+                        TextButton(
+                            onPressed: ()
+                            {
+                            },
+                            child: Container(
+                              height: 30,
+                              width: MediaQuery
+                                  .of(context)
+                                  .size
+                                  .width / 3.5,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: Colours.swatch(clrBlack)
+
+                              ),
+                              // color:Colours.swatch(Clr_Dialog_Btn_Ok),
+                              child: const Center(child: Text('Apply',
+                                  style: TextStyle(fontSize: 12,
+                                      fontFamily: "Poppins",
+                                      color: Colours.white)),
+                              ),
+                            )),
+                      ],
+                    )
+
+                  ],*/
+            );
+          });
+        });
+  }
 }
