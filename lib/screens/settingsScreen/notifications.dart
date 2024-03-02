@@ -53,187 +53,199 @@ class _NotificationsPageState extends State<NotificationsPage> {
                     left: screenWidth / 30,
                     right: screenWidth / 30,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Notifications",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 15,),
+                        Text(
+                          "Notifications",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              GoRouter.of(context)
-                                  .go('/SettingsPage/ChangePasswordPage');
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        SizedBox(height: 40,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                GoRouter.of(context)
+                                    .go('/SettingsPage/ChangePasswordPage');
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Phone number",
+                                    style: GoogleFonts.adamina(
+                                      textStyle: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.arrow_right,
+                                    size: 25,
+                                  )
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Phone number",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
+                                  "Daily Reminders  ",
+                                  style: GoogleFonts.adamina(
+                                    textStyle: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
-                                Icon(
-                                  Icons.arrow_right,
-                                  size: 25,
-                                )
+                                SizedBox(
+                                  width: screenWidth / 50,
+                                ),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  fillColor:
+                                      MaterialStateProperty.resolveWith(getColor),
+                                  side: BorderSide(
+                                    color: Colours.swatch(clrWhite),
+                                  ),
+                                  checkColor: Colors.white,
+                                  value: widget.cbenableNotifications,
+                                  onChanged: (bool? value) {
+                                    print(value);
+
+                                    setState(() {
+                                      widget.cbenableNotifications = value!;
+                                    });
+                                  },
+                                ),
                               ],
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Daily Reminders",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
+                            InkWell(
+                              onTap: () {
+                                _selectTime(context, widget.tfNotifTime);
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colours.swatch(
+                                      clrBackground), // Dark purple color
+                                  borderRadius: BorderRadius.circular(5),
                                 ),
-                              ),
-                              SizedBox(
-                                width: screenWidth / 50,
-                              ),
-                              Checkbox(
-                                visualDensity: VisualDensity.compact,
-                                fillColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                side: BorderSide(
-                                  color: Colours.swatch(clrWhite),
-                                ),
-                                checkColor: Colors.white,
-                                value: widget.cbenableNotifications,
-                                onChanged: (bool? value) {
-                                  print(value);
-
-                                  setState(() {
-                                    widget.cbenableNotifications = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          InkWell(
-                            onTap: () {
-                              _selectTime(context, widget.tfNotifTime);
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colours.swatch(
-                                    clrBackground), // Dark purple color
-                              ),
-                              width: screenWidth / 1.1,
-                              height: 40,
-                              child: Center(
-                                child: Text(
-                                  "Select a time to receive notifications",
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
+                                width: screenWidth / 1.1,
+                                height: 40,
+                                child: Center(
+                                  child: Text(
+                                    "Select a time to receive notifications",
+                                    style: GoogleFonts.tinos(
+                                      textStyle: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 50,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Notifications Time",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(
-                                width: screenWidth / 50,
-                              ),
-                              Container(
-                                width: screenWidth / 4,
-                                padding: EdgeInsets.all(3.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: Color(0xFFCEC0A1),
-                                    width: 2.0, // Set the border width
-                                  ),
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(5.0),
-                                ),
-                                child:
-                                    //textFieldTimeInput(context,tfNotifTime,"Start Time"),
-                                    TextField(
-                                  enabled: false,
-                                  controller: widget.tfNotifTime,
-                                  onChanged: (newValue) {
-                                    setState(() {});
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.zero,
-                                    isDense: true,
-                                    hintText: '',
-                                    hintStyle: GoogleFonts.tinos(
-                                        textStyle:
-                                            TextStyle(color: Colors.black)),
-                                    border: InputBorder
-                                        .none, // Hide the default border
+                            SizedBox(
+                              height: screenHeight / 60,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Notification Time",
+                                  style: GoogleFonts.adamina(
+                                    textStyle: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colours.swatch(
-                                clrBackground), // Dark purple color
-                            borderRadius: BorderRadius.circular(
-                                5), // Adjusted border radius
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 4,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          width: 210,
-                          height: 50,
-                          child: Center(
-                            child: Text(
-                              "Submit",
-                              style: GoogleFonts.tinos(
-                                textStyle: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
+                                SizedBox(
+                                  width: screenWidth / 50,
+                                ),
+                                Container(
+                                  width: screenWidth / 4,
+                                  padding: EdgeInsets.all(3.0),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color(0xFFCEC0A1),
+                                      width: 2.0, // Set the border width
+                                    ),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  child:
+                                      //textFieldTimeInput(context,tfNotifTime,"Start Time"),
+                                      TextField(
+                                    enabled: false,
+                                    controller: widget.tfNotifTime,
+                                    onChanged: (newValue) {
+                                      setState(() {});
+                                    },
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.zero,
+                                      isDense: true,
+                                      hintText: '   12:00pm',
+                                      hintStyle: GoogleFonts.tinos(
+                                          textStyle:
+                                              TextStyle(color: Colors.black)),
+                                      border: InputBorder
+                                          .none, // Hide the default border
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 40,),
+                        Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colours.swatch(
+                                  clrBackground), // Dark purple color
+                              borderRadius: BorderRadius.circular(
+                                  5), // Adjusted border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            width: 310,
+                            height: 60,
+                            child: Center(
+                              child: Text(
+                                "Submit",
+                                style: GoogleFonts.tinos(
+                                  textStyle: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

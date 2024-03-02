@@ -15,6 +15,14 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/settings.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
+import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
@@ -56,81 +64,9 @@ Future testingApi() async {
   await stats
       .buildCalendar()
       .then((value) => print(value['response'].toString()));
-  // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
-  // await u.findUsersNear().catchError((e) => print(e));
-
-  // await settings
-  //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
-  //         "newCommunity", "4 Years")
-  //     .catchError((e) => print(e));
-
-  // await settings.updatePrivacy(true, false).catchError((e) => print(e));
-
-  // await settings
-  //     .updateNotificationPreferences(false, "12:01pm")
-  //     .catchError((e) => print(e));
-
-  // Finished Testing addVirtue api
-  // u
-  //     .addVirtueEntry("legal", "Integrity", "0xFFF3A3CA",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true, true)
-  //     .then((value) => {print(value["Success"])})
-  //     .catchError((error) => {print('error in main: $error')});
-
-  // Finished Testing surveyInfo api, need to add more
-  // u
-  //     .surveyInfo(
-  //         "best attorney ever in the world, even better than saul",
-  //         "3 years",
-  //         "legal",
-  //         "I need to a",
-  //         true,
-  //         true,
-  //         true,
-  //         123 - 456 - 789,
-  //         "12:18pm")
-  //     .catchError((error) => {print('error in main: $error')});
-
-  // await u
-  //     .getUpdatedLocation(true)
-  //     .then((value) => print(value))
-  //     .catchError((e) => print(e));
-  // await u.addUserLocation().then((value) => print(value));
-  // await shared
-  //     .addSharedVirtueEntry("Honesty", "0xFFF3A3CA", true, "legal")
-  //     .then((val) => print(val))
-  //     .catchError((e) => print(e));
-  // u.getUserLocation();
-  // u.getMostRecentEntries("legal");
-  // dynamic userObject = await u.getUserInfo();
-  // auth.signInWithGoogle();
-  // print(userObject);
-
-  // Tested and working
-  // await u.updateQuadrantsUsed("legal", "Compassion");
-  // auth.signOutUser();
-
-  // stats.getQuadrantsUsedList("legal");
-  // Testing api ending
 }
 
-// Test screens and widgets with this
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Virtue Tracker',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
 
-//       // routerConfig: AppRouter.router,
-//       // home: HomePage(), // closed for testing
-//       home: NearbyPage(),
-//     );
-//   }
-// }
 
 // This widget has the navigation with routes
 class MyApp extends ConsumerWidget {
@@ -140,6 +76,7 @@ class MyApp extends ConsumerWidget {
     // final goRouter = ref.watch(goRouterProvider);
     final goRouter = ref.watch(AppNavigation.router);
 
+   // /*
     return MaterialApp.router(
       routerConfig: goRouter,
       title: 'Virtue Tacker',
@@ -148,5 +85,23 @@ class MyApp extends ConsumerWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
     );
+
+    // */
+    /*
+    return MaterialApp(
+      title: 'Virtue Tracker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      //home: GridPage(), // closed for testing
+      //home: SurveyPage(),
+      //home: TutorialPage(),
+      //home: SettingsPage(),
+      // DONE settings, privacypolicy,termsofuse,
+      // privacy, noti, changepass
+    );
+
+     */
   }
 }

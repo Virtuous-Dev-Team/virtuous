@@ -57,14 +57,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(height: 15,),
                       Text(
                         "Change Password",
                         style: TextStyle(
                           fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
                       ),
+                      SizedBox(height: 30,),
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +149,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         ],
                       ),
                       SizedBox(
-                        height: screenHeight / 70,
+                        height: 40,
                       ),
                       Center(
                         child: Container(
@@ -165,14 +167,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               ),
                             ],
                           ),
-                          width: 210,
-                          height: 50,
+                          width: 310,
+                          height: 60,
                           child: Center(
                             child: Text(
                               "Change Password",
                               style: GoogleFonts.tinos(
                                 textStyle: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),
