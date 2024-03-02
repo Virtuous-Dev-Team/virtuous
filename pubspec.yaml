@@ -11,15 +11,35 @@ dependencies:
   flutter:
     sdk: flutter
 
+  provider: ^5.0.0
   cupertino_icons: ^1.0.2
   firebase_core: ^2.21.0
   cloud_firestore: ^4.12.2
   firebase_auth: ^4.12.1
   google_fonts: ^6.1.0
+  go_router: ^13.0.1
+  flutter_riverpod: ^2.4.9
+  google_sign_in: ^6.1.6
+  sliding_clipped_nav_bar: ^3.1.0+4
+  toastification: ^1.2.0
+  shared_preferences: ^2.2.2
+  smooth_page_indicator: ^1.1.0
+  flutter_facebook_auth: ^6.0.4
+  geolocator: ^10.1.0
+  auto_size_text: ^3.0.0
+  colours: ^0.0.2
+  syncfusion_flutter_charts: ^22.2.12
+  flutter_calendar_carousel: ^2.4.2
+  riverpod_annotation: ^2.3.4
+  get: ^4.6.6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+    # a tool for running code generators
+  build_runner:
+  # the code generator
+  riverpod_generator:
 
   flutter_lints: ^2.0.0
 
@@ -31,4 +51,4 @@ flutter:
     - assets/images/googleLogo.png
     - assets/images/facebookLogo.png
     - assets/images/appleLogo.png
-
+    - assets/images/intro_virtue.png

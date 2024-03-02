@@ -4,6 +4,7 @@ import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 
+// void getUserInfo
 
 class NavControllerPage extends StatefulWidget {
   const NavControllerPage({super.key});
@@ -17,14 +18,16 @@ class _NavControllerPageState extends State<NavControllerPage> {
     HomePage(),
     AnalysisPage(),
     NearbyPage(),
-    ResourcePage()
+    //ResourcePage()
   ];
-  int currentIndex = 0; // used to keep track of which page is currently displayed
-  void onTap(int index){
+  int currentIndex =
+      0; // used to keep track of which page is currently displayed
+  void onTap(int index) {
     setState(() {
       currentIndex = index; // sets the currentIndex
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,9 +46,11 @@ class _NavControllerPageState extends State<NavControllerPage> {
         elevation: 0,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Analysis'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart), label: 'Analysis'),
           BottomNavigationBarItem(icon: Icon(Icons.near_me), label: 'Nearby'),
-          BottomNavigationBarItem(icon: Icon(Icons.library_books), label: 'Resources'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.library_books), label: 'Resources'),
         ],
       ),
     );
