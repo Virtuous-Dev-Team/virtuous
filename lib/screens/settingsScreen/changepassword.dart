@@ -1,7 +1,9 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/controllers/settingsController.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
@@ -28,128 +30,142 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    TextEditingController tfNewPass = TextEditingController();
-    TextEditingController tfCPass = TextEditingController();
+    TextEditingController newPassword = TextEditingController();
+    TextEditingController confirmPassword = TextEditingController();
 
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Color(0xFFEFE5CC),
-            appBar: AppBarWidget('regular'),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: screenWidth,
-                  height: screenHeight / 1.2,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFDF9),
-                    border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
+    return Consumer(builder: (context, ref, _) {
+      return Scaffold(
+          backgroundColor: Color(0xFFEFE5CC),
+          appBar: AppBarWidget('regular'),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Container(
+                width: screenWidth,
+                height: screenHeight / 1.2,
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFFDF9),
+                  border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  top: screenHeight / 50,
+                  bottom: screenHeight / 50,
+                  left: screenWidth / 30,
+                  right: screenWidth / 30,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  padding: EdgeInsets.only(
-                    top: screenHeight / 50,
-                    bottom: screenHeight / 50,
-                    left: screenWidth / 30,
-                    right: screenWidth / 30,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Change Password",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                    Text(
+                      "Change Password",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Enter New Password',
+                          style: GoogleFonts.adamina(
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 14),
+                          ),
                         ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Enter New Password',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
+                        SizedBox(
+                          height: screenHeight / 70,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(3.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Color(0xFFCEC0A1),
+                              width: 2.0, // Set the border width
+                            ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          child: TextField(
+                            controller: newPassword,
+                            onChanged: (newValue) {
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                              hintText: 'Eg. abc@gmail.com',
+                              hintStyle: GoogleFonts.tinos(
+                                  textStyle: TextStyle(color: Colors.black)),
+                              border:
+                                  InputBorder.none, // Hide the default border
                             ),
                           ),
-                          SizedBox(
-                            height: screenHeight / 70,
+                        ),
+                        SizedBox(
+                          height: screenHeight / 70,
+                        ),
+                        Text(
+                          'Confirm New Password',
+                          style: GoogleFonts.adamina(
+                            textStyle: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 14),
                           ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        SizedBox(
+                          height: screenHeight / 70,
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(3.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Color(0xFFCEC0A1),
+                              width: 2.0, // Set the border width
                             ),
-                            child: TextField(
-                              controller: tfNewPass,
-                              onChanged: (newValue) {
-                                setState(() {});
-                              },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. abc@gmail.com',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'Confirm New Password',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: tfCPass,
-                              onChanged: (newValue) {
-                                setState(() {});
-                              },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. john doe',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
+                          child: TextField(
+                            controller: confirmPassword,
+                            onChanged: (newValue) {
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.zero,
+                              isDense: true,
+                              hintText: 'Eg. john doe',
+                              hintStyle: GoogleFonts.tinos(
+                                  textStyle: TextStyle(color: Colors.black)),
+                              border:
+                                  InputBorder.none, // Hide the default border
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Center(
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Center(
+                      child: MaterialButton(
+                        onPressed: () {
+                          ref
+                              .read(settingsControllerProvider.notifier)
+                              .updatePassword(newPassword.text);
+
+                          ref.invalidate(settingsControllerProvider);
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colours.swatch(
@@ -169,7 +185,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           height: 50,
                           child: Center(
                             child: Text(
-                              "Change Password",
+                              "Update Profile",
                               style: GoogleFonts.tinos(
                                 textStyle: TextStyle(
                                   fontSize: 20,
@@ -180,10 +196,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            )));
+            ),
+          ));
+    });
   }
 }

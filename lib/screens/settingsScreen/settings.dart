@@ -60,214 +60,221 @@ class _SettingsPageState extends State<SettingsPage> {
                       left: screenWidth / 30,
                       right: screenWidth / 30,
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Settings",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Settings",
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/EditProfilePage');
-                                // Navigator.pushReplacement(
-                                //   context,
-                                //   CupertinoPageRoute(builder: (context) => EditProfilePage()),
-                                // );
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Edit Profile",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/ChangePasswordPage');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Change Password",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/NotificationsPage');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Notifications",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/PrivacyPage');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Privacy",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/TermOfUsePage');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Terms of Use",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/PrivacyPolicyPage');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Privacy Policy",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Center(
-                          child: MaterialButton(
-                            onPressed: () {
-                              ref
-                                  .read(authControllerProvider.notifier)
-                                  .signOut();
+                          SizedBox(height: 40,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/EditProfilePage');
+                              // Navigator.pushReplacement(
+                              //   context,
+                              //   CupertinoPageRoute(builder: (context) => EditProfilePage()),
+                              // );
                             },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colours.swatch(
-                                    clrBackground), // Dark purple color
-                                borderRadius: BorderRadius.circular(
-                                    5), // Adjusted border radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 3),
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Edit Profile",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
                                   ),
-                                ],
-                              ),
-                              width: 210,
-                              height: 50,
-                              child: Center(
-                                child: Text(
-                                  "Log Out",
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/ChangePasswordPage');
+                            },
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Change Password",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/NotificationsPage');
+                            },
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Notifications",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/PrivacyPage');
+                            },
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Privacy",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/TermOfUsePage');
+                            },
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Terms of Use",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 10,),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context)
+                                  .go('/SettingsPage/PrivacyPolicyPage');
+                            },
+                            child: Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Privacy Policy",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.arrow_right,
+                                  size: 25,
+                                )
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 200,),
+                          Center(
+                            child: MaterialButton(
+                              onPressed: () {
+                                ref
+                                    .read(authControllerProvider.notifier)
+                                    .signOut();
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colours.swatch(
+                                      clrBackground), // Dark purple color
+                                  borderRadius: BorderRadius.circular(
+                                      5), // Adjusted border radius
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                width: 210,
+                                height: 50,
+                                child: Center(
+                                  child: Text(
+                                    "Log Out",
+                                    style: GoogleFonts.tinos(
+                                      textStyle: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              )));
-    });
+              ),
+          ),
+        );
+      }
+    );
   }
 }

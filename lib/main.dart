@@ -16,6 +16,14 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/settings.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
+import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
@@ -81,8 +89,8 @@ Future testingApi() async {
   // await u.findUsersNear().catchError((e) => print(e));
 
   // await settings
-  //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
-  //         "newCommunity", "4 Years")
+  //     .updateProfile(
+  //         "testio1234@gmail.com", "TESTIOOOO", "newCareer", "legal", "4 Years")
   //     .catchError((e) => print(e));
 
   // await settings.updatePrivacy(true, false).catchError((e) => print(e));
@@ -136,39 +144,39 @@ Future testingApi() async {
 }
 
 // Test screens and widgets with this
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Virtue Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-
-      // routerConfig: AppRouter.router,
-      // home: HomePage(), // closed for testing
-      home: SurveyPage(),
-    );
-  }
-}
-
-// This widget has the navigation with routes
-// class MyApp extends ConsumerWidget {
-//   const MyApp({super.key});
+// class MyApp extends StatelessWidget {
 //   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     // final goRouter = ref.watch(goRouterProvider);
-//     final goRouter = ref.watch(AppNavigation.router);
-
-//     return MaterialApp.router(
-//       routerConfig: goRouter,
-//       title: 'Virtue Tacker',
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
+
+//       // routerConfig: AppRouter.router,
+//       // home: HomePage(), // closed for testing
+//       home: SurveyPage(),
 //     );
 //   }
 // }
+
+// This widget has the navigation with routes
+class MyApp extends ConsumerWidget {
+  const MyApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // final goRouter = ref.watch(goRouterProvider);
+    final goRouter = ref.watch(AppNavigation.router);
+
+    return MaterialApp.router(
+      routerConfig: goRouter,
+      title: 'Virtue Tacker',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
+}

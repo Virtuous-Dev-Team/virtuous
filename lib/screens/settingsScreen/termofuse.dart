@@ -56,10 +56,12 @@ class _TermOfUsePageState extends State<TermOfUsePage> {
                     children: [
                       Text(
                         "Terms of Use",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+                        style: GoogleFonts.adamina(
+                          textStyle: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -73,7 +75,7 @@ class _TermOfUsePageState extends State<TermOfUsePage> {
                             'Last Modified on 02/14/2024',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.normal,
                                   color: Colours.black),
                             ),
@@ -85,7 +87,7 @@ class _TermOfUsePageState extends State<TermOfUsePage> {
                             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Penatibus et magnis dis parturient montes nascetur ridiculus. Viverra orci sagittis eu volutpat odio facilisis. Tincidunt augue interdum velit euismod in. Aliquam eleifend mi in nulla posuere sollicitudin aliquam ultrices sagittis. Praesent tristique magna sit amet purus gravida quis. Aliquet porttitor lacus luctus accumsan tortor posuere. Lacus vel facilisis volutpat est velit. Magna eget est lorem ipsum dolor. Amet tellus cras adipiscing enim eu turpis egestas pretium aenean.',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   fontWeight: FontWeight.normal,
                                   color: Colours.swatch(clrText)),
                             ),

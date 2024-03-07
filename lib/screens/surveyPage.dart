@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:virtuetracker/App_Configuration/apptheme.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/surveyPageController.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
+import 'package:intl/intl.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -891,9 +894,12 @@ class SurveyPageState extends State<SurveyPage> {
                 ),
                 Center(
                   child: Text(
-                    selectedTime != null
-                        ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
+                    notificationTime.text != ''
+                        ? 'Time Selected ${notificationTime.text}'
                         : 'Time not selected',
+                    // selectedTime != null
+                    //     ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
+                    //     : 'Time not selected',
                     style: GoogleFonts.tinos(
                       textStyle: TextStyle(),
                     ),
@@ -976,23 +982,65 @@ class SurveyPageState extends State<SurveyPage> {
     }
   }
 
+  // Future<void> _selectTime(BuildContext context) async {
+  //   TimeOfDay? pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.now(),
+  //   );
+
+  //   if (pickedTime != null && pickedTime != selectedTime) {
+  //     setState(() {
+  //       print(pickedTime.format(context));
+  //       String timey = pickedTime.format(context).toString();
+  //       selectedTime = pickedTime;
+  //       answers[8] =
+  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+  //       notificationTime.text =
+  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+  //     });
+  //   }
+  // }
+
   Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? pickedTime = await showTimePicker(
+    final TimeOfDay? pickedTime = await showTimePicker(
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colours.swatch(clrBlack), // header background color
+              onPrimary: Colours.swatch(clrWhite), // header text color
+              onSurface: Colours.swatch(clrBlack), // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colours.swatch(clrBlack),
+
+                // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
     if (pickedTime != null && pickedTime != selectedTime) {
       setState(() {
-        print(pickedTime.format(context));
-        String timey = pickedTime.format(context).toString();
-        selectedTime = pickedTime;
-        answers[8] =
-            '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
-        notificationTime.text =
-            '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+        //widget._selectedTime = pickedTime;
+        notificationTime.text = formatTime(pickedTime);
       });
     }
+  }
+
+  String formatTime(TimeOfDay timeOfDay) {
+    // Use the format method of TimeOfDay to get a formatted string
+    final now = DateTime.now();
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final format = DateFormat('h:mm a');
+    return format.format(dateTime);
   }
 
   @override

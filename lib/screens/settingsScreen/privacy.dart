@@ -56,141 +56,146 @@ class _PrivacyPageState extends State<PrivacyPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      SizedBox(
+                        height: screenHeight / 40,
+                      ),
                       Text(
                         "Privacy",
-                        style: TextStyle(
+                        style: GoogleFonts.adamina(
+                          textStyle: TextStyle(
                           fontSize: 24,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.bold,
                           color: Colors.black,
+                          ),
                         ),
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Would you like to participate in entry sharing?',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colours.black),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colours.swatch(clrText)),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'Would you like to share your location?',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colours.black),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'We will not share your location with other users. However you can’t use some features without location tuned on.',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colours.swatch(clrText)),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Share Entries",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
-                                ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 15,),
+                            Text(
+                              'Would you like to participate in entry sharing?',
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colours.black),
                               ),
-                              SizedBox(
-                                width: screenWidth / 50,
+                            ),
+                            SizedBox(height: 5,),
+                            Text(
+                              'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colours.swatch(clrText)),
                               ),
-                              Checkbox(
-                                visualDensity: VisualDensity.compact,
-                                fillColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                side: BorderSide(
-                                  color: Colours.swatch(clrWhite),
+                            ),
+                            SizedBox(
+                              height: screenHeight / 70,
+                            ),
+                            Text(
+                              'Would you like to share your location?',
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colours.black),
+                              ),
+                            ),
+                            SizedBox(height: 5,),
+                            Text(
+                              'We will not share your location with other users. However you can’t use some features without location tuned on.',
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colours.swatch(clrText)),
+                              ),
+                            ),
+                            SizedBox(
+                              height: screenHeight / 70,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center, // Align children vertically at the center
+                              children: [
+                                Text(
+                                  "Share Entries   ",
+                                  style: GoogleFonts.adamina(
+                                    textStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
-                                checkColor: Colors.white,
-                                value: widget.cbShareEntries,
-                                onChanged: (bool? value) {
-                                  print(value);
+                                SizedBox(
+                                  width: screenWidth / 50,
+                                ),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  fillColor: MaterialStateProperty.resolveWith(getColor),
+                                  side: BorderSide(
+                                    color: Colours.swatch(clrWhite),
+                                  ),
+                                  checkColor: Colors.white,
+                                  value: widget.cbShareEntries,
+                                  onChanged: (bool? value) {
+                                    print(value);
 
-                                  setState(() {
-                                    widget.cbShareEntries = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Shae Locations",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black,
+                                    setState(() {
+                                      widget.cbShareEntries = value!;
+                                    });
+                                  },
                                 ),
-                              ),
-                              SizedBox(
-                                width: screenWidth / 50,
-                              ),
-                              Checkbox(
-                                visualDensity: VisualDensity.compact,
-                                fillColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                side: BorderSide(
-                                  color: Colours.swatch(clrWhite),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Share Location",
+                                  style: GoogleFonts.adamina(
+                                    textStyle: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
-                                checkColor: Colors.white,
-                                value: widget.cbShareLocations,
-                                onChanged: (bool? value) {
-                                  print(value);
+                                SizedBox(
+                                  width: screenWidth / 50,
+                                ),
+                                Checkbox(
+                                  visualDensity: VisualDensity.compact,
+                                  fillColor:
+                                      MaterialStateProperty.resolveWith(getColor),
+                                  side: BorderSide(
+                                    color: Colours.swatch(clrWhite),
+                                  ),
+                                  checkColor: Colors.white,
+                                  value: widget.cbShareLocations,
+                                  onChanged: (bool? value) {
+                                    print(value);
 
-                                  setState(() {
-                                    widget.cbShareLocations = value!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                                    setState(() {
+                                      widget.cbShareLocations = value!;
+                                    });
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                       SizedBox(
-                        height: screenHeight / 50,
+                        height: 30,
                       ),
                       Center(
                         child: Container(
@@ -208,14 +213,14 @@ class _PrivacyPageState extends State<PrivacyPage> {
                               ),
                             ],
                           ),
-                          width: 210,
-                          height: 50,
+                          width: 310,
+                          height: 60,
                           child: Center(
                             child: Text(
                               "Submit",
-                              style: GoogleFonts.tinos(
+                              style: GoogleFonts.adamina(
                                 textStyle: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.normal,
                                 ),
                               ),

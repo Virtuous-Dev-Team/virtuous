@@ -66,11 +66,11 @@ class Settings {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      // if (newEmail.isNotEmpty) {
-      //   await user
-      //       .verifyBeforeUpdateEmail(newEmail)
-      //       .catchError((e) => print('error in updateProfile $e'));
-      // }
+      if (newEmail.isNotEmpty) {
+        await user
+            .verifyBeforeUpdateEmail(newEmail)
+            .catchError((e) => print('error in updateProfile $e'));
+      }
       if (newProfileName.isNotEmpty) {
         await user
             .updateDisplayName(newProfileName)
@@ -78,12 +78,32 @@ class Settings {
       } else {
         print('profile name is empty');
       }
-
-      final response = await usersCollectionRef.doc(user.uid).update({
-        'currentCommunity': newCommunity,
-        'careerInfo.currentPosition': newCareer,
-        'careerInfo.careerLength': newCareerLength
-      });
+      // Build the update map
+      final Map<String, dynamic> updateMap = {};
+      if (newCommunity.isNotEmpty) {
+        updateMap['currentCommunity'] = newCommunity;
+      }
+      if (newCareer.isNotEmpty) {
+        updateMap['careerInfo.currentPosition'] = newCareer;
+      }
+      if (newCareerLength.isNotEmpty) {
+        updateMap['careerInfo.careerLength'] = newCareerLength;
+      }
+      if (newProfileName.isNotEmpty) {
+        await user
+            .updateDisplayName(newProfileName)
+            .catchError((e) => print('error in updateProfile $e'));
+      } else {
+        print('profile name is empty');
+      }
+      if (updateMap.isNotEmpty) {
+        await usersCollectionRef.doc(user.uid).update(updateMap);
+      }
+      // final response = await usersCollectionRef.doc(user.uid).update({
+      //   'currentCommunity': newCommunity,
+      //   'careerInfo.currentPosition': newCareer,
+      //   'careerInfo.careerLength': newCareerLength
+      // });
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};
