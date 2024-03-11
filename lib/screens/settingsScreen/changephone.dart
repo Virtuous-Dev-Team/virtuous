@@ -6,16 +6,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
 
-class ChangePasswordPage extends StatefulWidget {
+class ChangePhonePage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  _ChangePasswordPageState createState() => _ChangePasswordPageState();
+  _ChangePhonePageState createState() => _ChangePhonePageState();
 }
 
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  TextEditingController tfNewPass = TextEditingController();
-  TextEditingController tfCPass = TextEditingController();
+class _ChangePhonePageState extends State<ChangePhonePage> {
   @override
   void initState() {
     super.initState();
@@ -30,6 +28,8 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    TextEditingController tfNewPass = TextEditingController();
+    TextEditingController tfCPass = TextEditingController();
 
     return SafeArea(
         child: Scaffold(
@@ -59,7 +59,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     children: [
                       SizedBox(height: 15,),
                       Text(
-                        "Change Password",
+                        "Phone Number",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Enter New Password',
+                            'Phone Number',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
                                   fontWeight: FontWeight.normal, fontSize: 14),
@@ -99,52 +99,16 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                               decoration: InputDecoration(
                                 contentPadding: EdgeInsets.zero,
                                 isDense: true,
-                                hintText: 'Eg. abc@gmail.com',
+                                hintText: '123-456-7890',
                                 hintStyle: GoogleFonts.tinos(
                                     textStyle: TextStyle(color: Colors.black)),
                                 border:
-                                    InputBorder.none, // Hide the default border
+                                InputBorder.none, // Hide the default border
                               ),
                             ),
                           ),
                           SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'Confirm New Password',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: tfCPass,
-                              onChanged: (newValue) {
-                                setState(() {});
-                              },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. john doe',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
+                            height: screenHeight / 10,
                           ),
                         ],
                       ),
@@ -171,7 +135,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           height: 60,
                           child: Center(
                             child: Text(
-                              "Change Password",
+                              "Update Phone Number",
                               style: GoogleFonts.tinos(
                                 textStyle: TextStyle(
                                   fontSize: 18,

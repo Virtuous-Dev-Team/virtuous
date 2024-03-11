@@ -16,6 +16,8 @@ import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
+import 'package:virtuetracker/screens/settingsScreen/changeprofile.dart';
 import 'package:virtuetracker/screens/settingsScreen/settings.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
@@ -87,7 +89,7 @@ class MyApp extends ConsumerWidget {
     );
 
     // */
-    /*
+/*
     return MaterialApp(
       title: 'Virtue Tracker',
       theme: ThemeData(
@@ -97,11 +99,11 @@ class MyApp extends ConsumerWidget {
       //home: GridPage(), // closed for testing
       //home: SurveyPage(),
       //home: TutorialPage(),
-      //home: SettingsPage(),
+      home: PrivacyPage(),
       // DONE settings, privacypolicy,termsofuse,
       // privacy, noti, changepass
     );
+*/
 
-     */
   }
 }
