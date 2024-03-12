@@ -9,13 +9,15 @@ import '../../widgets/appBarWidget.dart';
 
 class PrivacyPage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
-  bool cbShareEntries = false;
-  bool cbShareLocations = false;
+
   @override
   _PrivacyPageState createState() => _PrivacyPageState();
 }
 
 class _PrivacyPageState extends State<PrivacyPage> {
+  bool shareEntries = false;
+  bool shareLocation = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,9 +65,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
                         "Privacy",
                         style: GoogleFonts.adamina(
                           textStyle: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                       ),
@@ -75,7 +77,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(height: 15,),
+                            SizedBox(
+                              height: 15,
+                            ),
                             Text(
                               'Would you like to participate in entry sharing?',
                               style: GoogleFonts.adamina(
@@ -85,7 +89,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
                                     color: Colours.black),
                               ),
                             ),
-                            SizedBox(height: 5,),
+                            SizedBox(
+                              height: 5,
+                            ),
                             Text(
                               'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
                               style: GoogleFonts.adamina(
@@ -107,7 +113,9 @@ class _PrivacyPageState extends State<PrivacyPage> {
                                     color: Colours.black),
                               ),
                             ),
-                            SizedBox(height: 5,),
+                            SizedBox(
+                              height: 5,
+                            ),
                             Text(
                               'We will not share your location with other users. However you can’t use some features without location tuned on.',
                               style: GoogleFonts.adamina(
@@ -122,7 +130,8 @@ class _PrivacyPageState extends State<PrivacyPage> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center, // Align children vertically at the center
+                              crossAxisAlignment: CrossAxisAlignment
+                                  .center, // Align children vertically at the center
                               children: [
                                 Text(
                                   "Share Entries   ",
@@ -139,17 +148,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
                                 ),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  fillColor: MaterialStateProperty.resolveWith(getColor),
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                      getColor),
                                   side: BorderSide(
                                     color: Colours.swatch(clrWhite),
                                   ),
                                   checkColor: Colors.white,
-                                  value: widget.cbShareEntries,
+                                  value: shareEntries,
                                   onChanged: (bool? value) {
                                     print(value);
 
                                     setState(() {
-                                      widget.cbShareEntries = value!;
+                                      shareEntries = value!;
                                     });
                                   },
                                 ),
@@ -174,18 +184,18 @@ class _PrivacyPageState extends State<PrivacyPage> {
                                 ),
                                 Checkbox(
                                   visualDensity: VisualDensity.compact,
-                                  fillColor:
-                                      MaterialStateProperty.resolveWith(getColor),
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                      getColor),
                                   side: BorderSide(
                                     color: Colours.swatch(clrWhite),
                                   ),
                                   checkColor: Colors.white,
-                                  value: widget.cbShareLocations,
+                                  value: shareLocation,
                                   onChanged: (bool? value) {
                                     print(value);
 
                                     setState(() {
-                                      widget.cbShareLocations = value!;
+                                      shareLocation = value!;
                                     });
                                   },
                                 ),

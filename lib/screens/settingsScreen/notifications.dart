@@ -10,14 +10,16 @@ import '../../widgets/appBarWidget.dart';
 
 class NotificationsPage extends StatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
-  bool cbenableNotifications = false;
-  TimeOfDay _selectedTime = TimeOfDay.now();
-  TextEditingController tfNotifTime = TextEditingController();
+
   @override
   _NotificationsPageState createState() => _NotificationsPageState();
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
+  bool enableNotifications = false;
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  TextEditingController notificationTime = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -77,8 +79,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           children: [
                             InkWell(
                               onTap: () {
-                                GoRouter.of(context)
-                                    .go('/SettingsPage/ChangePasswordPage');
+                                GoRouter.of(context).go(
+                                    '/SettingsPage/NotificationsPage/UpdatePhoneNumber');
                               },
                               child: Row(
                                 mainAxisAlignment:
@@ -126,12 +128,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                     color: Colours.swatch(clrWhite),
                                   ),
                                   checkColor: Colors.white,
-                                  value: widget.cbenableNotifications,
+                                  value: enableNotifications,
                                   onChanged: (bool? value) {
                                     print(value);
 
                                     setState(() {
-                                      widget.cbenableNotifications = value!;
+                                      enableNotifications = value!;
                                     });
                                   },
                                 ),
@@ -139,7 +141,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             ),
                             InkWell(
                               onTap: () {
-                                _selectTime(context, widget.tfNotifTime);
+                                _selectTime(context, notificationTime);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -194,10 +196,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                     borderRadius: BorderRadius.circular(5.0),
                                   ),
                                   child:
-                                      //textFieldTimeInput(context,tfNotifTime,"Start Time"),
+                                      //textFieldTimeInput(context,notificationTime,"Start Time"),
                                       TextField(
                                     enabled: false,
-                                    controller: widget.tfNotifTime,
+                                    controller: notificationTime,
                                     onChanged: (newValue) {
                                       setState(() {});
                                     },
@@ -328,11 +330,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
       initialTime: TimeOfDay.now(),
     );
 
-    if (pickedTime != null && pickedTime != widget._selectedTime) {
+    if (pickedTime != null && pickedTime != _selectedTime) {
       setState(() {
         //widget._selectedTime = pickedTime;
 
-        widget.tfNotifTime.text = formatTime(pickedTime);
+        notificationTime.text = formatTime(pickedTime);
       });
     }
   }

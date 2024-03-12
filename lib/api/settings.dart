@@ -9,7 +9,8 @@ class Settings {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   static String verifyId = "";
 
-  Future<dynamic> updatePassword(String newPassword) async {
+  Future<dynamic> updatePassword(
+      {required String newPassword, required Function authError}) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -18,7 +19,13 @@ class Settings {
       final response = await user.updatePassword(newPassword);
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
+      if (error.code == "requires-recent-login") {
+        authError();
+        return {'Success': false, 'Error': error.code};
+      }
       return {'Success': false, 'Error': error.message};
+    } catch (error) {
+      return {'Success': false, 'Error': error};
     }
   }
 
@@ -58,8 +65,13 @@ class Settings {
     }
   }
 
-  Future<dynamic> updateProfile(String newEmail, String newProfileName,
-      String newCareer, String newCommunity, String newCareerLength) async {
+  Future<dynamic> updateProfile(
+      String newEmail,
+      String newProfileName,
+      String newCareer,
+      String newCommunity,
+      String newCareerLength,
+      Function authError) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -67,9 +79,7 @@ class Settings {
       }
 
       if (newEmail.isNotEmpty) {
-        await user
-            .verifyBeforeUpdateEmail(newEmail)
-            .catchError((e) => print('error in updateProfile $e'));
+        await user.verifyBeforeUpdateEmail(newEmail);
       }
       if (newProfileName.isNotEmpty) {
         await user
@@ -106,6 +116,10 @@ class Settings {
       // });
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
+      if (error.code == "requires-recent-login") {
+        authError();
+        return {'Success': false, 'Error': error.code};
+      }
       return {'Success': false, 'Error': error.message};
     } catch (error) {
       return {'Success': false, 'Error': error};
@@ -126,6 +140,27 @@ class Settings {
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};
+    }
+  }
+
+  // Re-authenticate the user with their email and password
+  Future<dynamic> reauthenticateUser(String email, String password) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      print('re-aunthenticating the user');
+      if (user != null) {
+        AuthCredential credential = EmailAuthProvider.credential(
+          email: email,
+          password: password,
+        );
+        await user.reauthenticateWithCredential(credential);
+        return {"Success": true, 'response': "Done"};
+      }
+    } on FirebaseAuthException catch (e) {
+      print('Error re-authenticating user: $e');
+      return {'Success': false, 'Error': e.message};
+    } catch (error) {
+      return {'Success': false, 'Error': error};
     }
   }
 

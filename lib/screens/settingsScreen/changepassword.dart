@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
@@ -16,6 +18,8 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -30,10 +34,32 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    TextEditingController newPassword = TextEditingController();
-    TextEditingController confirmPassword = TextEditingController();
 
     return Consumer(builder: (context, ref, _) {
+      ref.watch(settingsControllerProvider).when(
+            loading: () => CircularProgressIndicator(),
+            error: (error, stackTrace) {
+              Future.delayed(Duration.zero, () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  // ref.read(authControllerProvider.notifier).state =
+                  //     AsyncLoading();
+                  dynamic errorType = error;
+                  if (errorType['Function'] == 'updatePassword') {
+                    showToasty(errorType['msg'], false, context);
+                  }
+                });
+              });
+            },
+            data: (response) async {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (response['Function'] == "updatePassword") {
+                  showToasty(response['msg'], true, context);
+                  newPassword.clear();
+                  confirmPassword.clear();
+                }
+              });
+            },
+          );
       return Scaffold(
           backgroundColor: Color(0xFFEFE5CC),
           appBar: AppBarWidget('regular'),
@@ -162,7 +188,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                         onPressed: () {
                           ref
                               .read(settingsControllerProvider.notifier)
-                              .updatePassword(newPassword.text);
+                              .updatePassword(
+                                  newPassword: newPassword.text,
+                                  authError: () => {
+                                        ReauthenticateShowDialogWidget()
+                                            .dialogBuilder(context),
+                                      });
 
                           ref.invalidate(settingsControllerProvider);
                         },
@@ -185,7 +216,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           height: 50,
                           child: Center(
                             child: Text(
-                              "Update Profile",
+                              "Update Password",
                               style: GoogleFonts.tinos(
                                 textStyle: TextStyle(
                                   fontSize: 20,
@@ -204,4 +235,15 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ));
     });
   }
+}
+
+void showToasty(msg, bool success, BuildContext context) {
+  print('calling toast widget in sign in page');
+  WidgetsBinding.instance?.addPostFrameCallback((_) {
+    ToastNotificationWidget().successOrError(
+      context,
+      msg,
+      success,
+    );
+  });
 }

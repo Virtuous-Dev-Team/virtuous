@@ -17,6 +17,7 @@ import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
 import 'package:virtuetracker/screens/settingsScreen/settings.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';

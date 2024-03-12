@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
 import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/api/users.dart';
@@ -195,10 +196,16 @@ class AppNavigation {
                         builder: (context, state) => EditProfilePage(),
                       ),
                       GoRoute(
-                        path: 'NotificationsPage',
-                        name: 'NotificationsPage',
-                        builder: (context, state) => NotificationsPage(),
-                      ),
+                          path: 'NotificationsPage',
+                          name: 'NotificationsPage',
+                          builder: (context, state) => NotificationsPage(),
+                          routes: [
+                            GoRoute(
+                              path: 'UpdatePhoneNumber',
+                              name: 'UpdatePhoneNumber',
+                              builder: (context, state) => ChangePhonePage(),
+                            ),
+                          ]),
                       GoRoute(
                         path: 'ChangePasswordPage',
                         name: 'ChangePasswordPage',
