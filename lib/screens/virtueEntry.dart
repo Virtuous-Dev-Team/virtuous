@@ -8,28 +8,44 @@ import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import '../App_Configuration/apptheme.dart';
 import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
+
 class VirtueEntry extends StatefulWidget {
   final String? quadrantName;
   final String? definition;
   final String? color;
   VirtueEntry(
-  {super.key,
-  required this.quadrantName,
-  required this.definition,
-  required this.color});
-  List<Events> eventList= [Events('Tv', false),Events('In a Meeting', true),Events('Reading Emails', false),
-    Events('Driving', false),Events('Eating', false),Events('Exercising', false),Events('Commuting', false),
-    Events('Working', false),Events('Other', false)];
-  List<Events> whoWereWithYouList= [Events('Pet', false),Events('Co-Workers', true),Events('Family', false),
-    Events('No one', false),Events('Friends', false),Events('Other', false)];
-  List<Events> locationList= [Events('Work', false),Events('Home', false),Events('Outdoors', false),
-    Events('School', false),Events('Commuting', false),Events('Other', false)];
-  List<String> sleepingHoursList = [
-    '1',
-    '2',
-    '3',
-    '4'
+      {super.key,
+      required this.quadrantName,
+      required this.definition,
+      required this.color});
+  List<Events> eventList = [
+    Events('Tv', false),
+    Events('In a Meeting', true),
+    Events('Reading Emails', false),
+    Events('Driving', false),
+    Events('Eating', false),
+    Events('Exercising', false),
+    Events('Commuting', false),
+    Events('Working', false),
+    Events('Other', false)
   ];
+  List<Events> whoWereWithYouList = [
+    Events('Pet', false),
+    Events('Co-Workers', true),
+    Events('Family', false),
+    Events('No one', false),
+    Events('Friends', false),
+    Events('Other', false)
+  ];
+  List<Events> locationList = [
+    Events('Work', false),
+    Events('Home', false),
+    Events('Outdoors', false),
+    Events('School', false),
+    Events('Commuting', false),
+    Events('Other', false)
+  ];
+  List<String> sleepingHoursList = ['1', '2', '3', '4'];
   String sleepingHours = '';
   // you can send this data from backend
 
@@ -40,95 +56,85 @@ class VirtueEntry extends StatefulWidget {
   @override
   _VirtueEntryState createState() => _VirtueEntryState();
 }
-   class _VirtueEntryState extends State<VirtueEntry> {
 
+class _VirtueEntryState extends State<VirtueEntry> {
   final PageController _pageController = PageController();
-
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return
-      SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: mainBackgroundColor,
-          //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
-          appBar: AppBar(
-            backgroundColor: appBarColor,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-                onPressed: () {
-                  // TODO: Implement profile icon functionality.
-                },
-              ),
-              SizedBox(width: 12),
-            ],
-          ),
-          body: Center(
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color(0xFFFFFDF9),
-                border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-              ),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: PageView(
-                      controller: _pageController,
-                      children: [
-                        buildVirtueEntry1(context,screenWidth,screenHeight
-
-                        ),
-                        buildVirtueEntry2(context,screenWidth,screenHeight,
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: mainBackgroundColor,
+        //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
+        appBar: AppBar(
+          backgroundColor: appBarColor,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+              onPressed: () {
+                // TODO: Implement profile icon functionality.
+              },
+            ),
+            SizedBox(width: 12),
+          ],
+        ),
+        body: Center(
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Color(0xFFFFFDF9),
+              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView(
+                    controller: _pageController,
+                    children: [
+                      buildVirtueEntry1(context, screenWidth, screenHeight),
+                      buildVirtueEntry2(context, screenWidth, screenHeight,
                           quadrantName: widget.quadrantName!,
-                          definition:widget.definition!
-
-                        ),
-
-                      ],
-                    ),
+                          definition: widget.definition!),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SmoothPageIndicator(
-                      controller: _pageController,
-                      count: 2,
-                      effect: WormEffect(
-                        dotColor: Colours.swatch("#EFE5CC"),
-                        activeDotColor: Colours.swatch("#C5B898"),
-                      ),
-                      onDotClicked: (index) {
-                        _pageController.animateToPage(
-                          index,
-                          duration: Duration(milliseconds: 500),
-                          curve: Curves.easeInOut,
-                        );
-                      },
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SmoothPageIndicator(
+                    controller: _pageController,
+                    count: 2,
+                    effect: WormEffect(
+                      dotColor: Colours.swatch("#EFE5CC"),
+                      activeDotColor: Colours.swatch("#C5B898"),
                     ),
+                    onDotClicked: (index) {
+                      _pageController.animateToPage(
+                        index,
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-// Bottom navigation bar code would be here
         ),
-      );
-
-
-
+// Bottom navigation bar code would be here
+      ),
+    );
   }
-  Widget buildVirtueEntry1(
-      BuildContext context,
-      double screenWidth,
-      double screenHeight,
 
-      ) {
+  Widget buildVirtueEntry1(
+    BuildContext context,
+    double screenWidth,
+    double screenHeight,
+  ) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -167,59 +173,62 @@ class VirtueEntry extends StatefulWidget {
                 ),
               ),
             ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-      MaterialButton(onPressed: (){
-
-          _selectTime(context, widget.tfTime);
-
-
-      },child: Container(
-        width:screenWidth/3,
-        height: 20,
-        decoration: BoxDecoration(border: Border.all(
-          color: Colors.black, // Set border color here
-          width: 1, // Set border width here
-        ),
-            borderRadius: BorderRadius.circular(5)),
-        child: Center(child: Text(
-          'Pick Time',
-          style: GoogleFonts.inter(
-            textStyle: TextStyle(
-              fontSize: 12,
-              color: Colors.black,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MaterialButton(
+                    onPressed: () {
+                      _selectTime(context, widget.tfTime);
+                    },
+                    child: Container(
+                      width: screenWidth / 3,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Set border color here
+                            width: 1, // Set border width here
+                          ),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Center(
+                        child: Text(
+                          'Pick Time',
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )),
+                MaterialButton(
+                    onPressed: () {
+                      _selecteDate(context, DateTime.now(), widget.tfDate);
+                    },
+                    child: Container(
+                      width: screenWidth / 3,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Set border color here
+                            width: 1, // Set border width here
+                          ),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Center(
+                        child: Text(
+                          'Pick Date',
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ))
+              ],
             ),
-          ),
-        ),),
-      )),
-
-      MaterialButton(onPressed: (){
-
-  _selecteDate(context, DateTime.now(), widget.tfDate);
-
-
-      },child:Container(
-        width:screenWidth/3,
-        height: 20,
-        decoration: BoxDecoration(border: Border.all(
-          color: Colors.black, // Set border color here
-          width: 1, // Set border width here
-        ),
-            borderRadius: BorderRadius.circular(5)),
-        child: Center(child: Text(
-          'Pick Date',
-          style: GoogleFonts.inter(
-            textStyle: TextStyle(
-              fontSize: 12,
-              color: Colors.black,
-            ),
-          ),
-        ),),
-      ))
-        ],
-      ),
 
             Text(
               'What event was happening',
@@ -231,43 +240,49 @@ class VirtueEntry extends StatefulWidget {
                 ),
               ),
             ),
-        Wrap(
-          spacing: 10, // Space between containers
-          runSpacing: 10, // Space between rows
-          children: List.generate(
-            widget.eventList.length, // Number of containers, you can replace this with your dynamic data length
-                (index) =>   MaterialButton(onPressed: (){
-                  setState(() {
-                    if(widget.eventList[index].isSelected==true) {
-                      widget.eventList[index].isSelected != false;
-                    }
-                    else{
-                      widget.eventList[index].isSelected != true;
-                    }
-                  });
-
-
-                },child:Container(
-                  width:screenWidth/3,
-                  height: 20,
-                  decoration: BoxDecoration(border: Border.all(
-                    color: Colors.black, // Set border color here
-                    width: 1, // Set border width here
-                  ),
-                      color: Colours.swatch(widget.eventList[index].isSelected!?clrPurple:clrWhite),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Center(child: Text(
-                    widget.eventList[index].eventName.toString(),
-                    style: GoogleFonts.inter(
-                      textStyle: TextStyle(
-                        fontSize: 12,
-                        color: Colors.black,
+            Wrap(
+              spacing: 10, // Space between containers
+              runSpacing: 10, // Space between rows
+              children: List.generate(
+                widget.eventList
+                    .length, // Number of containers, you can replace this with your dynamic data length
+                (index) => MaterialButton(
+                    onPressed: () {
+                      setState(() {
+                        if (widget.eventList[index].isSelected == true) {
+                          widget.eventList[index].isSelected = false;
+                        } else {
+                          widget.eventList[index].isSelected = true;
+                        }
+                      });
+                    },
+                    child: Container(
+                      width: screenWidth / 3,
+                      height: 20,
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Set border color here
+                            width: 1, // Set border width here
+                          ),
+                          color: Colours.swatch(
+                              widget.eventList[index].isSelected!
+                                  ? clrPurple
+                                  : clrWhite),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Center(
+                        child: Text(
+                          widget.eventList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),),
-                )),
-          ),
-        ),
+                    )),
+              ),
+            ),
 
             Text(
               'Who were you with?',
@@ -283,42 +298,58 @@ class VirtueEntry extends StatefulWidget {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                widget.whoWereWithYouList.length, // Number of containers, you can replace this with your dynamic data length
-                    (index) =>   MaterialButton(onPressed: (){
+                widget.whoWereWithYouList
+                    .length, // Number of containers, you can replace this with your dynamic data length
+                (index) => MaterialButton(
+                    onPressed: () {
                       setState(() {
-                        widget.whoWereWithYouList[index].isSelected!=!widget.whoWereWithYouList[index].isSelected!;
-                        for(int checkCount=0;checkCount<widget.whoWereWithYouList.length;checkCount++)
-                        {
-                          if(widget.whoWereWithYouList[index].isSelected==true)
-                          {
-                            if(widget.whoWereWithYouList[index]!=widget.whoWereWithYouList[checkCount])
-                            {
-                              widget.whoWereWithYouList[checkCount].isSelected != false;
+                        if (widget.whoWereWithYouList[index].isSelected ==
+                            true) {
+                          widget.whoWereWithYouList[index].isSelected = false;
+                        } else {
+                          widget.whoWereWithYouList[index].isSelected = true;
+                        }
+                        // widget.whoWereWithYouList[index].isSelected !=
+                        //     !widget.whoWereWithYouList[index].isSelected!;
+                        for (int checkCount = 0;
+                            checkCount < widget.whoWereWithYouList.length;
+                            checkCount++) {
+                          if (widget.whoWereWithYouList[index].isSelected ==
+                              true) {
+                            if (widget.whoWereWithYouList[index] !=
+                                widget.whoWereWithYouList[checkCount]) {
+                              widget.whoWereWithYouList[checkCount]
+                                      .isSelected !=
+                                  false;
                             }
                           }
                         }
-
                       });
-
-
-                    },child:Container(
-                      width:screenWidth/3,
+                    },
+                    child: Container(
+                      width: screenWidth / 3,
                       height: 20,
-                      decoration: BoxDecoration(border: Border.all(
-                        color: Colors.black, // Set border color here
-                        width: 1, // Set border width here
-                      ),
-                          color: Colours.swatch(widget.whoWereWithYouList[index].isSelected!?clrPurple:clrWhite),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Set border color here
+                            width: 1, // Set border width here
+                          ),
+                          color: Colours.swatch(
+                              widget.whoWereWithYouList[index].isSelected!
+                                  ? clrPurple
+                                  : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
-                      child: Center(child: Text(
-                        widget.whoWereWithYouList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
+                      child: Center(
+                        child: Text(
+                          widget.whoWereWithYouList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      ),),
+                      ),
                     )),
               ),
             ),
@@ -337,42 +368,55 @@ class VirtueEntry extends StatefulWidget {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                widget.locationList.length, // Number of containers, you can replace this with your dynamic data length
-                    (index) =>   MaterialButton(onPressed: (){
+                widget.locationList
+                    .length, // Number of containers, you can replace this with your dynamic data length
+                (index) => MaterialButton(
+                    onPressed: () {
                       setState(() {
-                        widget.locationList[index].isSelected!=!widget.locationList[index].isSelected!;
-                        for(int checkCount=0;checkCount<widget.locationList.length;checkCount++)
-                        {
-                          if(widget.locationList[index].isSelected==true)
-                          {
-                            if(widget.locationList[index]!=widget.locationList[checkCount])
-                            {
-                              widget.locationList[checkCount].isSelected != false;
+                        if (widget.locationList[index].isSelected == true) {
+                          widget.locationList[index].isSelected = false;
+                        } else {
+                          widget.locationList[index].isSelected = true;
+                        }
+                        // widget.locationList[index].isSelected !=
+                        //     !widget.locationList[index].isSelected!;
+                        for (int checkCount = 0;
+                            checkCount < widget.locationList.length;
+                            checkCount++) {
+                          if (widget.locationList[index].isSelected == true) {
+                            if (widget.locationList[index] !=
+                                widget.locationList[checkCount]) {
+                              widget.locationList[checkCount].isSelected !=
+                                  false;
                             }
                           }
                         }
                       });
-
-
-
-                    },child:Container(
-                      width:screenWidth/3,
+                    },
+                    child: Container(
+                      width: screenWidth / 3,
                       height: 20,
-                      decoration: BoxDecoration(border: Border.all(
-                        color: Colors.black, // Set border color here
-                        width: 1, // Set border width here
-                      ),
-                          color: Colours.swatch(widget.locationList[index].isSelected!?clrPurple:clrWhite),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black, // Set border color here
+                            width: 1, // Set border width here
+                          ),
+                          color: Colours.swatch(
+                              widget.locationList[index].isSelected!
+                                  ? clrPurple
+                                  : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
-                      child: Center(child: Text(
-                        widget.locationList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
+                      child: Center(
+                        child: Text(
+                          widget.locationList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      ),),
+                      ),
                     )),
               ),
             ),
@@ -392,37 +436,31 @@ class VirtueEntry extends StatefulWidget {
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: DropdownButton<String>(
-
                 onChanged: (newValue) {
-setState(() {
-  widget.sleepingHours = newValue!;
-});
-
-
+                  setState(() {
+                    widget.sleepingHours = newValue!;
+                  });
                 },
-                hint: const Text("How much sleep did you get the night before?"),
+                hint:
+                    const Text("How much sleep did you get the night before?"),
                 items: widget.sleepingHoursList
-                    .map<DropdownMenuItem<String>>(
-                        (String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                dropdownColor: Colors
-                    .white, // Set the background color of the dropdown
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                dropdownColor:
+                    Colors.white, // Set the background color of the dropdown
                 isDense: true, // Reduce height
                 icon: Icon(Icons.arrow_drop_down,
-                    color: Colors
-                        .black), // Align the arrow to the right
-                isExpanded:
-                true, // Extend the button to the right
+                    color: Colors.black), // Align the arrow to the right
+                isExpanded: true, // Extend the button to the right
                 underline: Container(),
               ),
             ),
 
-
-      // Other widgets or content can go here
+            // Other widgets or content can go here
           ],
         ),
       ),
@@ -430,22 +468,16 @@ setState(() {
   }
 
   Widget buildVirtueEntry2(
-      BuildContext context,
-      double screenWidth,
-      double screenHeight,
-      {required String quadrantName,
-        required String definition
-      }) {
+      BuildContext context, double screenWidth, double screenHeight,
+      {required String quadrantName, required String definition}) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
-          Column(
-            children: [
-              Text(quadrantName), Text(definition)
-            ],
-          ),
+            Column(
+              children: [Text(quadrantName), Text(definition)],
+            ),
             Divider(
               thickness: 0.5,
               color: Colours.swatch(clrHonesty),
@@ -466,7 +498,9 @@ setState(() {
             ),
             SizedBox(height: 8.0),
             textFieldNoteInput(context, widget.tfDescription, false),
-            SizedBox(height: 8.0,),
+            SizedBox(
+              height: 8.0,
+            ),
             Container(
               child: Text(
                 "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
@@ -483,15 +517,13 @@ setState(() {
             textFieldNoteInput(context, widget.tfAdvice, false),
             SizedBox(height: 8.0),
             MaterialButton(
-              onPressed: () {
-
-              },
+              onPressed: () {},
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
                     color: Color(0xFFbab7d4), // Dark purple color
                     borderRadius:
-                    BorderRadius.circular(5), // Adjusted border radius
+                        BorderRadius.circular(5), // Adjusted border radius
                     boxShadow: [
                       BoxShadow(
                         color: Colors.grey.withOpacity(0.5),
@@ -517,73 +549,57 @@ setState(() {
                 ),
               ),
             ),
-
-
           ],
         ),
       ),
     );
   }
-  _selecteDate(BuildContext context,DateTime selectedDate, TextEditingController tfDate) async {
 
-
-
-
-    final DateTime? picked = await  showDatePicker(
-
+  _selecteDate(BuildContext context, DateTime selectedDate,
+      TextEditingController tfDate) async {
+    final DateTime? picked = await showDatePicker(
       confirmText: "Select",
-
       builder: (context, child) {
-        return
-          Theme(
+        return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Colours.swatch(clrBlack), // header background color
+                onPrimary: Colours.swatch(clrWhite), // header text color
+                onSurface: Colours.swatch(clrBlack),
+                // body text color
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colours.swatch(clrBlack),
 
-              data: Theme.of(context).copyWith(
-
-                colorScheme: ColorScheme.light(
-                  primary: Colours.swatch(clrBlack), // header background color
-                  onPrimary: Colours.swatch(clrWhite), // header text color
-                  onSurface: Colours.swatch(clrBlack),
-                  // body text color
-                ),
-                textButtonTheme: TextButtonThemeData(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colours.swatch(clrBlack),
-
-                    // button text color
-                  ),
+                  // button text color
                 ),
               ),
-              child:  Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-
-                  Container(
-                    height: MediaQuery.of(context).size.height/2,
-                    width: MediaQuery.of(context).size.width/1.1,
-                    child: child,
-
-                  ),
-                ],
-              ));
-
-
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  width: MediaQuery.of(context).size.width / 1.1,
+                  child: child,
+                ),
+              ],
+            ));
       },
       initialDate: DateTime.now(),
       firstDate: DateTime(1985),
-      lastDate: DateTime(DateTime.now().year+1),
+      lastDate: DateTime(DateTime.now().year + 1),
       context: context,
-
     );
     print("Picked Date:$picked");
     if (picked != null && picked != selectedDate) {
-
       selectedDate = picked;
       setState(() {
         tfDate.text = DateFormat('dd-MMM-yyy').format(picked);
       });
 
       print("Picked Now:$picked");
-
     }
   }
 
@@ -614,16 +630,12 @@ setState(() {
     );
 
     if (pickedTime != null && pickedTime != controller) {
-
       //widget._selectedTime = pickedTime;
       setState(() {
-        controller.text= formatTime(pickedTime);
+        controller.text = formatTime(pickedTime);
       });
-
-
     }
   }
-
 }
 
 Widget textFieldNoteInput(
@@ -651,8 +663,4 @@ Widget textFieldNoteInput(
             filled: true,
             fillColor: Colors.white),
       ));
-
 }
-
-
-
