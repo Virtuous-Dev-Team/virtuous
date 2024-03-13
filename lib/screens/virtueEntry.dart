@@ -18,6 +18,13 @@ class VirtueEntry extends StatefulWidget {
       required this.quadrantName,
       required this.definition,
       required this.color});
+
+  @override
+  _VirtueEntryState createState() => _VirtueEntryState();
+}
+
+class _VirtueEntryState extends State<VirtueEntry> {
+  final PageController _pageController = PageController();
   List<Events> eventList = [
     Events('Tv', false),
     Events('In a Meeting', true),
@@ -29,6 +36,7 @@ class VirtueEntry extends StatefulWidget {
     Events('Working', false),
     Events('Other', false)
   ];
+
   List<Events> whoWereWithYouList = [
     Events('Pet', false),
     Events('Co-Workers', true),
@@ -53,13 +61,6 @@ class VirtueEntry extends StatefulWidget {
   TextEditingController tfTime = TextEditingController();
   TextEditingController tfDescription = TextEditingController();
   TextEditingController tfAdvice = TextEditingController();
-  @override
-  _VirtueEntryState createState() => _VirtueEntryState();
-}
-
-class _VirtueEntryState extends State<VirtueEntry> {
-  final PageController _pageController = PageController();
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -165,7 +166,7 @@ class _VirtueEntryState extends State<VirtueEntry> {
               endIndent: 30,
             ),
             Text(
-              'Date of occurance ${widget.tfDate.text}, ${widget.tfTime.text}',
+              'Date of occurance ${tfDate.text}, ${tfTime.text}',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 16,
@@ -179,7 +180,7 @@ class _VirtueEntryState extends State<VirtueEntry> {
               children: [
                 MaterialButton(
                     onPressed: () {
-                      _selectTime(context, widget.tfTime);
+                      _selectTime(context, tfTime);
                     },
                     child: Container(
                       width: screenWidth / 3,
@@ -204,7 +205,7 @@ class _VirtueEntryState extends State<VirtueEntry> {
                     )),
                 MaterialButton(
                     onPressed: () {
-                      _selecteDate(context, DateTime.now(), widget.tfDate);
+                      _selecteDate(context, DateTime.now(), tfDate);
                     },
                     child: Container(
                       width: screenWidth / 3,
@@ -244,15 +245,15 @@ class _VirtueEntryState extends State<VirtueEntry> {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                widget.eventList
+                eventList
                     .length, // Number of containers, you can replace this with your dynamic data length
                 (index) => MaterialButton(
                     onPressed: () {
                       setState(() {
-                        if (widget.eventList[index].isSelected == true) {
-                          widget.eventList[index].isSelected = false;
+                        if (eventList[index].isSelected == true) {
+                          eventList[index].isSelected = false;
                         } else {
-                          widget.eventList[index].isSelected = true;
+                          eventList[index].isSelected = true;
                         }
                       });
                     },
@@ -264,14 +265,13 @@ class _VirtueEntryState extends State<VirtueEntry> {
                             color: Colors.black, // Set border color here
                             width: 1, // Set border width here
                           ),
-                          color: Colours.swatch(
-                              widget.eventList[index].isSelected!
-                                  ? clrPurple
-                                  : clrWhite),
+                          color: Colours.swatch(eventList[index].isSelected!
+                              ? clrPurple
+                              : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
                       child: Center(
                         child: Text(
-                          widget.eventList[index].eventName.toString(),
+                          eventList[index].eventName.toString(),
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 12,
@@ -298,28 +298,25 @@ class _VirtueEntryState extends State<VirtueEntry> {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                widget.whoWereWithYouList
+                whoWereWithYouList
                     .length, // Number of containers, you can replace this with your dynamic data length
                 (index) => MaterialButton(
                     onPressed: () {
                       setState(() {
-                        if (widget.whoWereWithYouList[index].isSelected ==
-                            true) {
-                          widget.whoWereWithYouList[index].isSelected = false;
+                        if (whoWereWithYouList[index].isSelected == true) {
+                          whoWereWithYouList[index].isSelected = false;
                         } else {
-                          widget.whoWereWithYouList[index].isSelected = true;
+                          whoWereWithYouList[index].isSelected = true;
                         }
                         // widget.whoWereWithYouList[index].isSelected !=
                         //     !widget.whoWereWithYouList[index].isSelected!;
                         for (int checkCount = 0;
-                            checkCount < widget.whoWereWithYouList.length;
+                            checkCount < whoWereWithYouList.length;
                             checkCount++) {
-                          if (widget.whoWereWithYouList[index].isSelected ==
-                              true) {
-                            if (widget.whoWereWithYouList[index] !=
-                                widget.whoWereWithYouList[checkCount]) {
-                              widget.whoWereWithYouList[checkCount]
-                                      .isSelected !=
+                          if (whoWereWithYouList[index].isSelected == true) {
+                            if (whoWereWithYouList[index] !=
+                                whoWereWithYouList[checkCount]) {
+                              whoWereWithYouList[checkCount].isSelected !=
                                   false;
                             }
                           }
@@ -335,13 +332,13 @@ class _VirtueEntryState extends State<VirtueEntry> {
                             width: 1, // Set border width here
                           ),
                           color: Colours.swatch(
-                              widget.whoWereWithYouList[index].isSelected!
+                              whoWereWithYouList[index].isSelected!
                                   ? clrPurple
                                   : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
                       child: Center(
                         child: Text(
-                          widget.whoWereWithYouList[index].eventName.toString(),
+                          whoWereWithYouList[index].eventName.toString(),
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 12,
@@ -368,26 +365,25 @@ class _VirtueEntryState extends State<VirtueEntry> {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                widget.locationList
+                locationList
                     .length, // Number of containers, you can replace this with your dynamic data length
                 (index) => MaterialButton(
                     onPressed: () {
                       setState(() {
-                        if (widget.locationList[index].isSelected == true) {
-                          widget.locationList[index].isSelected = false;
+                        if (locationList[index].isSelected == true) {
+                          locationList[index].isSelected = false;
                         } else {
-                          widget.locationList[index].isSelected = true;
+                          locationList[index].isSelected = true;
                         }
                         // widget.locationList[index].isSelected !=
                         //     !widget.locationList[index].isSelected!;
                         for (int checkCount = 0;
-                            checkCount < widget.locationList.length;
+                            checkCount < locationList.length;
                             checkCount++) {
-                          if (widget.locationList[index].isSelected == true) {
-                            if (widget.locationList[index] !=
-                                widget.locationList[checkCount]) {
-                              widget.locationList[checkCount].isSelected !=
-                                  false;
+                          if (locationList[index].isSelected == true) {
+                            if (locationList[index] !=
+                                locationList[checkCount]) {
+                              locationList[checkCount].isSelected != false;
                             }
                           }
                         }
@@ -401,14 +397,13 @@ class _VirtueEntryState extends State<VirtueEntry> {
                             color: Colors.black, // Set border color here
                             width: 1, // Set border width here
                           ),
-                          color: Colours.swatch(
-                              widget.locationList[index].isSelected!
-                                  ? clrPurple
-                                  : clrWhite),
+                          color: Colours.swatch(locationList[index].isSelected!
+                              ? clrPurple
+                              : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
                       child: Center(
                         child: Text(
-                          widget.locationList[index].eventName.toString(),
+                          locationList[index].eventName.toString(),
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 12,
@@ -438,12 +433,12 @@ class _VirtueEntryState extends State<VirtueEntry> {
               child: DropdownButton<String>(
                 onChanged: (newValue) {
                   setState(() {
-                    widget.sleepingHours = newValue!;
+                    sleepingHours = newValue!;
                   });
                 },
                 hint:
                     const Text("How much sleep did you get the night before?"),
-                items: widget.sleepingHoursList
+                items: sleepingHoursList
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -497,7 +492,7 @@ class _VirtueEntryState extends State<VirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, widget.tfDescription, false),
+            textFieldNoteInput(context, tfDescription, false),
             SizedBox(
               height: 8.0,
             ),
@@ -514,10 +509,14 @@ class _VirtueEntryState extends State<VirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, widget.tfAdvice, false),
+            textFieldNoteInput(context, tfAdvice, false),
             SizedBox(height: 8.0),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () {
+                eventList.forEach((element) {
+                  print(element.isSelected);
+                });
+              },
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
