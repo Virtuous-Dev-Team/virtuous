@@ -50,6 +50,8 @@ class SurveyPageState extends State<SurveyPage> {
   TextEditingController notificationTime = TextEditingController();
   // Phone verification
   bool phoneVerified = false;
+  // If data is loading then we won't allow to submit
+  bool isLoading = false;
   // Location of user
   dynamic userLocation = null;
   // Selected values for dropdowns
@@ -567,9 +569,15 @@ class SurveyPageState extends State<SurveyPage> {
                       setState(() {
                         if (newValue == "Yes")
                           // call controller to get location
-                          ref
-                              .read(surveyPageControllerProvider.notifier)
-                              .getLocation();
+                          setState(() {
+                            isLoading = true;
+                          });
+                        ref
+                            .read(surveyPageControllerProvider.notifier)
+                            .getLocation();
+                        setState(() {
+                          isLoading = false;
+                        });
                         shareLocation = newValue!;
                         answers[5] = newValue;
                       });
@@ -915,42 +923,45 @@ class SurveyPageState extends State<SurveyPage> {
             child: Container(
               width: double.infinity,
               child: ElevatedButton(
-                  onPressed: () async {
-                    print(careerPosition.text);
-                    print(careerLength.text);
-                    print(currentCommunity);
-                    print(reasons.text);
-                    print(shareEntries);
-                    print(shareLocation);
-                    print(allowNotifications);
-                    print(phoneNumber.text);
-                    print(notificationTime.text);
-                    print(userLocation.toString());
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          print(careerPosition.text);
+                          print(careerLength.text);
+                          print(currentCommunity);
+                          print(reasons.text);
+                          print(shareEntries);
+                          print(shareLocation);
+                          print(allowNotifications);
+                          print(phoneNumber.text);
+                          print(notificationTime.text);
+                          print(userLocation.toString());
 
-                    if (careerPosition.text == "" ||
-                        careerLength.text == "" ||
-                        currentCommunity.isEmpty ||
-                        reasons.text == "") {
-                      print('Fields missing');
-                      return;
-                    } else {
-                      ref
-                          .read(surveyPageControllerProvider.notifier)
-                          .surveyInfo(
-                              careerPosition.text,
-                              careerLength.text,
-                              currentCommunity,
-                              reasons.text,
-                              shareEntries == "Yes" ? true : false,
-                              shareLocation == "Yes" ? true : false,
-                              allowNotifications == "Yes" ? true : false,
-                              phoneNumber.text,
-                              notificationTime.text,
-                              phoneVerified,
-                              userLocation);
-                    }
-                  },
-                  child: Text('Submit'),
+                          if (careerPosition.text == "" ||
+                              careerLength.text == "" ||
+                              currentCommunity.isEmpty ||
+                              reasons.text == "") {
+                            print('Fields missing');
+                            return;
+                          } else {
+                            ref
+                                .read(surveyPageControllerProvider.notifier)
+                                .surveyInfo(
+                                    careerPosition.text,
+                                    careerLength.text,
+                                    currentCommunity,
+                                    reasons.text,
+                                    shareEntries == "Yes" ? true : false,
+                                    shareLocation == "Yes" ? true : false,
+                                    allowNotifications == "Yes" ? true : false,
+                                    phoneNumber.text,
+                                    notificationTime.text,
+                                    phoneVerified,
+                                    userLocation);
+                          }
+                        },
+                  child:
+                      isLoading ? CircularProgressIndicator() : Text('Submit'),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFbab7d4),
                       foregroundColor: Colors.black)),

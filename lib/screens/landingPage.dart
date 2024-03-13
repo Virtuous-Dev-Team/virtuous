@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
@@ -15,20 +16,33 @@ Future<dynamic> getUserInfo() async {
   return info;
 }
 
-class LandingPageTest extends StatefulWidget {
+class LandingPageTest extends ConsumerStatefulWidget {
   const LandingPageTest({super.key});
 
   @override
-  State<LandingPageTest> createState() => _LandingPageTestState();
+  _LandingPageTestState createState() => _LandingPageTestState();
 }
 
-class _LandingPageTestState extends State<LandingPageTest> {
+class _LandingPageTestState extends ConsumerState<LandingPageTest> {
   @override
   void initState() {
     // Call your async method here
     navigate();
+    Future.microtask(() => setUserInfoProvider(ref));
     super.initState();
   }
+
+  // late UserInfoProvider userInfoProvider;
+  // final userInfoProviderr = ChangeNotifierProvider((ref) => UserInfoProvider());
+  // setUserInfoProvider(ref) async {
+  //   final setUserInfo = ref.read(userInfoProviderr);
+  //   final getUserInfo = await ref.read(usersRepositoryProvider).getUserInfo();
+  //   if (getUserInfo['Success']) {
+  //     final info = getUserInfo['response'];
+  //     setUserInfo.setUserInfo(getUserInfo['response']);
+  //     print('landing page setting user info: ${setUserInfo.currentCommunity}');
+  //   }
+  // }
 
   Auth auth = Auth();
   Future<void> navigate() async {
@@ -61,5 +75,15 @@ class _LandingPageTestState extends State<LandingPageTest> {
         child: Center(
       child: CircularProgressIndicator(),
     ));
+  }
+}
+
+setUserInfoProvider(ref) async {
+  final setUserInfo = ref.read(userInfoProviderr);
+  final getUserInfo = await ref.read(usersRepositoryProvider).getUserInfo();
+  if (getUserInfo['Success']) {
+    final info = getUserInfo['response'];
+    setUserInfo.setUserInfo(getUserInfo['response']);
+    print('landing page setting user info: ${setUserInfo.currentCommunity}');
   }
 }

@@ -1,28 +1,37 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../App_Configuration/globalfunctions.dart';
 import '../../widgets/appBarWidget.dart';
 
-class NotificationsPage extends StatefulWidget {
+class NotificationsPage extends ConsumerStatefulWidget {
   // const SettingsPage({Key? key}) : super(key: key);
 
   @override
   _NotificationsPageState createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage> {
+class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   bool enableNotifications = false;
+  bool onChanged = false;
   TimeOfDay _selectedTime = TimeOfDay.now();
   TextEditingController notificationTime = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    final userInfo = ref.read(userInfoProviderr);
+    enableNotifications = userInfo.notificationPreferences.allowNotifications;
+    notificationTime.text = userInfo.notificationPreferences.notificationTime;
   }
 
   @override
@@ -35,6 +44,31 @@ class _NotificationsPageState extends State<NotificationsPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
+    ref.watch(settingsControllerProvider).when(
+        loading: () => CircularProgressIndicator(),
+        error: (error, stackTrace) {
+          Future.delayed(Duration.zero, () {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              // ref.read(authControllerProvider.notifier).state =
+              //     AsyncLoading();
+              dynamic errorType = error;
+              if (errorType['Function'] == 'updateNotificationPreferences') {
+                showToasty(errorType['msg'], false, context);
+              }
+            });
+          });
+        },
+        data: (response) async {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (response['Function'] == "updateNotificationPreferences") {
+              showToasty(response['msg'], true, context);
+              setUserInfoProvider(ref);
+              GoRouter.of(context).pop();
+
+              // newProfileName.
+            }
+          });
+        });
     return SafeArea(
         child: Scaffold(
             backgroundColor: Color(0xFFEFE5CC),
@@ -134,6 +168,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
                                     setState(() {
                                       enableNotifications = value!;
+                                      onChanged = true;
                                     });
                                   },
                                 ),
@@ -142,6 +177,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             InkWell(
                               onTap: () {
                                 _selectTime(context, notificationTime);
+                                onChanged = true;
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -222,31 +258,75 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         SizedBox(
                           height: 40,
                         ),
+                        // Center(
+                        //   child: Container(
+                        //     decoration: BoxDecoration(
+                        //       color: Colours.swatch(
+                        //           clrBackground), // Dark purple color
+                        //       borderRadius: BorderRadius.circular(
+                        //           5), // Adjusted border radius
+                        //       boxShadow: [
+                        //         BoxShadow(
+                        //           color: Colors.grey.withOpacity(0.5),
+                        //           spreadRadius: 2,
+                        //           blurRadius: 4,
+                        //           offset: Offset(0, 3),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //     width: 310,
+                        //     height: 60,
+                        //     child: Center(
+                        //       child: Text(
+                        //         "Submit",
+                        //         style: GoogleFonts.tinos(
+                        //           textStyle: TextStyle(
+                        //             fontSize: 18,
+                        //             fontWeight: FontWeight.normal,
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
                         Center(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colours.swatch(
-                                  clrBackground), // Dark purple color
-                              borderRadius: BorderRadius.circular(
-                                  5), // Adjusted border radius
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  spreadRadius: 2,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            width: 310,
-                            height: 60,
-                            child: Center(
-                              child: Text(
-                                "Submit",
-                                style: GoogleFonts.tinos(
-                                  textStyle: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
+                          child: MaterialButton(
+                            onPressed: () {
+                              if (onChanged) {
+                                ref
+                                    .read(settingsControllerProvider.notifier)
+                                    .updateNotificationPreferences(
+                                        enableNotifications,
+                                        notificationTime.text);
+
+                                ref.invalidate(settingsControllerProvider);
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colours.swatch(
+                                    clrBackground), // Dark purple color
+                                borderRadius: BorderRadius.circular(
+                                    5), // Adjusted border radius
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              width: 210,
+                              height: 50,
+                              child: Center(
+                                child: Text(
+                                  "Update Notifications",
+                                  style: GoogleFonts.tinos(
+                                    textStyle: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.normal,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -338,6 +418,4 @@ class _NotificationsPageState extends State<NotificationsPage> {
       });
     }
   }
-
-
 }

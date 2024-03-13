@@ -30,7 +30,7 @@ class Settings {
   }
 
   Future<dynamic> updatePrivacy(
-      bool newShareEntries, bool newShareLocation) async {
+      bool newShareEntries, bool newShareLocation, dynamic userLocation) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -38,18 +38,11 @@ class Settings {
       }
 
       if (newShareLocation) {
-        Users userAPI = new Users();
-        final getLocation = await userAPI.addUserLocation();
-        if (getLocation['Success']) {
-          final GeoPoint location = getLocation['response'];
-          final response = await usersCollectionRef.doc(user.uid).update({
-            'shareEntries': newShareEntries,
-            'shareLocation': newShareLocation,
-            'userLocation': location
-          });
-        } else {
-          return {'Success': false, "Error": "Couldn't get location"};
-        }
+        final response = await usersCollectionRef.doc(user.uid).update({
+          'shareEntries': newShareEntries,
+          'shareLocation': newShareLocation,
+          'userLocation': userLocation
+        });
       } else {
         final response = await usersCollectionRef.doc(user.uid).update({
           'shareEntries': newShareEntries,
@@ -114,6 +107,7 @@ class Settings {
       //   'careerInfo.currentPosition': newCareer,
       //   'careerInfo.careerLength': newCareerLength
       // });
+
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
       if (error.code == "requires-recent-login") {

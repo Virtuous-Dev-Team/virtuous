@@ -2,7 +2,9 @@ import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
@@ -34,7 +36,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Consumer(builder: (context, ref, _) {
       ref.watch(settingsControllerProvider).when(
             loading: () => CircularProgressIndicator(),
@@ -56,6 +57,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   showToasty(response['msg'], true, context);
                   newPassword.clear();
                   confirmPassword.clear();
+                  GoRouter.of(context).pop();
                 }
               });
             },

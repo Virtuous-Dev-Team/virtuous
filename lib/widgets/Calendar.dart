@@ -57,7 +57,7 @@ class CustomCalender {
 
         disableDayPressed: false,
         onDayPressed: (p0, p1) {
-          print('day pressed ${p1.toString()}');
+          print('day pressed');
         },
 
         weekdayTextStyle: TextStyle(color: Colours.swatch(clrBlack)),

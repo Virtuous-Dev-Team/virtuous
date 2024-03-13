@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 
 class Users {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
@@ -380,7 +381,32 @@ class Users {
 final usersRepositoryProvider = Provider<Users>((ref) {
   return Users();
 });
-final currentUserInfo = StateProvider.autoDispose(
-    (ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfoProvider = StateProvider.autoDispose(
+//     (ref) => ref.watch(usersRepositoryProvider).getUserInfo());
 // final currentUserInfo =
 //     StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfoProvider = StateProvider<Map<String, dynamic>>((ref) {
+//   // This will call getUserInfo() once when the provider is first accessed
+//   final dynamic userInfo = ref.watch(usersRepositoryProvider).getUserInfo();
+//   return userInfo['response'] as Map<String, dynamic>? ??
+//       {}; // Return response from getUserInfo(), or an empty map if it's null
+// });
+// final userInfoProvider = Provider<UserInfoe>((ref) {
+//   // Return the UserInfo object here
+//   final dynamic userInfo =
+//       ref.watch(usersRepositoryProvider).getUserInfo().then((value) => {});
+//   print(userInfo);
+//   return UserInfoe(
+//     id: '123',
+//     email: 'user@example.com',
+//     displayName: 'John Doe',
+//     currentCommunity: 'Community A',
+//     currentPosition: 'Developer',
+//     careerLength: '3 years',
+//   );
+// });
+final currentUserInfoProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
+  final userInfo = await ref.read(usersRepositoryProvider).getUserInfo();
+  return userInfo;
+});

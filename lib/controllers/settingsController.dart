@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/settings.dart';
 
 part 'settingsController.g.dart';
@@ -39,16 +41,24 @@ class SettingsController extends _$SettingsController {
   }
 
   Future<void> updatePrivacy(
-      bool newShareEntries, bool newShareLocation) async {
+      bool newShareEntries, bool newShareLocation, dynamic userLocation) async {
     try {
       final settingsRepo = ref.read(settingsRepositoryProvider);
-      final result = await AsyncValue.guard(
-          () => settingsRepo.updatePrivacy(newShareEntries, newShareLocation));
+      final result = await AsyncValue.guard(() => settingsRepo.updatePrivacy(
+          newShareEntries, newShareLocation, userLocation));
 
       if (result.value['Success']) {
-        state = AsyncData('Privacy preferences updated successfully');
+        state = AsyncData({
+          'Function': "updatePrivacy",
+          "msg": 'Privacy preferences updated successfully!'
+        });
       } else {
-        state = AsyncError(result.value['Error'], StackTrace.current);
+        final error = {
+          'Function': 'updatePrivacy',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
       }
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -99,9 +109,17 @@ class SettingsController extends _$SettingsController {
               newAllowNotificationa, newNotificationTime));
 
       if (result.value['Success']) {
-        state = AsyncData('Notification preferences updated successfully');
+        state = AsyncData({
+          'Function': "updateNotificationPreferences",
+          "msg": 'Notification preferences updated successfully!'
+        });
       } else {
-        state = AsyncError(result.value['Error'], StackTrace.current);
+        final error = {
+          'Function': 'updateNotificationPreferences',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
       }
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
