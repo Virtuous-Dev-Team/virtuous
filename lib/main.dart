@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart'
     hide ChangeNotifierProvider;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/settings.dart';
@@ -107,7 +108,7 @@ Future testingApi() async {
   await stats
       .buildCalendar()
       .then((value) => print(value['response'].toString()));
-  await u.getUserInfo().catchError((e) => print(e));
+
   // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
   // await u.findUsersNear().catchError((e) => print(e));
 

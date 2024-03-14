@@ -1,15 +1,23 @@
+import 'dart:ffi';
+
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
+import 'package:virtuetracker/controllers/virtueEntryController.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import '../App_Configuration/apptheme.dart';
 import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
 
-class VirtueEntry extends StatefulWidget {
+class VirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
   final String? definition;
   final String? color;
@@ -23,11 +31,32 @@ class VirtueEntry extends StatefulWidget {
   _VirtueEntryState createState() => _VirtueEntryState();
 }
 
-class _VirtueEntryState extends State<VirtueEntry> {
+class _VirtueEntryState extends ConsumerState<VirtueEntry> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final userInfo = ref.read(userInfoProviderr);
+    shareEntry = userInfo.shareEntries;
+    shareLocation = userInfo.shareLocation;
+    communityName = userInfo.currentCommunity;
+    tfDescription.text = '';
+    tfAdvice.text = '';
+    DateTime now = DateTime.now();
+    // Format the date as a string (e.g., "2/20/24")
+    tfDate.text = DateFormat('M/d/yy').format(now);
+    // Format the time as a string (e.g., "2:20pm")
+    tfTime.text = DateFormat('h:mma').format(now);
+  }
+
+  late bool shareEntry;
+  late bool shareLocation;
+  late String communityName;
+  bool isLoading = false;
   final PageController _pageController = PageController();
   List<Events> eventList = [
     Events('Tv', false),
-    Events('In a Meeting', true),
+    Events('In a Meeting', false),
     Events('Reading Emails', false),
     Events('Driving', false),
     Events('Eating', false),
@@ -39,13 +68,13 @@ class _VirtueEntryState extends State<VirtueEntry> {
 
   List<Events> whoWereWithYouList = [
     Events('Pet', false),
-    Events('Co-Workers', true),
+    Events('Co-Workers', false),
     Events('Family', false),
     Events('No one', false),
     Events('Friends', false),
     Events('Other', false)
   ];
-  List<Events> locationList = [
+  List<Events> whereWereYouList = [
     Events('Work', false),
     Events('Home', false),
     Events('Outdoors', false),
@@ -65,6 +94,41 @@ class _VirtueEntryState extends State<VirtueEntry> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+    print('color in virtue entry: ${widget.color}');
+    ref.watch(virtueEntryControllerProvider).when(
+          loading: () => CircularProgressIndicator(),
+          error: (error, stackTrace) {
+            Future.delayed(Duration.zero, () {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                // ref.read(authControllerProvider.notifier).state =
+                //     AsyncLoading();
+                dynamic errorType = error;
+                if (errorType['Function'] == 'addEntry') {
+                  showToasty(errorType['msg'], false, context);
+                }
+              });
+            });
+          },
+          data: (response) async {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              if (response['Function'] == "addEntry") {
+                showToasty(response['msg'], true, context);
+                tfAdvice.clear();
+                tfDescription.clear();
+                tfDate.clear();
+                tfTime.clear();
+                // Update UserInfo Provider
+                setUserInfoProvider(ref);
+                await ref
+                    .read(virtueEntryControllerProvider.notifier)
+                    .getMostRecentEntries(communityName.toLowerCase());
+                GoRouter.of(context).go('/home');
+
+                // newProfileName.
+              }
+            });
+          },
+        );
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -100,7 +164,8 @@ class _VirtueEntryState extends State<VirtueEntry> {
                       buildVirtueEntry1(context, screenWidth, screenHeight),
                       buildVirtueEntry2(context, screenWidth, screenHeight,
                           quadrantName: widget.quadrantName!,
-                          definition: widget.definition!),
+                          definition: widget.definition!,
+                          color: widget.color!),
                     ],
                   ),
                 ),
@@ -156,14 +221,13 @@ class _VirtueEntryState extends State<VirtueEntry> {
                 ),
               ),
             ),
+
             SizedBox(
               height: 5,
             ),
             Divider(
-              thickness: 0.5,
-              color: Colours.swatch(clrHonesty),
-              indent: 30,
-              endIndent: 30,
+              thickness: 2,
+              color: Colours.swatch(widget.color!),
             ),
             Text(
               'Date of occurance ${tfDate.text}, ${tfTime.text}',
@@ -365,25 +429,25 @@ class _VirtueEntryState extends State<VirtueEntry> {
               spacing: 10, // Space between containers
               runSpacing: 10, // Space between rows
               children: List.generate(
-                locationList
+                whereWereYouList
                     .length, // Number of containers, you can replace this with your dynamic data length
                 (index) => MaterialButton(
                     onPressed: () {
                       setState(() {
-                        if (locationList[index].isSelected == true) {
-                          locationList[index].isSelected = false;
+                        if (whereWereYouList[index].isSelected == true) {
+                          whereWereYouList[index].isSelected = false;
                         } else {
-                          locationList[index].isSelected = true;
+                          whereWereYouList[index].isSelected = true;
                         }
-                        // widget.locationList[index].isSelected !=
-                        //     !widget.locationList[index].isSelected!;
+                        // widget.whereWereYouList[index].isSelected !=
+                        //     !widget.whereWereYouList[index].isSelected!;
                         for (int checkCount = 0;
-                            checkCount < locationList.length;
+                            checkCount < whereWereYouList.length;
                             checkCount++) {
-                          if (locationList[index].isSelected == true) {
-                            if (locationList[index] !=
-                                locationList[checkCount]) {
-                              locationList[checkCount].isSelected != false;
+                          if (whereWereYouList[index].isSelected == true) {
+                            if (whereWereYouList[index] !=
+                                whereWereYouList[checkCount]) {
+                              whereWereYouList[checkCount].isSelected != false;
                             }
                           }
                         }
@@ -397,13 +461,14 @@ class _VirtueEntryState extends State<VirtueEntry> {
                             color: Colors.black, // Set border color here
                             width: 1, // Set border width here
                           ),
-                          color: Colours.swatch(locationList[index].isSelected!
-                              ? clrPurple
-                              : clrWhite),
+                          color: Colours.swatch(
+                              whereWereYouList[index].isSelected!
+                                  ? clrPurple
+                                  : clrWhite),
                           borderRadius: BorderRadius.circular(5)),
                       child: Center(
                         child: Text(
-                          locationList[index].eventName.toString(),
+                          whereWereYouList[index].eventName.toString(),
                           style: GoogleFonts.inter(
                             textStyle: TextStyle(
                               fontSize: 12,
@@ -464,7 +529,9 @@ class _VirtueEntryState extends State<VirtueEntry> {
 
   Widget buildVirtueEntry2(
       BuildContext context, double screenWidth, double screenHeight,
-      {required String quadrantName, required String definition}) {
+      {required String quadrantName,
+      required String definition,
+      required String color}) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -474,10 +541,8 @@ class _VirtueEntryState extends State<VirtueEntry> {
               children: [Text(quadrantName), Text(definition)],
             ),
             Divider(
-              thickness: 0.5,
-              color: Colours.swatch(clrHonesty),
-              indent: 30,
-              endIndent: 30,
+              thickness: 2,
+              color: Colours.swatch(color),
             ),
             Container(
               child: Text(
@@ -512,9 +577,26 @@ class _VirtueEntryState extends State<VirtueEntry> {
             textFieldNoteInput(context, tfAdvice, false),
             SizedBox(height: 8.0),
             MaterialButton(
-              onPressed: () {
-                eventList.forEach((element) {
-                  print(element.isSelected);
+              onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+                await ref.read(virtueEntryControllerProvider.notifier).addEntry(
+                      communityName.toLowerCase(),
+                      widget.quadrantName!,
+                      widget.color!,
+                      shareLocation,
+                      shareEntry,
+                      sleepingHours,
+                      tfAdvice.text,
+                      tfDescription.text,
+                      eventList,
+                      whoWereWithYouList,
+                      whereWereYouList,
+                      '${tfDate.text}, ${tfTime.text}',
+                    );
+                setState(() {
+                  isLoading = false;
                 });
               },
               child: Center(
@@ -535,15 +617,19 @@ class _VirtueEntryState extends State<VirtueEntry> {
                   width: 210,
                   height: 50,
                   child: Center(
-                    child: Text(
-                      "Save Entry",
-                      style: GoogleFonts.tinos(
-                        textStyle: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
+                    child: isLoading
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Text(
+                            "Save Entry",
+                            style: GoogleFonts.tinos(
+                              textStyle: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               ),
@@ -595,7 +681,7 @@ class _VirtueEntryState extends State<VirtueEntry> {
     if (picked != null && picked != selectedDate) {
       selectedDate = picked;
       setState(() {
-        tfDate.text = DateFormat('dd-MMM-yyy').format(picked);
+        tfDate.text = DateFormat('M/d/yy').format(picked);
       });
 
       print("Picked Now:$picked");

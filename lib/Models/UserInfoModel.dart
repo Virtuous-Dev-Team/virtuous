@@ -56,7 +56,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class UserInfoProvider extends ChangeNotifier {
-  late String _quadrantUsedData;
+  late Map<String, dynamic> _quadrantUsedData;
   late String _reasons;
   late bool _shareEntries;
   late String _currentCommunity;
@@ -65,7 +65,7 @@ class UserInfoProvider extends ChangeNotifier {
   late NotificationPreferences _notificationPreferences;
   late CareerInfo _careerInfo;
 
-  String get quadrantUsedData => _quadrantUsedData;
+  Map<String, dynamic> get quadrantUsedData => _quadrantUsedData;
   String get reasons => _reasons;
   bool get shareEntries => _shareEntries;
   String get currentCommunity => _currentCommunity;
