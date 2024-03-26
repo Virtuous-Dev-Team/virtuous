@@ -15,6 +15,7 @@ import '../App_Configuration/apptheme.dart';
 class CustomCalender {
   Widget customCalender(
       BuildContext context, List<LegalCalendarModel> markers) {
+    print('calendar page $markers');
     addListToCalender(markers, context);
     return Container(
       decoration: BoxDecoration(

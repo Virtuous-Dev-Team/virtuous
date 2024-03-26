@@ -108,6 +108,7 @@ Future testingApi() async {
   await stats
       .buildCalendar()
       .then((value) => print(value['response'].toString()));
+  await stats.getAllStats("legal");
 
   // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
   // await u.findUsersNear().catchError((e) => print(e));

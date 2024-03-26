@@ -6,7 +6,7 @@ part of 'statsController.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$statsControllerHash() => r'e7f118a00882c09620e1d448647512d25284d78f';
+String _$statsControllerHash() => r'17cc0f6a089a1641053c99bb57a167f484475ee0';
 
 /// See also [StatsController].
 @ProviderFor(StatsController)

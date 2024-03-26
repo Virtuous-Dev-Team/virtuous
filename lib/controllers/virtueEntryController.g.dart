@@ -7,7 +7,7 @@ part of 'virtueEntryController.dart';
 // **************************************************************************
 
 String _$virtueEntryControllerHash() =>
-    r'da227285cdc5e5f4bdf04705df17e4eaff65f4b0';
+    r'97b196876953f8786d6fab903df74903147b9cbc';
 
 /// See also [VirtueEntryController].
 @ProviderFor(VirtueEntryController)

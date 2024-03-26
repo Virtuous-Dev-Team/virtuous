@@ -65,9 +65,9 @@ class ScaffoldWithNavBar extends ConsumerWidget {
         {}
       case 1:
         {
-          ref
-              .read(statsControllerProvider.notifier)
-              .getQuadrantsUsedList("legal");
+          // ref
+          //     .read(statsControllerProvider.notifier)
+          //     .getQuadrantsUsedList("legal");
           // ref.read(statsControllerProvider.notifier).buildCalendar();
         }
       case 2:
