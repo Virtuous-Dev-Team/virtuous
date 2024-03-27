@@ -57,7 +57,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
   List<Events> eventList = [
     Events('Tv', false),
     Events('In a Meeting', false),
-    Events('Reading Emails', false),
+    Events('Emails', false), //Reading EMails is 2 long
     Events('Driving', false),
     Events('Eating', false),
     Events('Exercising', false),
@@ -212,7 +212,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               height: 30,
             ),
             Text(
-              'What were you doing when you modeled this virtue?',
+              '     What were you doing when you modeled this virtue?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -233,7 +233,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               'Date of occurance ${tfDate.text}, ${tfTime.text}',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   color: Colors.black,
                 ),
               ),
@@ -254,7 +254,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                             color: Colors.black, // Set border color here
                             width: 1, // Set border width here
                           ),
-                          borderRadius: BorderRadius.circular(5)),
+                      ),
                       child: Center(
                         child: Text(
                           'Pick Time',
@@ -296,18 +296,17 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
 
             Text(
-              'What event was happening',
+              'What event was happening?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
-                  fontStyle: FontStyle.italic,
                   color: Colors.black,
                 ),
               ),
             ),
             Wrap(
-              spacing: 10, // Space between containers
-              runSpacing: 10, // Space between rows
+              //spacing: 10, // Space between containers
+              //runSpacing: 10, // Space between rows
               children: List.generate(
                 eventList
                     .length, // Number of containers, you can replace this with your dynamic data length
@@ -322,7 +321,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                       });
                     },
                     child: Container(
-                      width: screenWidth / 3,
+                      width: screenWidth / 5, //3,
                       height: 20,
                       decoration: BoxDecoration(
                           border: Border.all(
@@ -332,7 +331,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                           color: Colours.swatch(eventList[index].isSelected!
                               ? clrPurple
                               : clrWhite),
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(10)),
                       child: Center(
                         child: Text(
                           eventList[index].eventName.toString(),
@@ -353,14 +352,13 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
-                  fontStyle: FontStyle.italic,
                   color: Colors.black,
                 ),
               ),
             ),
             Wrap(
-              spacing: 10, // Space between containers
-              runSpacing: 10, // Space between rows
+              //spacing: 10, // Space between containers
+              //runSpacing: 10, // Space between rows
               children: List.generate(
                 whoWereWithYouList
                     .length, // Number of containers, you can replace this with your dynamic data length
@@ -388,7 +386,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                       });
                     },
                     child: Container(
-                      width: screenWidth / 3,
+                      width: screenWidth / 5,//3,
                       height: 20,
                       decoration: BoxDecoration(
                           border: Border.all(
@@ -399,7 +397,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                               whoWereWithYouList[index].isSelected!
                                   ? clrPurple
                                   : clrWhite),
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(15)),
                       child: Center(
                         child: Text(
                           whoWereWithYouList[index].eventName.toString(),
@@ -420,14 +418,13 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
-                  fontStyle: FontStyle.italic,
                   color: Colors.black,
                 ),
               ),
             ),
             Wrap(
-              spacing: 10, // Space between containers
-              runSpacing: 10, // Space between rows
+              //spacing: 10, // Space between containers
+              //runSpacing: 10, // Space between rows
               children: List.generate(
                 whereWereYouList
                     .length, // Number of containers, you can replace this with your dynamic data length
@@ -454,7 +451,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                       });
                     },
                     child: Container(
-                      width: screenWidth / 3,
+                      width: screenWidth / 5, //3,
                       height: 20,
                       decoration: BoxDecoration(
                           border: Border.all(
@@ -465,7 +462,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                               whereWereYouList[index].isSelected!
                                   ? clrPurple
                                   : clrWhite),
-                          borderRadius: BorderRadius.circular(5)),
+                          borderRadius: BorderRadius.circular(15)),
                       child: Center(
                         child: Text(
                           whereWereYouList[index].eventName.toString(),
@@ -502,7 +499,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   });
                 },
                 hint:
-                    const Text("How much sleep did you get the night before?"),
+                    const Text("  How much sleep did you get the night before?"),
                 items: sleepingHoursList
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
@@ -538,44 +535,56 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
         child: Column(
           children: [
             Column(
-              children: [Text(quadrantName), Text(definition)],
+              children: [
+                Text(quadrantName),
+                SizedBox(height: 5,),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Text(definition),
+                )],
             ),
             Divider(
               thickness: 2,
               color: Colours.swatch(color),
             ),
             Container(
-              child: Text(
-                "Take a moment to write about what happened. What made it meaningful to you?",
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: Colours.swatch("#000000"),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Take a moment to write about what happened.               What made it meaningful to you?",
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Colours.swatch("#000000"),
+                    ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 8.0),
+            SizedBox(height: 3.0),
             textFieldNoteInput(context, tfDescription, false),
             SizedBox(
               height: 8.0,
             ),
             Container(
-              child: Text(
-                "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: Colours.swatch("#000000"),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "What is the best piece of advice you could give    someone about modeling this virtue throughout            the day?",
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                      color: Colours.swatch("#000000"),
+                    ),
                   ),
                 ),
               ),
             ),
             SizedBox(height: 8.0),
             textFieldNoteInput(context, tfAdvice, false),
-            SizedBox(height: 8.0),
+            SizedBox(height: 28.0),
             MaterialButton(
               onPressed: () async {
                 setState(() {
