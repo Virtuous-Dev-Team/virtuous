@@ -71,6 +71,49 @@ class Users {
     }
   }
 
+  Future<dynamic> editEntry(
+      String communityName,
+      String quadrantUsed,
+      String quadrantColor,
+      bool shareLocation,
+      bool shareEntry,
+      String sleepHours,
+      String adviceAnswer,
+      String whatHappenedAnswer,
+      List<Events> eventList,
+      List<Events> whoWereWithYouList,
+      List<Events> whereWereYouList,
+      String dateAndTimeOfOccurence) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
+    } catch (error) {
+      return {'Success': false, 'Error': error};
+    }
+  }
+
+  Future<dynamic> getEntry(String docId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
+      DocumentSnapshot<Map<String, dynamic>> res = await usersCollectionRef
+          .doc(user.uid)
+          .collection("totalData")
+          .doc(docId)
+          .get();
+      if (res.exists) {
+        print('get entry ${res.data()}');
+        return {'Success': true, 'response': res.data()};
+      }
+    } catch (error) {
+      return {'Success': false, 'Error': error};
+    }
+  }
+
   Future<dynamic> addEntry(
       String communityName,
       String quadrantUsed,

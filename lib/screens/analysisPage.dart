@@ -1,9 +1,12 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event.dart';
+import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/pieChartController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
@@ -51,6 +54,7 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
     // ref.read(statsControllerProvider.notifier).buildCalendar();
   }
 
+  EventList<Event> _markedDateMap = EventList(events: {});
   List<LegalCalendarModel> calendarData = [];
   Map<String, int>? topThreeVirtues;
   Map<String, int>? bottomThreeVirtues;
@@ -71,7 +75,9 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
                     'get all stats ${quadrantListInfo} && ${response['calendarData']}');
                 setState(() {
                   chartData = quadrantListInfo['pieChart'];
-                  calendarData = response['calendarData'];
+                  // calendarData = response['calendarData'];
+                  _markedDateMap = response['calendarData'];
+
                   topThreeVirtues = quadrantListInfo['topThreeVirtues'];
                   bottomThreeVirtues = quadrantListInfo['bottomThreeVirtues'];
                 });
@@ -105,8 +111,8 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
                   color: Colours.white,
                   child: Center(
                       child: Expanded(
-                          child:
-                              calendar.customCalender(context, calendarData))),
+                          child: calendar.customCalender(
+                              context, calendarData, _markedDateMap, ref))),
                 ),
                 Column(
                   children: [
@@ -135,14 +141,21 @@ class RenderPieChart extends ConsumerWidget {
   final List<ChartData> chartData;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return SfCircularChart(series: <CircularSeries>[
-      // Render pie chart
-      PieSeries<ChartData, String>(
-          dataSource: chartData,
-          pointColorMapper: (ChartData data, _) => data.color,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.y)
-    ]);
+    return chartData.isEmpty
+        ? SizedBox(
+            height: 200,
+            child: Center(
+              child: Text('No data found, sumbit entries'),
+            ))
+        : SfCircularChart(series: <CircularSeries>[
+            // Render pie chart
+
+            PieSeries<ChartData, String>(
+                dataSource: chartData,
+                pointColorMapper: (ChartData data, _) => data.color,
+                xValueMapper: (ChartData data, _) => data.x,
+                yValueMapper: (ChartData data, _) => data.y)
+          ]);
   }
 }
 
@@ -170,9 +183,15 @@ class RenderQuadrantUsedList extends StatelessWidget {
                 ),
               ),
             ),
-            TopBottomVirtuesWidget(
-              virtueList: topThreeVirtues,
-            )
+            topThreeVirtues == null
+                ? SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Text('No data found, sumbit entries'),
+                    ))
+                : TopBottomVirtuesWidget(
+                    virtueList: topThreeVirtues,
+                  )
           ]),
         )),
         Expanded(
@@ -190,9 +209,15 @@ class RenderQuadrantUsedList extends StatelessWidget {
                 ),
               ),
             ),
-            TopBottomVirtuesWidget(
-              virtueList: bottomThreeVirtues,
-            )
+            bottomThreeVirtues == null
+                ? SizedBox(
+                    height: 100,
+                    child: Center(
+                      child: Text('No data found, sumbit entries'),
+                    ))
+                : TopBottomVirtuesWidget(
+                    virtueList: bottomThreeVirtues,
+                  )
           ]),
         )),
       ],
@@ -227,7 +252,7 @@ class TopBottomVirtuesWidget extends StatelessWidget {
                   width: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(1),
-                    color: Colours.swatch(clrCompassion),
+                    color: legalVirtueColors['$key'],
                   ),
                 ),
                 Expanded(

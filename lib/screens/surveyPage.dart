@@ -8,6 +8,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/App_Configuration/apptheme.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/surveyPageController.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 import 'package:intl/intl.dart';
 
@@ -129,6 +130,7 @@ class SurveyPageState extends State<SurveyPage> {
               }
               print("What is the response survey: $response");
               // If user has now been created in Users collection then go to Tutorial Page
+              await setUserInfoProvider(ref);
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 GoRouter.of(context).go(response);
               });

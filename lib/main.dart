@@ -102,13 +102,14 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
+  await u.getEntry("d02BlbbM4UW3skvdqmXo");
   // await stats
   //     .getQuadrantsUsedList("legal")
   //     .then((value) => print('main: $value'));
-  await stats
-      .buildCalendar()
-      .then((value) => print(value['response'].toString()));
-  await stats.getAllStats("legal");
+  // await stats
+  //     .buildCalendar()
+  //     .then((value) => print(value['response'].toString()));
+  // await stats.getAllStats("legal");
 
   // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
   // await u.findUsersNear().catchError((e) => print(e));

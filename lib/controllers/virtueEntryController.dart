@@ -61,6 +61,29 @@ class VirtueEntryController extends _$VirtueEntryController {
     }
   }
 
+  Future<void> getEntry(
+    String docId,
+  ) async {
+    try {
+      final usersRepo = ref.read(usersRepositoryProvider);
+      final result = await AsyncValue.guard(() => usersRepo.getEntry(docId));
+
+      if (result.value['Success']) {
+        print(
+            'recent list virtue entry controller: ${result.value['response']}');
+        state = AsyncData(
+            {'Function': "getEntry", "list": result.value['response']});
+        // ref.refresh(UserRecentEntriesControllerProvider);
+      } else {
+        final error = {'Function': 'getEntry', 'msg': result.value['Error']};
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
   Future<void> getMostRecentEntries(
     String communityName,
   ) async {

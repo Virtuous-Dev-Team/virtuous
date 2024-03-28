@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/apptheme.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 
@@ -20,39 +21,31 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-void main() {
-  runApp(
-    ProviderScope(
-      child: MyApp(),
-    ),
-  );
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Your App Title',
-      home: ResourcePage(),
-    );
-  }
-}
-
-class ResourcePage extends StatefulWidget {
+class ResourcePage extends ConsumerStatefulWidget {
   const ResourcePage({Key? key}) : super(key: key);
 
   @override
   _ResourcePageState createState() => _ResourcePageState();
 }
 
-class _ResourcePageState extends State<ResourcePage>
+class _ResourcePageState extends ConsumerState<ResourcePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    final userInfo = ref.read(userInfoProviderr);
+    String communityName = userInfo.currentCommunity;
+    ref
+        .read(resourcesControllerProvider.notifier)
+        .getResources(communityName.toLowerCase());
     _tabController = TabController(length: 2, vsync: this);
+    // final userInfo = ref.read(userInfoProviderr);
+    // String communityName = userInfo.currentCommunity;
+    // ref
+    //     .read(resourcesControllerProvider.notifier)
+    //     .getResources(communityName.toLowerCase());
   }
 
   @override
@@ -65,94 +58,94 @@ class _ResourcePageState extends State<ResourcePage>
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    return Consumer(builder: (context, ref, _) {
-      final resourcesController = ref.watch(resourcesControllerProvider);
-      return SafeArea(
-          child: Scaffold(
-              backgroundColor: Color(0xFFEFE5CC),
-              appBar: AppBarWidget('regular'),
-              body: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFFDF9),
-                    border:
-                        Border.all(color: const Color(0xFFFEFE5CC), width: 9.0),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colours.swatch(clrBackground),
-                        ),
-                        child: TabBar(
-                          controller: _tabController,
-                          onTap: (index) {
-                            print('tapped $index');
-                            if (index == 1) {
-                              ref
-                                  .read(resourcesControllerProvider.notifier)
-                                  .getResources("legal");
-                            }
-                          },
-                          labelStyle: const TextStyle(
-                              fontSize: 16,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.w600,
-                              color: Colours.black),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          unselectedLabelColor: Colours.swatch(clrBlack),
-                          indicatorPadding:
-                              const EdgeInsets.only(left: 0, right: 0),
-                          indicator: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(5),
-                                topRight: Radius.circular(5)),
-                            color: Colours.swatch(clrWhite),
-                          ),
-                          indicatorColor: Colours.swatch(clrBlack),
-                          tabs: const [
-                            Tab(
-                              text: "Virtuous",
-                            ),
-                            Tab(
-                              text: "My Community",
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: [
-                            Vitruous(screenWidth, screenHeight),
-                            resourcesController.when(
-                                loading: () => CircularProgressIndicator(),
-                                error: (error, stackTrace) =>
-                                    Text('Error: $error'),
-                                data: (quadrantList) {
-                                  if (quadrantList is Map<String, dynamic>) {
-                                    return MyCommunity(screenWidth,
-                                        screenHeight, quadrantList);
-                                  } else {
-                                    return Text('Error');
-                                  }
-                                }),
 
-                            // ClientScreen(widget.clientsResponseData!,widget.authentication!,session.tokens!,widget.index!),
-                            // // ClientScreen(widget.clientsResponseData!,widget.authentication!,widget.token!,widget.index!),
-                            // SignatureScreen(widget.clientsResponseData!,widget.authentication!,session.tokens!,widget.index!,_scaffoldKey),
-                            //
-                          ],
+    final resourcesController = ref.watch(resourcesControllerProvider);
+    return SafeArea(
+        child: Scaffold(
+            backgroundColor: Color(0xFFEFE5CC),
+            appBar: AppBarWidget('regular'),
+            body: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFFDF9),
+                  border:
+                      Border.all(color: const Color(0xFFFEFE5CC), width: 9.0),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colours.swatch(clrBackground),
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        onTap: (index) {
+                          print('tapped $index');
+                          if (index == 1) {
+                            ref
+                                .read(resourcesControllerProvider.notifier)
+                                .getResources("legal");
+                          }
+                        },
+                        labelStyle: const TextStyle(
+                            fontSize: 16,
+                            fontFamily: "Poppins",
+                            fontWeight: FontWeight.w600,
+                            color: Colours.black),
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        unselectedLabelColor: Colours.swatch(clrBlack),
+                        indicatorPadding:
+                            const EdgeInsets.only(left: 0, right: 0),
+                        indicator: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              topRight: Radius.circular(5)),
+                          color: Colours.swatch(clrWhite),
                         ),
-                      )
-                    ],
-                  ))));
-    });
+                        indicatorColor: Colours.swatch(clrBlack),
+                        tabs: const [
+                          Tab(
+                            text: "Virtuous",
+                          ),
+                          Tab(
+                            text: "My Community",
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          Vitruous(screenWidth, screenHeight),
+                          resourcesController.when(
+                              loading: () => CircularProgressIndicator(),
+                              error: (error, stackTrace) =>
+                                  Text('Error: $error'),
+                              data: (quadrantList) {
+                                print('resources controller $quadrantList');
+                                if (quadrantList is Map<String, dynamic>) {
+                                  return MyCommunity(
+                                      screenWidth, screenHeight, quadrantList);
+                                } else {
+                                  return Text('Error');
+                                }
+                              }),
+
+                          // ClientScreen(widget.clientsResponseData!,widget.authentication!,session.tokens!,widget.index!),
+                          // // ClientScreen(widget.clientsResponseData!,widget.authentication!,widget.token!,widget.index!),
+                          // SignatureScreen(widget.clientsResponseData!,widget.authentication!,session.tokens!,widget.index!,_scaffoldKey),
+                          //
+                        ],
+                      ),
+                    )
+                  ],
+                ))));
   }
 
   Widget Vitruous(

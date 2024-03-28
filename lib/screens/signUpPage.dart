@@ -125,164 +125,159 @@ class SignUpPage extends ConsumerWidget {
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              SizedBox(height: 50),
-              Image(
-                image: const AssetImage(
-                    "assets/images/virtuous_circle_outline.png"),
-                height: 100,
-              ),
-              Text(
-                'Your journey starts with just one entry',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
-              ),
-              SizedBox(height: 20.0),
-              Form(
-                  key: formGlobalKey,
-                  child: Column(
-                    children: [
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            SizedBox(height: 50),
+            Image(
+              image:
+                  const AssetImage("assets/images/virtuous_circle_outline.png"),
+              height: 100,
+            ),
+            Text(
+              'Your journey starts with just one entry',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
+            ),
+            SizedBox(height: 20.0),
+            Form(
+                key: formGlobalKey,
+                child: Column(
+                  children: [
 // Email input field
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: TextFormField(
-                          controller: email,
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            labelStyle: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                            prefixIcon: Icon(
-                              Icons.mail_outline,
-                              color: Colors.black,
-                            ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: TextFormField(
+                        controller: email,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.black),
+                          prefixIcon: Icon(
+                            Icons.mail_outline,
+                            color: Colors.black,
                           ),
-                          keyboardType: TextInputType.emailAddress,
-                          validator: validateEmail,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: validateEmail,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
-                      SizedBox(height: 10.0),
-                      // Full Name input field
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: TextFormField(
-                          controller: fullName,
-                          decoration: InputDecoration(
-                            labelText: 'Full Name',
-                            labelStyle: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                            prefixIcon: Icon(
-                              Icons.person_outline,
-                              color: Colors.black,
-                            ),
+                    ),
+                    SizedBox(height: 10.0),
+                    // Full Name input field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: TextFormField(
+                        controller: fullName,
+                        decoration: InputDecoration(
+                          labelText: 'Full Name',
+                          labelStyle: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.black),
+                          prefixIcon: Icon(
+                            Icons.person_outline,
+                            color: Colors.black,
                           ),
-                          validator: (fullName) => fullName!.length < 3
-                              ? 'Name should be at least 3 characters'
-                              : null,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
+                        validator: (fullName) => fullName!.length < 3
+                            ? 'Name should be at least 3 characters'
+                            : null,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
-                      SizedBox(height: 10.0),
-                      // Password input field
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: TextFormField(
-                          controller: password,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            labelStyle: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: Colors.black),
-                            prefixIcon: Icon(
-                              Icons.fingerprint_outlined,
-                              color: Colors.black,
-                            ),
+                    ),
+                    SizedBox(height: 10.0),
+                    // Password input field
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: TextFormField(
+                        controller: password,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                              fontStyle: FontStyle.italic, color: Colors.black),
+                          prefixIcon: Icon(
+                            Icons.fingerprint_outlined,
+                            color: Colors.black,
                           ),
-                          validator: validatePassword,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
                         ),
+                        validator: validatePassword,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
-                      SizedBox(height: 10.0),
-                    ],
-                  )),
+                    ),
+                    SizedBox(height: 10.0),
+                  ],
+                )),
 
-              SizedBox(height: 20.0),
-              // Sign Up button
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: ElevatedButton(
-                  child: Text(
-                    'Create Account',
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 4,
-                    backgroundColor: Color(0xFFC5B898),
-                    padding: EdgeInsets.symmetric(vertical: 25.0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0)),
-                    shadowColor: Colors.black,
-                  ),
-                  onPressed: () async {
-                    if (formGlobalKey.currentState!.validate()) {
-                      print('Fields pass validation');
-                      try {
-                        // Redirect to Survey or Verify Email page after calling function
-                        ref.read(authControllerProvider.notifier).createAccount(
-                            email.text, password.text, fullName.text);
-                        ref.invalidate(authControllerProvider);
-                      } catch (e) {
-                        print(e);
-                      }
-                    } else {
-                      print('Fields not passing validation');
-                    }
-                  },
+            SizedBox(height: 20.0),
+            // Sign Up button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: ElevatedButton(
+                child: Text(
+                  'Create Account',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0),
                 ),
+                style: ElevatedButton.styleFrom(
+                  elevation: 4,
+                  backgroundColor: Color(0xFFC5B898),
+                  padding: EdgeInsets.symmetric(vertical: 25.0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0)),
+                  shadowColor: Colors.black,
+                ),
+                onPressed: () async {
+                  if (formGlobalKey.currentState!.validate()) {
+                    print('Fields pass validation');
+                    try {
+                      // Redirect to Survey or Verify Email page after calling function
+                      ref.read(authControllerProvider.notifier).createAccount(
+                          email.text, password.text, fullName.text);
+                      ref.invalidate(authControllerProvider);
+                    } catch (e) {
+                      print(e);
+                    }
+                  } else {
+                    print('Fields not passing validation');
+                  }
+                },
               ),
-              SizedBox(height: 10.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Already have an account?',
+            ),
+            SizedBox(height: 10.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Already have an account?',
+                    style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400)),
+                TextButton(
+                  child: const Text('Sign In',
                       style: TextStyle(
+                          decoration: TextDecoration.underline,
                           fontStyle: FontStyle.italic,
                           color: Colors.black,
                           fontWeight: FontWeight.w400)),
-                  TextButton(
-                    child: const Text('Sign In',
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w400)),
-                    onPressed: () {
-                      // Redirect to Sign In page
-                      GoRouter.of(context).go('/signIn');
-                    },
-                  ),
-                ],
-              ),
+                  onPressed: () {
+                    // Redirect to Sign In page
+                    GoRouter.of(context).go('/signIn');
+                  },
+                ),
+              ],
+            ),
 
-              SizedBox(height: 130),
-              Text(
-                'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10.0),
-              ),
-            ],
-          ),
+            SizedBox(height: 100),
+            Text(
+              'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 10.0),
+            ),
+          ],
         ),
       ),
     );

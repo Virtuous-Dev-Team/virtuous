@@ -10,6 +10,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
+import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
@@ -122,6 +123,9 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                 await ref
                     .read(virtueEntryControllerProvider.notifier)
                     .getMostRecentEntries(communityName.toLowerCase());
+                await ref
+                    .read(statsControllerProvider.notifier)
+                    .getAllStats(communityName.toLowerCase());
                 GoRouter.of(context).go('/home');
 
                 // newProfileName.

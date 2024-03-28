@@ -124,7 +124,7 @@ class BuildRecentEntriesList extends StatelessWidget {
   Widget build(BuildContext context) {
     print('Recent entries in HomePage: $listy');
 
-    return listy == null
+    return listy.isEmpty
         ? Center(
             child: Text('List is Null'),
           )

@@ -107,10 +107,11 @@ class PopOutMenuWidget extends StatelessWidget {
       elevation: 2,
       icon: Icon(Icons.account_circle,
           size: 30, color: iconColor), // Replace with your desired icon
-      onSelected: (value) {
+      onSelected: (value) async {
         if (value == 'signOut') {
           print('sign out plz');
-          ref.read(authControllerProvider.notifier).signOut();
+          await ref.read(authControllerProvider.notifier).signOut();
+          ref.invalidate(authControllerProvider);
         } else if (value == 'settings') {
           GoRouter.of(context).go('/SettingsPage');
         }
