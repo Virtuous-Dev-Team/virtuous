@@ -10,6 +10,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
@@ -360,25 +361,25 @@ class CustomCalender {
       );
   Future<String?> _selectSubjectDialog(
       BuildContext context, List<Event> eventsList, ref) async {
-    print(eventsList[1]);
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colours.swatch(clrWhite),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                icon: Icon(Icons.cancel_outlined),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
+          // title: Row(
+          //   mainAxisAlignment: MainAxisAlignment.end,
+          //   children: [
+          //     IconButton(
+          //       icon: Icon(Icons.cancel_outlined),
+          //       onPressed: () {
+          //         Navigator.of(context).pop();
+          //       },
+          //     ),
+          //   ],
+          // ),
           content: Container(
-            height: MediaQuery.of(context).size.height / 3,
+            padding: EdgeInsets.only(top: 10, bottom: 10),
+            height: MediaQuery.of(context).size.height / 4,
             width: MediaQuery.of(context).size.width / 2,
             child: ListView.separated(
               itemCount: eventsList.length,
@@ -387,10 +388,12 @@ class CustomCalender {
                 Event e = eventsList[index];
                 print('event: ${e.description}');
                 return GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       print(e.description);
 
-                      settingEntryProvider(ref, e.description);
+                      await settingEntryProvider(ref, e.description);
+                      Navigator.of(context).pop();
+                      GoRouter.of(context).go('/analysis/editEntry');
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -440,17 +443,6 @@ class CustomCalender {
         );
       },
     );
-  }
-
-  settingEntryProvider(ref, String? docId) async {
-    final setEntryInfo = await ref.read(entryInfoProviderr);
-
-    final entryInfo = await ref.read(usersRepositoryProvider).getEntry(docId);
-    if (entryInfo['Success']) {
-      setEntryInfo.updateEntry(entryInfo['response']);
-
-      print('calendar page setting clicked entry ${setEntryInfo.quadrantUsed}');
-    }
   }
 
   // Future<Future<String?>> _selectSubjectDialog(
@@ -725,4 +717,15 @@ class CustomCalender {
   //         });
   //       });
   // }
+}
+
+settingEntryProvider(ref, String? docId) async {
+  final setEntryInfo = await ref.read(entryInfoProviderr);
+
+  final entryInfo = await ref.read(usersRepositoryProvider).getEntry(docId);
+  if (entryInfo['Success']) {
+    setEntryInfo.updateEntry(entryInfo['response']);
+    setEntryInfo.docIdFunc(docId);
+    print('calendar page setting clicked entry ${setEntryInfo.quadrantUsed}');
+  }
 }

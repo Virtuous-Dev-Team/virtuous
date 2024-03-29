@@ -13,6 +13,7 @@ import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -117,11 +118,11 @@ class RecentEntriesWidget extends ConsumerWidget {
 }
 
 // Builds recent entries list
-class BuildRecentEntriesList extends StatelessWidget {
+class BuildRecentEntriesList extends ConsumerWidget {
   const BuildRecentEntriesList({super.key, required this.listy});
   final List<dynamic> listy;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     print('Recent entries in HomePage: $listy');
 
     return listy.isEmpty
@@ -135,10 +136,13 @@ class BuildRecentEntriesList extends StatelessWidget {
                   final Map<String, dynamic> item =
                       listy![index] as Map<String, dynamic>;
                   return RecentEntryWidget(
-                      quadrantName: item['quadrantUsed'],
-                      quadrantColor:
-                          int.tryParse(item['quadrantColor'].toString()) ??
-                              0xFFA6A1CC);
+                    quadrantName: item['quadrantUsed'],
+                    quadrantColor:
+                        int.tryParse(item['quadrantColor'].toString()) ??
+                            0xFFA6A1CC,
+                    docId: item['docId'],
+                    ref: ref,
+                  );
                 }),
           );
   }
@@ -147,15 +151,23 @@ class BuildRecentEntriesList extends StatelessWidget {
 // Recent entrywidget, that is also tappable
 class RecentEntryWidget extends StatelessWidget {
   const RecentEntryWidget(
-      {super.key, required this.quadrantName, required this.quadrantColor});
+      {super.key,
+      required this.quadrantName,
+      required this.quadrantColor,
+      required this.docId,
+      this.ref});
   final String quadrantName;
   final int quadrantColor;
+  final String docId;
+  final dynamic ref;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        print('Clicked virtue');
+      onTap: () async {
+        print('Clicked virtue $docId');
+        await settingEntryProvider(ref, docId);
+        GoRouter.of(context).go('/home/editEntry');
       },
       child: Container(
         width: double.infinity,

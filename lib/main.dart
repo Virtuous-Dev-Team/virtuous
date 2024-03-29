@@ -102,7 +102,20 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
-  await u.getEntry("d02BlbbM4UW3skvdqmXo");
+  // await u.editEntry(
+  //     "legal",
+  //     "Integrity",
+  //     "0xFFF3A3CA",
+  //     true,
+  //     true,
+  //     "1-2 hours",
+  //     "asoh",
+  //     "whatHappenedAnswer",
+  //     [],
+  //     [],
+  //     [],
+  //     "3/29/2024, 3:33pm",
+  //     "wFgwG6p1GCPrEyY7nGWd");
   // await stats
   //     .getQuadrantsUsedList("legal")
   //     .then((value) => print('main: $value'));

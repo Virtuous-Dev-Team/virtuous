@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
+import 'package:virtuetracker/screens/editVirtueEntry.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
 import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
@@ -150,6 +151,13 @@ class AppNavigation {
                       const HomePage(),
                   routes: [
                     GoRoute(
+                      path: "editEntry",
+                      name: "EditEntry1",
+                      builder: (BuildContext context, GoRouterState state) =>
+                          EditVirtueEntry(),
+                      routes: [],
+                    ),
+                    GoRoute(
                       path: 'gridPage',
                       name: 'GridPage',
                       routes: [
@@ -239,7 +247,15 @@ class AppNavigation {
                   name: "Analysis",
                   builder: (BuildContext context, GoRouterState state) =>
                       const AnalysisPage(),
-                  routes: [],
+                  routes: [
+                    GoRoute(
+                      path: "editEntry",
+                      name: "EditEntry",
+                      builder: (BuildContext context, GoRouterState state) =>
+                          EditVirtueEntry(),
+                      routes: [],
+                    ),
+                  ],
                 ),
               ],
             ),

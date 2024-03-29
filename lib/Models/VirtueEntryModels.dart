@@ -21,7 +21,7 @@ class EntryProvider extends ChangeNotifier {
   late List<Events> whoWereWithYouList;
   late List<Events> whereWereYouList;
   late String dateAndTimeOfOccurence;
-
+  late String docId;
   // EntryProvider({
   //   required this.communityName,
   //   required this.quadrantUsed,
@@ -36,6 +36,9 @@ class EntryProvider extends ChangeNotifier {
   //   required this.whereWereYouList,
   //   required this.dateAndTimeOfOccurence,
   // });
+  void docIdFunc(String value) {
+    docId = value;
+  }
 
   // Function to update entry data...
   void updateEntry(Map<String, dynamic> data) {

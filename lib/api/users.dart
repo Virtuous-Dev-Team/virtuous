@@ -83,12 +83,45 @@ class Users {
       List<Events> eventList,
       List<Events> whoWereWithYouList,
       List<Events> whereWereYouList,
-      String dateAndTimeOfOccurence) async {
+      String dateAndTimeOfOccurence,
+      String docId) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
         return {'Success': false, 'Error': 'User not found'};
       }
+      Map<String, bool> eventsMap = {};
+      eventList.forEach((event) {
+        eventsMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whoWereWithYouMap = {};
+      whoWereWithYouList.forEach((event) {
+        whoWereWithYouMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whereWereYouMap = {};
+      whereWereYouList.forEach((event) {
+        whereWereYouMap[event.eventName!] = event.isSelected!;
+      });
+      final totalDataObject = {
+        "communityName": communityName,
+        "quadrantUsed": quadrantUsed,
+        "quadrantColor": quadrantColor,
+        "dateEntried": FieldValue.serverTimestamp(),
+        "sleepHours": sleepHours,
+        "eventList": eventsMap,
+        "whatHappenedAnswer": whatHappenedAnswer,
+        "adviceAnswer": adviceAnswer,
+        "whoWereWithYouList": whoWereWithYouMap,
+        "whereWereYouList": whereWereYouMap,
+        "dateAndTimeOfOccurence": dateAndTimeOfOccurence
+      };
+      await usersCollectionRef
+          .doc(user.uid)
+          .collection("totalData")
+          .doc(docId)
+          .update(totalDataObject);
+
+      return {'Success': true, 'msg': 'Successfully edited entry'};
     } catch (error) {
       return {'Success': false, 'Error': error};
     }
@@ -238,6 +271,7 @@ class Users {
           String dateEntered =
               timestamp != null ? timestamp.toDate().toString() : "Unknown";
           return {
+            "docId": document.id,
             "communityName": document["communityName"],
             "quadrantUsed": document["quadrantUsed"] ?? "Error",
             "quadrantColor": document["quadrantColor"],

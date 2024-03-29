@@ -16,6 +16,53 @@ class VirtueEntryController extends _$VirtueEntryController {
     return;
   }
 
+  Future<void> editEntry(
+      String communityName,
+      String quadrantUsed,
+      String quadrantColor,
+      bool shareLocation,
+      bool shareEntry,
+      String sleepHours,
+      String adviceAnswer,
+      String whatHappenedAnswer,
+      List<Events> eventList,
+      List<Events> whoWereWithYouList,
+      List<Events> whereWereYouList,
+      String dateAndTimeOfOccurence,
+      String docId) async {
+    try {
+      final usersRepo = ref.read(usersRepositoryProvider);
+      final result = await AsyncValue.guard(() => usersRepo.editEntry(
+          communityName,
+          quadrantUsed,
+          quadrantColor,
+          shareLocation,
+          shareEntry,
+          sleepHours,
+          adviceAnswer,
+          whatHappenedAnswer,
+          eventList,
+          whoWereWithYouList,
+          whereWereYouList,
+          dateAndTimeOfOccurence,
+          docId));
+
+      if (result.value['Success']) {
+        state = AsyncData({
+          'Function': "editEntry",
+          "msg": 'Successfully edited your entry!'
+        });
+        // ref.refresh(UserRecentEntriesControllerProvider);
+      } else {
+        final error = {'Function': 'editEntry', 'msg': result.value['Error']};
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
   Future<void> addEntry(
     String communityName,
     String quadrantUsed,
