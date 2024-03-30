@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/userControllers.dart';
+import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -19,17 +24,27 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final response = ref
-        .watch(UserRecentEntriesControllerProvider((communityName: "legal")));
-    // final a = ref.watch(
-    //     UserRecentEntriesController().getMostRecentEntries("communityName"));
+  _HomePageState createState() => _HomePageState();
+}
 
-    // print('testing homepage: $a');
+class _HomePageState extends ConsumerState<HomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final userInfo = ref.read(userInfoProviderr);
+    String communityName = userInfo.currentCommunity;
+    ref
+        .read(virtueEntryControllerProvider.notifier)
+        .getMostRecentEntries(communityName.toLowerCase());
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
@@ -69,18 +84,7 @@ class HomePage extends ConsumerWidget {
                   color: Colors.black,
                 ),
                 SizedBox(height: 15),
-                Container(
-                  // Builds list from response from api
-                  child: response.when(
-                      error: (error, stacktrace) => Text(
-                            "You currently don't have any entries, click the Reflect button to make your first entry!",
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                      data: (recentEntriesList) => BuildRecentEntriesList(
-                          listy: recentEntriesList ?? []),
-                      loading: () => const CircularProgressIndicator()),
-                  // child: BuildRecentEntriesList(listy: []),
-                ),
+                RecentEntriesWidget(ref: ref)
               ],
             ),
           ),
@@ -90,35 +94,38 @@ class HomePage extends ConsumerWidget {
   }
 }
 
+class RecentEntriesWidget extends ConsumerWidget {
+  const RecentEntriesWidget({super.key, required this.ref});
+  final ref;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(virtueEntryControllerProvider).when(
+        error: (error, stacktrace) => Text(
+              "You currently don't have any entries, click the Reflect button to make your first entry!",
+              style: TextStyle(fontStyle: FontStyle.italic),
+            ),
+        data: (response) {
+          if (response['Function'] == "getMostRecentEntries") {
+            List recentEntriesList = response['list'];
+            return BuildRecentEntriesList(listy: recentEntriesList ?? []);
+          } else {
+            return Text('Not sure');
+          }
+        },
+        loading: () => const Center(child: CircularProgressIndicator()));
+    // child: BuildRecentEntriesList(listy: []),
+  }
+}
+
 // Builds recent entries list
-class BuildRecentEntriesList extends StatelessWidget {
+class BuildRecentEntriesList extends ConsumerWidget {
   const BuildRecentEntriesList({super.key, required this.listy});
   final List<dynamic> listy;
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     print('Recent entries in HomePage: $listy');
-    final List<dynamic> list = [
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-      {'quadrantName': "Honesty", 'quadrantColor': 0xFFF3A3CA},
-    ];
 
-    return listy == null
+    return listy.isEmpty
         ? Center(
             child: Text('List is Null'),
           )
@@ -129,10 +136,13 @@ class BuildRecentEntriesList extends StatelessWidget {
                   final Map<String, dynamic> item =
                       listy![index] as Map<String, dynamic>;
                   return RecentEntryWidget(
-                      quadrantName: item['quadrantUsed'],
-                      quadrantColor:
-                          int.tryParse(item['quadrantColor'].toString()) ??
-                              0xFFA6A1CC);
+                    quadrantName: item['quadrantUsed'],
+                    quadrantColor:
+                        int.tryParse(item['quadrantColor'].toString()) ??
+                            0xFFA6A1CC,
+                    docId: item['docId'],
+                    ref: ref,
+                  );
                 }),
           );
   }
@@ -141,15 +151,23 @@ class BuildRecentEntriesList extends StatelessWidget {
 // Recent entrywidget, that is also tappable
 class RecentEntryWidget extends StatelessWidget {
   const RecentEntryWidget(
-      {super.key, required this.quadrantName, required this.quadrantColor});
+      {super.key,
+      required this.quadrantName,
+      required this.quadrantColor,
+      required this.docId,
+      this.ref});
   final String quadrantName;
   final int quadrantColor;
+  final String docId;
+  final dynamic ref;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        print('Clicked virtue');
+      onTap: () async {
+        print('Clicked virtue $docId');
+        await settingEntryProvider(ref, docId);
+        GoRouter.of(context).go('/home/editEntry');
       },
       child: Container(
         width: double.infinity,

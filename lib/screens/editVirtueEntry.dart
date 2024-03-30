@@ -19,71 +19,59 @@ import '../App_Configuration/apptheme.dart';
 import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
 
-class VirtueEntry extends ConsumerStatefulWidget {
+class EditVirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
   final String? definition;
   final String? color;
-  VirtueEntry(
-      {super.key,
-      required this.quadrantName,
-      required this.definition,
-      required this.color});
+  EditVirtueEntry({super.key, this.quadrantName, this.definition, this.color});
 
   @override
-  _VirtueEntryState createState() => _VirtueEntryState();
+  _EditVirtueEntryState createState() => _EditVirtueEntryState();
 }
 
-class _VirtueEntryState extends ConsumerState<VirtueEntry> {
+class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
+    final virtueEntryInfo = ref.read(entryInfoProviderr);
+    print('edit entry ${virtueEntryInfo.eventList}');
     shareEntry = userInfo.shareEntries;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
-    tfDescription.text = '';
-    tfAdvice.text = '';
+    tfDescription.text = virtueEntryInfo.whatHappenedAnswer;
+    tfAdvice.text = virtueEntryInfo.adviceAnswer;
+    eventList = virtueEntryInfo.eventList;
+    whoWereWithYouList = virtueEntryInfo.whoWereWithYouList;
+    whereWereYouList = virtueEntryInfo.whereWereYouList;
+    sleepingHours = virtueEntryInfo.sleepHours;
+    quadrantName = virtueEntryInfo.quadrantUsed;
+    color = virtueEntryInfo.quadrantColor;
+    definition = '';
+    docId = virtueEntryInfo.docId;
+    List<String> split = virtueEntryInfo.dateAndTimeOfOccurence.split(',');
+    print('split $split');
     DateTime now = DateTime.now();
     // Format the date as a string (e.g., "2/20/24")
-    tfDate.text = DateFormat('M/d/yy').format(now);
+    tfDate.text = split[0];
     // Format the time as a string (e.g., "2:20pm")
-    tfTime.text = DateFormat('h:mma').format(now);
+    tfTime.text = split[1];
   }
 
   late bool shareEntry;
   late bool shareLocation;
   late String communityName;
+  late String quadrantName;
+  late String definition;
+  late String color;
+  late String docId;
   bool isLoading = false;
   final PageController _pageController = PageController();
-  List<Events> eventList = [
-    Events('Tv', false),
-    Events('In a Meeting', false),
-    Events('Emails', false), //Reading EMails is 2 long
-    Events('Driving', false),
-    Events('Eating', false),
-    Events('Exercising', false),
-    Events('Commuting', false),
-    Events('Working', false),
-    Events('Other', false)
-  ];
+  List<Events> eventList = [];
 
-  List<Events> whoWereWithYouList = [
-    Events('Pet', false),
-    Events('Co-Workers', false),
-    Events('Family', false),
-    Events('No one', false),
-    Events('Friends', false),
-    Events('Other', false)
-  ];
-  List<Events> whereWereYouList = [
-    Events('Work', false),
-    Events('Home', false),
-    Events('Outdoors', false),
-    Events('School', false),
-    Events('Commuting', false),
-    Events('Other', false)
-  ];
+  List<Events> whoWereWithYouList = [];
+  List<Events> whereWereYouList = [];
   List<String> sleepingHoursList = ['1', '2', '3', '4'];
   String sleepingHours = '';
   // you can send this data from backend
@@ -113,7 +101,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
           },
           data: (response) async {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              if (response['Function'] == "addEntry") {
+              if (response['Function'] == "editEntry") {
                 showToasty(response['msg'], true, context);
                 tfAdvice.clear();
                 tfDescription.clear();
@@ -168,9 +156,9 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                     children: [
                       buildVirtueEntry1(context, screenWidth, screenHeight),
                       buildVirtueEntry2(context, screenWidth, screenHeight,
-                          quadrantName: widget.quadrantName!,
-                          definition: widget.definition!,
-                          color: widget.color!),
+                          quadrantName: quadrantName,
+                          definition: definition,
+                          color: color),
                     ],
                   ),
                 ),
@@ -232,7 +220,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
+              color: legalVirtueColors[quadrantName],
             ),
             Text(
               'Date of occurance ${tfDate.text}, ${tfTime.text}',
@@ -333,7 +321,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                             color: Colors.black, // Set border color here
                             width: 1, // Set border width here
                           ),
-                          color: Colours.swatch(eventList[index].isSelected!
+                          color: Colours.swatch(eventList[index].isSelected
                               ? clrPurple
                               : clrWhite),
                           borderRadius: BorderRadius.circular(10)),
@@ -399,7 +387,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                             width: 1, // Set border width here
                           ),
                           color: Colours.swatch(
-                              whoWereWithYouList[index].isSelected!
+                              whoWereWithYouList[index].isSelected
                                   ? clrPurple
                                   : clrWhite),
                           borderRadius: BorderRadius.circular(15)),
@@ -464,7 +452,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                             width: 1, // Set border width here
                           ),
                           color: Colours.swatch(
-                              whereWereYouList[index].isSelected!
+                              whereWereYouList[index].isSelected
                                   ? clrPurple
                                   : clrWhite),
                           borderRadius: BorderRadius.circular(15)),
@@ -553,7 +541,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
+              color: legalVirtueColors[quadrantName],
             ),
             Container(
               child: Padding(
@@ -598,20 +586,22 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                 setState(() {
                   isLoading = true;
                 });
-                await ref.read(virtueEntryControllerProvider.notifier).addEntry(
-                      communityName.toLowerCase(),
-                      widget.quadrantName!,
-                      widget.color!,
-                      shareLocation,
-                      shareEntry,
-                      sleepingHours,
-                      tfAdvice.text,
-                      tfDescription.text,
-                      eventList,
-                      whoWereWithYouList,
-                      whereWereYouList,
-                      '${tfDate.text}, ${tfTime.text}',
-                    );
+                await ref
+                    .read(virtueEntryControllerProvider.notifier)
+                    .editEntry(
+                        communityName.toLowerCase(),
+                        quadrantName,
+                        color,
+                        shareLocation,
+                        shareEntry,
+                        sleepingHours,
+                        tfAdvice.text,
+                        tfDescription.text,
+                        eventList,
+                        whoWereWithYouList,
+                        whereWereYouList,
+                        '${tfDate.text}, ${tfTime.text}',
+                        docId);
                 setState(() {
                   isLoading = false;
                 });

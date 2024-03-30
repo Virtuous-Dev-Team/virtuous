@@ -21,11 +21,11 @@ class ResourcesController extends _$ResourcesController {
           () => resourcesRepo.resourcesMyCommunityInfo(communityName));
       if (result.value['Success']) {
         print('called resources controller, result: $result');
-        final Map<String, dynamic> mappy = result.value['response'];
-        // state = AsyncData(result.value['response']);
-        state = AsyncData(mappy);
+        // final Map<String, dynamic> mappy = result.value['response'];
+        state = AsyncData(result.value['response']);
+        // state = AsyncData(mappy);
 
-        print(mappy);
+        // print(mappy);
       } else {
         state = AsyncError(result.value['Error'], StackTrace.current);
       }

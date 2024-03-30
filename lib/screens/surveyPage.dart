@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:virtuetracker/App_Configuration/apptheme.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/surveyPageController.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
+import 'package:intl/intl.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -47,6 +51,8 @@ class SurveyPageState extends State<SurveyPage> {
   TextEditingController notificationTime = TextEditingController();
   // Phone verification
   bool phoneVerified = false;
+  // If data is loading then we won't allow to submit
+  bool isLoading = false;
   // Location of user
   dynamic userLocation = null;
   // Selected values for dropdowns
@@ -124,6 +130,7 @@ class SurveyPageState extends State<SurveyPage> {
               }
               print("What is the response survey: $response");
               // If user has now been created in Users collection then go to Tutorial Page
+              await setUserInfoProvider(ref);
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 GoRouter.of(context).go(response);
               });
@@ -564,9 +571,15 @@ class SurveyPageState extends State<SurveyPage> {
                       setState(() {
                         if (newValue == "Yes")
                           // call controller to get location
-                          ref
-                              .read(surveyPageControllerProvider.notifier)
-                              .getLocation();
+                          setState(() {
+                            isLoading = true;
+                          });
+                        ref
+                            .read(surveyPageControllerProvider.notifier)
+                            .getLocation();
+                        setState(() {
+                          isLoading = false;
+                        });
                         shareLocation = newValue!;
                         answers[5] = newValue;
                       });
@@ -753,7 +766,10 @@ class SurveyPageState extends State<SurveyPage> {
                       ),
                     )),
                 SizedBox(
-                  height: 20,
+                  height: 10,
+                ),
+                SizedBox(
+                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
@@ -761,7 +777,8 @@ class SurveyPageState extends State<SurveyPage> {
                         ref.read(surveyPageControllerProvider.notifier);
                         print("phone number no parse: ${phoneNumber.text}");
                         Users().sendOtp(
-                            phone: phoneNumber.text.replaceAll(RegExp('[^0-9]'), ''),
+                            phone: phoneNumber.text
+                                .replaceAll(RegExp('[^0-9]'), ''),
                             errorStep: () => ScaffoldMessenger.of(context)
                                     .showSnackBar(SnackBar(
                                   content: Text(
@@ -813,15 +830,15 @@ class SurveyPageState extends State<SurveyPage> {
                                                 if (_formKey1.currentState!
                                                     .validate()) {
                                                   // call confirm Otp
-                                                  ref.read(
-                                                      surveyPageControllerProvider
-                                                          .notifier);
+                                                  // ref.read(
+                                                  //     surveyPageControllerProvider
+                                                  //         .notifier);
                                                   Users()
                                                       .confirmOtp(
                                                           otp: _otpController
                                                               .text)
                                                       .then((value) {
-                                                    if (value == "Success") {
+                                                    if (value['Success']) {
                                                       phoneVerified = true;
                                                       Navigator.pop(context);
                                                       print(
@@ -877,7 +894,7 @@ class SurveyPageState extends State<SurveyPage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.amber,
+                        primary: buttonColor,
                       ),
                     ),
                   ),
@@ -887,9 +904,12 @@ class SurveyPageState extends State<SurveyPage> {
                 ),
                 Center(
                   child: Text(
-                    selectedTime != null
-                        ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
+                    notificationTime.text != ''
+                        ? 'Time Selected ${notificationTime.text}'
                         : 'Time not selected',
+                    // selectedTime != null
+                    //     ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
+                    //     : 'Time not selected',
                     style: GoogleFonts.tinos(
                       textStyle: TextStyle(),
                     ),
@@ -905,45 +925,48 @@ class SurveyPageState extends State<SurveyPage> {
             child: Container(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () async {
-                  print(careerPosition.text);
-                  print(careerLength.text);
-                  print(currentCommunity);
-                  print(reasons.text);
-                  print(shareEntries);
-                  print(shareLocation);
-                  print(allowNotifications);
-                  print(phoneNumber.text);
-                  print(notificationTime.text);
-                  print(userLocation.toString());
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          print(careerPosition.text);
+                          print(careerLength.text);
+                          print(currentCommunity);
+                          print(reasons.text);
+                          print(shareEntries);
+                          print(shareLocation);
+                          print(allowNotifications);
+                          print(phoneNumber.text);
+                          print(notificationTime.text);
+                          print(userLocation.toString());
 
-                  if (careerPosition.text == "" ||
-                      careerLength.text == "" ||
-                      currentCommunity.isEmpty ||
-                      reasons.text == "") {
-                    print('Fields missing');
-                    return;
-                  } else {
-                    ref.read(surveyPageControllerProvider.notifier).surveyInfo(
-                        careerPosition.text,
-                        careerLength.text,
-                        currentCommunity,
-                        reasons.text,
-                        shareEntries == "Yes" ? true : false,
-                        shareLocation == "Yes" ? true : false,
-                        allowNotifications == "Yes" ? true : false,
-                        phoneNumber.text,
-                        notificationTime.text,
-                        phoneVerified,
-                        userLocation);
-                  }
-                },
-                child: Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.amber,
-                  // Change button color to beige
-                ),
-              ),
+                          if (careerPosition.text == "" ||
+                              careerLength.text == "" ||
+                              currentCommunity.isEmpty ||
+                              reasons.text == "") {
+                            print('Fields missing');
+                            return;
+                          } else {
+                            ref
+                                .read(surveyPageControllerProvider.notifier)
+                                .surveyInfo(
+                                    careerPosition.text,
+                                    careerLength.text,
+                                    currentCommunity,
+                                    reasons.text,
+                                    shareEntries == "Yes" ? true : false,
+                                    shareLocation == "Yes" ? true : false,
+                                    allowNotifications == "Yes" ? true : false,
+                                    phoneNumber.text,
+                                    notificationTime.text,
+                                    phoneVerified,
+                                    userLocation);
+                          }
+                        },
+                  child:
+                      isLoading ? CircularProgressIndicator() : Text('Submit'),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFbab7d4),
+                      foregroundColor: Colors.black)),
             ),
           ),
         ],
@@ -972,23 +995,65 @@ class SurveyPageState extends State<SurveyPage> {
     }
   }
 
+  // Future<void> _selectTime(BuildContext context) async {
+  //   TimeOfDay? pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.now(),
+  //   );
+
+  //   if (pickedTime != null && pickedTime != selectedTime) {
+  //     setState(() {
+  //       print(pickedTime.format(context));
+  //       String timey = pickedTime.format(context).toString();
+  //       selectedTime = pickedTime;
+  //       answers[8] =
+  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+  //       notificationTime.text =
+  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+  //     });
+  //   }
+  // }
+
   Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? pickedTime = await showTimePicker(
+    final TimeOfDay? pickedTime = await showTimePicker(
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colours.swatch(clrBlack), // header background color
+              onPrimary: Colours.swatch(clrWhite), // header text color
+              onSurface: Colours.swatch(clrBlack), // body text color
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                primary: Colours.swatch(clrBlack),
+
+                // button text color
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
     if (pickedTime != null && pickedTime != selectedTime) {
       setState(() {
-        print(pickedTime.format(context));
-        String timey = pickedTime.format(context).toString();
-        selectedTime = pickedTime;
-        answers[8] =
-            '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
-        notificationTime.text =
-            '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
+        //widget._selectedTime = pickedTime;
+        notificationTime.text = formatTime(pickedTime);
       });
     }
+  }
+
+  String formatTime(TimeOfDay timeOfDay) {
+    // Use the format method of TimeOfDay to get a formatted string
+    final now = DateTime.now();
+    final dateTime = DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    final format = DateFormat('h:mm a');
+    return format.format(dateTime);
   }
 
   @override

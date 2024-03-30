@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/authControllers.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 final Auth auth = Auth();
@@ -109,6 +110,8 @@ class SignInPage extends ConsumerWidget {
           },
           data: (response) async {
             print("What is the response in sign in: $response");
+            await setUserInfoProvider(ref);
+
             WidgetsBinding.instance.addPostFrameCallback((_) {
               GoRouter.of(context).go(response);
             });

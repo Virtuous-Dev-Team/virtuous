@@ -3,8 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
 
 class Users {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
@@ -69,22 +71,180 @@ class Users {
     }
   }
 
+  Future<dynamic> editEntry(
+      String communityName,
+      String quadrantUsed,
+      String quadrantColor,
+      bool shareLocation,
+      bool shareEntry,
+      String sleepHours,
+      String adviceAnswer,
+      String whatHappenedAnswer,
+      List<Events> eventList,
+      List<Events> whoWereWithYouList,
+      List<Events> whereWereYouList,
+      String dateAndTimeOfOccurence,
+      String docId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
+      Map<String, bool> eventsMap = {};
+      eventList.forEach((event) {
+        eventsMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whoWereWithYouMap = {};
+      whoWereWithYouList.forEach((event) {
+        whoWereWithYouMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whereWereYouMap = {};
+      whereWereYouList.forEach((event) {
+        whereWereYouMap[event.eventName!] = event.isSelected!;
+      });
+      final totalDataObject = {
+        "communityName": communityName,
+        "quadrantUsed": quadrantUsed,
+        "quadrantColor": quadrantColor,
+        "dateEntried": FieldValue.serverTimestamp(),
+        "sleepHours": sleepHours,
+        "eventList": eventsMap,
+        "whatHappenedAnswer": whatHappenedAnswer,
+        "adviceAnswer": adviceAnswer,
+        "whoWereWithYouList": whoWereWithYouMap,
+        "whereWereYouList": whereWereYouMap,
+        "dateAndTimeOfOccurence": dateAndTimeOfOccurence
+      };
+      await usersCollectionRef
+          .doc(user.uid)
+          .collection("totalData")
+          .doc(docId)
+          .update(totalDataObject);
+
+      return {'Success': true, 'msg': 'Successfully edited entry'};
+    } catch (error) {
+      return {'Success': false, 'Error': error};
+    }
+  }
+
+  Future<dynamic> getEntry(String docId) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
+      DocumentSnapshot<Map<String, dynamic>> res = await usersCollectionRef
+          .doc(user.uid)
+          .collection("totalData")
+          .doc(docId)
+          .get();
+      if (res.exists) {
+        print('get entry ${res.data()}');
+        return {'Success': true, 'response': res.data()};
+      }
+    } catch (error) {
+      return {'Success': false, 'Error': error};
+    }
+  }
+
+  Future<dynamic> addEntry(
+      String communityName,
+      String quadrantUsed,
+      String quadrantColor,
+      bool shareLocation,
+      bool shareEntry,
+      String sleepHours,
+      String adviceAnswer,
+      String whatHappenedAnswer,
+      List<Events> eventList,
+      List<Events> whoWereWithYouList,
+      List<Events> whereWereYouList,
+      String dateAndTimeOfOccurence) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': 'User not found'};
+      }
+
+      Map<String, bool> eventsMap = {};
+      eventList.forEach((event) {
+        eventsMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whoWereWithYouMap = {};
+      whoWereWithYouList.forEach((event) {
+        whoWereWithYouMap[event.eventName!] = event.isSelected!;
+      });
+      Map<String, bool> whereWereYouMap = {};
+      whereWereYouList.forEach((event) {
+        whereWereYouMap[event.eventName!] = event.isSelected!;
+      });
+      print('runiing.... $eventsMap');
+
+      final totalDataObject = {
+        "communityName": communityName,
+        "quadrantUsed": quadrantUsed,
+        "quadrantColor": quadrantColor,
+        "dateEntried": FieldValue.serverTimestamp(),
+        "sleepHours": sleepHours,
+        "eventList": eventsMap,
+        "whatHappenedAnswer": whatHappenedAnswer,
+        "adviceAnswer": adviceAnswer,
+        "whoWereWithYouList": whoWereWithYouMap,
+        "whereWereYouList": whereWereYouMap,
+        "dateAndTimeOfOccurence": dateAndTimeOfOccurence
+      };
+      // Add virtue entry to totalData subcollection
+      await usersCollectionRef
+          .doc(user.uid)
+          .collection("totalData")
+          .add(totalDataObject);
+      print('runiing....');
+
+      // Maybe add a check to see if it completed
+      final updateQuadrant =
+          await updateQuadrantsUsed(communityName, quadrantUsed);
+      if (updateQuadrant["Success"] == false) {
+        print('Error updating quadrant used: ${updateQuadrant['Error']}');
+      }
+      if (shareLocation && shareEntry) {
+        final CommunityShared communitySharedApi = CommunityShared();
+        final addToShared = await communitySharedApi.addSharedVirtueEntry(
+            quadrantUsed, quadrantColor, shareLocation, communityName);
+        if (addToShared["Success"] == false) {
+          print(
+              'Error adding quadrant to shared collection: ${addToShared['Error']}');
+        }
+      }
+      return {'Success': true, "response": "Entry added"};
+    } on FirebaseException catch (error) {
+      print('Error ${error.message}');
+      return {'Success': false, 'Error': error.message};
+    } catch (error) {
+      print('Error ${error}');
+      return {'Success': false, 'Error': error};
+    }
+  }
+
   // Tested and is working as intended
   Future<dynamic> updateQuadrantsUsed(communityName, quadrantUsed) async {
     try {
-      // User? user = FirebaseAuth.instance.currentUser;
-      // if (user == null) {
-      //   return Future.error({'Success': false, 'Error': 'User not found'});
-      // }
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': 'User not found'});
+      }
 
       // Increment whichever quadrant was used
-      await usersCollectionRef.doc("6EYIoEo5JDWB4akJGZ65D5YVzaM2").update({
+      await usersCollectionRef.doc(user.uid).update({
         'quadrantUsedData.${communityName}.${quadrantUsed}':
             FieldValue.increment(1),
       });
       print('Updated quadrant Used');
+      return {'Success': true, "response": "Entry added"};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
+    } catch (error) {
+      print('Error ${error}');
+      return {'Success': false, 'Error': error};
     }
   }
 
@@ -106,13 +266,17 @@ class Users {
       if (querySnapshot.docs.isNotEmpty) {
         // Iterate over the documents
         dynamic recentEntriesList = querySnapshot.docs.map((document) {
-          Timestamp timestamp = document['dateEntried'] as Timestamp;
+          print('recent entries document: ${document.data()}');
+          Timestamp? timestamp = document['dateEntried'] as Timestamp?;
+          String dateEntered =
+              timestamp != null ? timestamp.toDate().toString() : "Unknown";
           return {
+            "docId": document.id,
             "communityName": document["communityName"],
             "quadrantUsed": document["quadrantUsed"] ?? "Error",
             "quadrantColor": document["quadrantColor"],
-            "dateEntried": timestamp.toDate().toString(),
-            "quadrantAnswers": document["quadrantAnswers"]
+            "dateEntried": dateEntered,
+            // add other stuff
           };
         }).toList();
 
@@ -124,6 +288,9 @@ class Users {
       }
     } on FirebaseException catch (error) {
       return {'Success': false, 'error': error.message};
+    } catch (error) {
+      print('Error getting recent entries in users.dart $error');
+      return {'Success': false, 'error': error};
     }
   }
 
@@ -185,27 +352,36 @@ class Users {
     required Function errorStep,
     required Function nextStep,
   }) async {
-    await _firebaseAuth
-        .verifyPhoneNumber(
-      timeout: Duration(seconds: 60),
-      phoneNumber: "+1$phone",
-      verificationCompleted: (phoneAuthCredential) async {
-        return;
-      },
-      verificationFailed: (error) async {
-        return;
-      },
-      codeSent: (verificationId, forceResendingToken) async {
-        verifyId = verificationId;
-        nextStep();
-      },
-      codeAutoRetrievalTimeout: (verificationId) async {
-        return;
-      },
-    )
-        .onError((error, stackTrace) {
+    try {
+      await _firebaseAuth
+          .verifyPhoneNumber(
+        timeout: Duration(seconds: 60),
+        phoneNumber: "+1$phone",
+        verificationCompleted: (phoneAuthCredential) async {
+          return;
+        },
+        verificationFailed: (error) async {
+          return;
+        },
+        codeSent: (verificationId, forceResendingToken) async {
+          verifyId = verificationId;
+          nextStep();
+        },
+        codeAutoRetrievalTimeout: (verificationId) async {
+          return;
+        },
+      )
+          .onError((error, stackTrace) {
+        print('error in onError');
+
+        errorStep();
+      });
+    } on FirebaseAuthException catch (e) {
+      print('firebase auth exception $e');
+    } catch (error) {
+      print('error in catch');
       errorStep();
-    });
+    }
   }
 
   // verify otp code
@@ -393,5 +569,32 @@ Future<dynamic> getNotiTime() async {
 final usersRepositoryProvider = Provider<Users>((ref) {
   return Users();
 });
-final currentUserInfo =
-    StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfoProvider = StateProvider.autoDispose(
+//     (ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfo =
+//     StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());
+// final currentUserInfoProvider = StateProvider<Map<String, dynamic>>((ref) {
+//   // This will call getUserInfo() once when the provider is first accessed
+//   final dynamic userInfo = ref.watch(usersRepositoryProvider).getUserInfo();
+//   return userInfo['response'] as Map<String, dynamic>? ??
+//       {}; // Return response from getUserInfo(), or an empty map if it's null
+// });
+// final userInfoProvider = Provider<UserInfoe>((ref) {
+//   // Return the UserInfo object here
+//   final dynamic userInfo =
+//       ref.watch(usersRepositoryProvider).getUserInfo().then((value) => {});
+//   print(userInfo);
+//   return UserInfoe(
+//     id: '123',
+//     email: 'user@example.com',
+//     displayName: 'John Doe',
+//     currentCommunity: 'Community A',
+//     currentPosition: 'Developer',
+//     careerLength: '3 years',
+//   );
+// });
+final currentUserInfoProvider =
+    FutureProvider<Map<String, dynamic>>((ref) async {
+  final userInfo = await ref.read(usersRepositoryProvider).getUserInfo();
+  return userInfo;
+});

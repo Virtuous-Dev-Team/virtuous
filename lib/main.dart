@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart'
+    hide ChangeNotifierProvider;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/api/settings.dart';
 import 'package:virtuetracker/api/stats.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/screens/analysisPage.dart';
@@ -15,20 +18,33 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
+import 'package:virtuetracker/screens/settingsScreen/settings.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
+import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
+import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
+import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
+import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
+import 'package:virtuetracker/screens/virtueEntry.dart';
 import 'package:virtuetracker/widgets/Calendar.dart';
 import 'firebase_options.dart';
 // Imported both pages from screens folder.
 import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
+import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:virtuetracker/api/noti_service.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,11 +53,48 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(ProviderScope(child: MyApp()));
+  // runApp(ProviderScope(child: MyApp()));
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider(create: (_) => UserInfoProvider()),
+  //     ],
+  //     child: MyApp(),
+  //   ),
+  // );
+  runApp(
+    ProviderScope(
+      child: ChangeNotifierProvider(
+        create: (_) =>
+            UserInfoProvider(), // Provide an instance of UserInfoProvider
+        child: MyApp(),
+      ),
+    ),
+  );
 
   // await Geolocator.openAppSettings();
   // await Geolocator.openLocationSettings();
   testingApi();
+  setSharedPreferences();
+}
+
+Future setSharedPreferences() async {
+  final Users user = Users();
+  final result = await user.getUserInfo();
+  if (result['Success']) {
+    final userInfo = result['response'];
+    String currentCommunity = userInfo['currentCommunity'];
+    bool shareLocation = userInfo['shareLocation'];
+    bool shareEntries = userInfo['shareEntries'];
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentCommunity', currentCommunity);
+    await prefs.setBool('shareLocation', shareLocation);
+    await prefs.setBool('shareEntries', shareEntries);
+
+    print(
+        'main shared pref \n currentCommunity: $currentCommunity, shareLocation: $shareLocation, shareEntries: $shareEntries');
+  }
 }
 
 Future testingApi() async {
@@ -53,18 +106,34 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
+  // await u.editEntry(
+  //     "legal",
+  //     "Integrity",
+  //     "0xFFF3A3CA",
+  //     true,
+  //     true,
+  //     "1-2 hours",
+  //     "asoh",
+  //     "whatHappenedAnswer",
+  //     [],
+  //     [],
+  //     [],
+  //     "3/29/2024, 3:33pm",
+  //     "wFgwG6p1GCPrEyY7nGWd");
   // await stats
   //     .getQuadrantsUsedList("legal")
   //     .then((value) => print('main: $value'));
-  await stats
-      .buildCalendar()
-      .then((value) => print(value['response'].toString()));
+  // await stats
+  //     .buildCalendar()
+  //     .then((value) => print(value['response'].toString()));
+  // await stats.getAllStats("legal");
+
   // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
   // await u.findUsersNear().catchError((e) => print(e));
 
   // await settings
-  //     .updateProfile("testio1234@gmail.com", "TESTIOOOO", "newCareer",
-  //         "newCommunity", "4 Years")
+  //     .updateProfile(
+  //         "testio1234@gmail.com", "TESTIOOOO", "newCareer", "legal", "4 Years")
   //     .catchError((e) => print(e));
 
   // await settings.updatePrivacy(true, false).catchError((e) => print(e));
@@ -94,7 +163,6 @@ Future testingApi() async {
   //         "12:18pm")
   //     .catchError((error) => {print('error in main: $error')});
 
-
   // await u
   //     .getUpdatedLocation(true)
   //     .then((value) => print(value))
@@ -123,6 +191,7 @@ Future testingApi() async {
 //   @override
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
 //       title: 'Virtue Tracker',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
@@ -131,7 +200,11 @@ Future testingApi() async {
 
 //       // routerConfig: AppRouter.router,
 //       // home: HomePage(), // closed for testing
-//       home: ForgotPasswordPage(),
+//       home: VirtueEntry(
+//         quadrantName: '',
+//         definition: '',
+//         color: '',
+//       ),
 //     );
 //   }
 // }
@@ -139,6 +212,7 @@ Future testingApi() async {
 // This widget has the navigation with routes
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final goRouter = ref.watch(goRouterProvider);
