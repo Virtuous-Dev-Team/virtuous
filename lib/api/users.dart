@@ -366,6 +366,28 @@ class Users {
         .where('userLocation', isGreaterThanOrEqualTo: min)
         .get();
   }
+
+Future<dynamic> getNotiTime() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return Future.error({'Success': false, 'Error': 'User not found'});
+      }
+      DocumentSnapshot documentSnapshot =
+          await usersCollectionRef.doc(user.uid).get();
+      if (documentSnapshot.exists) {
+        //final userInfo = documentSnapshot.data() as Map<String, dynamic>;
+        dynamic notificationPreferences = documentSnapshot["notificationPreferences"];
+        dynamic notiTime = notificationPreferences["notificationTime"];
+
+
+        return {'Success': true, "response": notiTime};
+      }
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'error': error.message};
+    }
+  }
+
 }
 
 final usersRepositoryProvider = Provider<Users>((ref) {

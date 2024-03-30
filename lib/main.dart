@@ -27,9 +27,13 @@ import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:virtuetracker/api/noti_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
+  tz.initializeTimeZones;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
