@@ -231,63 +231,74 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 ),
               ),
             ),
+            SizedBox(
+              height: 5,
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MaterialButton(
+                SizedBox(
+                  height: 30.0, // Adjust the height as needed
+                  child: OutlinedButton(
                     onPressed: () {
                       _selectTime(context, tfTime);
                     },
-                    child: Container(
-                      width: screenWidth / 3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black, // Set border color here
-                          width: 1, // Set border width here
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: Colours.swatch(clrWhite),
+                      // Define button shape as rectangular
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            4.0), // Adjust the radius as needed
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 25.0),
+                    ),
+                    child: Text(
+                      "Pick Time",
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
                         ),
                       ),
-                      child: Center(
-                        child: Text(
-                          'Pick Time',
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ),
-                    )),
-                MaterialButton(
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  height: 30.0, // Adjust the height as needed
+                  child: OutlinedButton(
                     onPressed: () {
                       _selecteDate(context, DateTime.now(), tfDate);
                     },
-                    child: Container(
-                      width: screenWidth / 3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black, // Set border color here
-                            width: 1, // Set border width here
-                          ),
-                          borderRadius: BorderRadius.circular(5)),
-                      child: Center(
-                        child: Text(
-                          'Pick Date',
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
-                          ),
+                    style: OutlinedButton.styleFrom(
+                      // Define button shape as rectangular
+                      backgroundColor: Colours.swatch(clrWhite),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            4.0), // Adjust the radius as needed
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 25.0),
+                    ),
+                    child: Text(
+                      "Pick Date",
+                      style: GoogleFonts.inter(
+                        textStyle: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
                         ),
                       ),
-                    ))
+                    ),
+                  ),
+                ),
               ],
             ),
 
+            SizedBox(
+              height: 10,
+            ),
             Text(
               'What event was happening?',
               style: GoogleFonts.tinos(
@@ -297,49 +308,52 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 ),
               ),
             ),
+
+            SizedBox(
+              height: 10,
+            ),
             Wrap(
-              //spacing: 10, // Space between containers
-              //runSpacing: 10, // Space between rows
-              children: List.generate(
-                eventList
-                    .length, // Number of containers, you can replace this with your dynamic data length
-                (index) => MaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        if (eventList[index].isSelected == true) {
-                          eventList[index].isSelected = false;
-                        } else {
-                          eventList[index].isSelected = true;
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: screenWidth / 5, //3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black, // Set border color here
-                            width: 1, // Set border width here
-                          ),
-                          color: Colours.swatch(eventList[index].isSelected
-                              ? clrPurple
-                              : clrWhite),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Text(
-                          eventList[index].eventName.toString(),
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
+              direction: Axis.horizontal,
+              children: List.generate(eventList.length, (index) {
+                return Container(
+                  margin: EdgeInsets.only(left: 5, right: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        // color: Colours.swatch(
+                        //     eventList[index].isSelected ? clrPurple : clrWhite),
+                        // borderRadius: BorderRadius.circular(10)
+                        ),
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
+                          if (eventList[index].isSelected == true) {
+                            eventList[index].isSelected = false;
+                          } else {
+                            eventList[index].isSelected = true;
+                          }
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colours.swatch(
+                            eventList[index].isSelected ? clrPurple : clrWhite),
+                      ),
+                      child: Text(
+                        eventList[index].eventName.toString(),
+                        style: GoogleFonts.inter(
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            color: Colours.swatch(eventList[index].isSelected
+                                ? clrWhite
+                                : clrBlack),
                           ),
                         ),
                       ),
-                    )),
-              ),
+                    ),
+                  ),
+                );
+              }),
             ),
-
+            SizedBox(height: 10),
             Text(
               'Who were you with?',
               style: GoogleFonts.tinos(
@@ -349,61 +363,56 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 ),
               ),
             ),
+
+            SizedBox(
+              height: 10,
+            ),
             Wrap(
-              //spacing: 10, // Space between containers
-              //runSpacing: 10, // Space between rows
-              children: List.generate(
-                whoWereWithYouList
-                    .length, // Number of containers, you can replace this with your dynamic data length
-                (index) => MaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        if (whoWereWithYouList[index].isSelected == true) {
-                          whoWereWithYouList[index].isSelected = false;
-                        } else {
-                          whoWereWithYouList[index].isSelected = true;
-                        }
-                        // widget.whoWereWithYouList[index].isSelected !=
-                        //     !widget.whoWereWithYouList[index].isSelected!;
-                        for (int checkCount = 0;
-                            checkCount < whoWereWithYouList.length;
-                            checkCount++) {
+              direction: Axis.horizontal,
+              children: List.generate(whoWereWithYouList.length, (index) {
+                return Container(
+                  margin: EdgeInsets.only(left: 5, right: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        // color: Colours.swatch(
+                        //     eventList[index].isSelected ? clrPurple : clrWhite),
+                        // borderRadius: BorderRadius.circular(10)
+                        ),
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
                           if (whoWereWithYouList[index].isSelected == true) {
-                            if (whoWereWithYouList[index] !=
-                                whoWereWithYouList[checkCount]) {
-                              whoWereWithYouList[checkCount].isSelected !=
-                                  false;
-                            }
+                            whoWereWithYouList[index].isSelected = false;
+                          } else {
+                            whoWereWithYouList[index].isSelected = true;
                           }
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: screenWidth / 5, //3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black, // Set border color here
-                            width: 1, // Set border width here
-                          ),
-                          color: Colours.swatch(
-                              whoWereWithYouList[index].isSelected
-                                  ? clrPurple
-                                  : clrWhite),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Center(
-                        child: Text(
-                          whoWereWithYouList[index].eventName.toString(),
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colours.swatch(
+                            whoWereWithYouList[index].isSelected
+                                ? clrPurple
+                                : clrWhite),
+                      ),
+                      child: Text(
+                        whoWereWithYouList[index].eventName.toString(),
+                        style: GoogleFonts.inter(
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            color: Colours.swatch(
+                                whoWereWithYouList[index].isSelected
+                                    ? clrWhite
+                                    : clrBlack),
                           ),
                         ),
                       ),
-                    )),
-              ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+            SizedBox(
+              height: 10,
             ),
 
             Text(
@@ -415,62 +424,57 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 ),
               ),
             ),
+
+            SizedBox(
+              height: 10,
+            ),
             Wrap(
-              //spacing: 10, // Space between containers
-              //runSpacing: 10, // Space between rows
-              children: List.generate(
-                whereWereYouList
-                    .length, // Number of containers, you can replace this with your dynamic data length
-                (index) => MaterialButton(
-                    onPressed: () {
-                      setState(() {
-                        if (whereWereYouList[index].isSelected == true) {
-                          whereWereYouList[index].isSelected = false;
-                        } else {
-                          whereWereYouList[index].isSelected = true;
-                        }
-                        // widget.whereWereYouList[index].isSelected !=
-                        //     !widget.whereWereYouList[index].isSelected!;
-                        for (int checkCount = 0;
-                            checkCount < whereWereYouList.length;
-                            checkCount++) {
+              direction: Axis.horizontal,
+              children: List.generate(whereWereYouList.length, (index) {
+                return Container(
+                  margin: EdgeInsets.only(left: 5, right: 5),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        // color: Colours.swatch(
+                        //     eventList[index].isSelected ? clrPurple : clrWhite),
+                        // borderRadius: BorderRadius.circular(10)
+                        ),
+                    child: OutlinedButton(
+                      onPressed: () {
+                        setState(() {
                           if (whereWereYouList[index].isSelected == true) {
-                            if (whereWereYouList[index] !=
-                                whereWereYouList[checkCount]) {
-                              whereWereYouList[checkCount].isSelected != false;
-                            }
+                            whereWereYouList[index].isSelected = false;
+                          } else {
+                            whereWereYouList[index].isSelected = true;
                           }
-                        }
-                      });
-                    },
-                    child: Container(
-                      width: screenWidth / 5, //3,
-                      height: 20,
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black, // Set border color here
-                            width: 1, // Set border width here
-                          ),
-                          color: Colours.swatch(
-                              whereWereYouList[index].isSelected
-                                  ? clrPurple
-                                  : clrWhite),
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Center(
-                        child: Text(
-                          whereWereYouList[index].eventName.toString(),
-                          style: GoogleFonts.inter(
-                            textStyle: TextStyle(
-                              fontSize: 12,
-                              color: Colors.black,
-                            ),
+                        });
+                      },
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colours.swatch(
+                            whereWereYouList[index].isSelected
+                                ? clrPurple
+                                : clrWhite),
+                      ),
+                      child: Text(
+                        whereWereYouList[index].eventName.toString(),
+                        style: GoogleFonts.inter(
+                          textStyle: TextStyle(
+                            fontSize: 12,
+                            color: Colours.swatch(
+                                whereWereYouList[index].isSelected
+                                    ? clrWhite
+                                    : clrBlack),
                           ),
                         ),
                       ),
-                    )),
-              ),
+                    ),
+                  ),
+                );
+              }),
             ),
-
+            SizedBox(
+              height: 20,
+            ),
             Container(
               constraints: BoxConstraints(
                   minHeight: 0,
@@ -733,7 +737,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
 Widget textFieldNoteInput(
     BuildContext context, TextEditingController controller, bool readOnly) {
   return SizedBox(
-      width: MediaQuery.of(context).size.width / 1.2,
+      width: MediaQuery.of(context).size.width / 1.0,
       height: 120,
       child: TextFormField(
         cursorColor: Colors.black,
