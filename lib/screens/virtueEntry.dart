@@ -362,10 +362,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                           child: OutlinedButton(
                             onPressed: () {
                               setState(() {
-                                if (eventList[0].isSelected == true) {
-                                  eventList[0].isSelected = false;
+                                if (eventList[1].isSelected == true) {
+                                  eventList[1].isSelected = false;
                                 } else {
-                                  eventList[0].isSelected = true;
+                                  eventList[1].isSelected = true;
                                 }
                               });
                             },
@@ -387,7 +387,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                     width: 90,
                     height: 30,
                     decoration: BoxDecoration(
-                        color: Colours.swatch(eventList[1].isSelected!
+                        color: Colours.swatch(eventList[2].isSelected!
                             ? clrPurple
                             : clrWhite),
                         borderRadius: BorderRadius.circular(10)),
@@ -535,7 +535,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                     width: 120,
                     height: 30,
                     decoration: BoxDecoration(
-                        color: Colours.swatch(eventList[3].isSelected!
+                        color: Colours.swatch(eventList[6].isSelected!
                             ? clrPurple
                             : clrWhite),
                         borderRadius: BorderRadius.circular(10)),
@@ -821,7 +821,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                     width: 85,
                     height: 30,
                     decoration: BoxDecoration(
-                        color: Colours.swatch(whoWereWithYouList[1].isSelected!
+                        color: Colours.swatch(whoWereWithYouList[5].isSelected!
                             ? clrPurple
                             : clrWhite),
                         borderRadius: BorderRadius.circular(10)),
@@ -1043,7 +1043,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                     width: 85,
                     height: 30,
                     decoration: BoxDecoration(
-                        color: Colours.swatch(whereWereYouList[1].isSelected!
+                        color: Colours.swatch(whereWereYouList[5].isSelected!
                             ? clrPurple
                             : clrWhite),
                         borderRadius: BorderRadius.circular(10)),
