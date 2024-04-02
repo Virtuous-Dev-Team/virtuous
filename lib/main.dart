@@ -41,11 +41,15 @@ import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/homePage.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:virtuetracker/api/noti_service.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationService().initNotification();
+  tz.initializeTimeZones;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

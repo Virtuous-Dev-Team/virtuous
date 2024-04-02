@@ -11,6 +11,7 @@ import 'package:virtuetracker/controllers/surveyPageController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 import 'package:intl/intl.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -117,7 +118,7 @@ class SurveyPageState extends State<SurveyPage> {
             },
             data: (response) async {
               // If response is location and not string then update userLocation
-              if (response is GeoPoint) {
+              if (response is GeoFirePoint) {
                 print('User Location : $response');
                 userLocation = response;
                 return;
@@ -959,7 +960,7 @@ class SurveyPageState extends State<SurveyPage> {
                                     phoneNumber.text,
                                     notificationTime.text,
                                     phoneVerified,
-                                    userLocation);
+                                    userLocation.data);
                           }
                         },
                   child:

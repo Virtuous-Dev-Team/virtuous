@@ -10,7 +10,7 @@ class UserInfoProvider extends ChangeNotifier {
   late bool _shareEntries;
   late String _currentCommunity;
   late bool _shareLocation;
-  late GeoPoint _userLocation;
+  late dynamic _userLocation;
   late NotificationPreferences _notificationPreferences;
   late CareerInfo _careerInfo;
 
@@ -19,7 +19,7 @@ class UserInfoProvider extends ChangeNotifier {
   bool get shareEntries => _shareEntries;
   String get currentCommunity => _currentCommunity;
   bool get shareLocation => _shareLocation;
-  GeoPoint get userLocation => _userLocation;
+  dynamic get userLocation => _userLocation;
   NotificationPreferences get notificationPreferences =>
       _notificationPreferences;
   CareerInfo get careerInfo => _careerInfo;
@@ -31,7 +31,7 @@ class UserInfoProvider extends ChangeNotifier {
     _currentCommunity = response['currentCommunity'] ?? '';
     _shareLocation = response['shareLocation'] ?? false;
     _userLocation = response['userLocation'] ??
-        GeoPoint(0, 0); // Assuming GeoPoint has constructor
+        []; // Assuming GeoPoint has constructor
     _notificationPreferences =
         NotificationPreferences.fromJson(response['notificationPreferences']);
     _careerInfo = CareerInfo.fromJson(response['careerInfo']);
