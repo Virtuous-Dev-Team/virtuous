@@ -7,11 +7,13 @@ import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 class Users {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static String verifyId = "";
+  final geo = GeoFlutterFire();
 
   // Add different communitiesst, and write getter function per commmunity.
 
@@ -423,6 +425,7 @@ class Users {
 
   // Used whenever we need to to ask for user permissions for location
   // Done and tested
+  // updated to geoflutterfire
   Future<dynamic> addUserLocation() async {
     try {
       bool serviceEnabled;
@@ -469,9 +472,10 @@ class Users {
           desiredAccuracy: LocationAccuracy.high);
       print(
           "latitude: ${position.latitude} and longitude: ${position.longitude}");
+      GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
       return {
         "Success": true,
-        "response": GeoPoint(position.latitude, position.longitude)
+        "response": geoFireLocation
       };
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -479,12 +483,14 @@ class Users {
   }
 
   // Done and tested
+  // updated to geoflutterfire
   Future<dynamic> getUpdatedLocation(shareLocation) async {
     try {
       if (shareLocation) {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
-        return GeoPoint(position.latitude, position.longitude);
+        GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
+        return geoFireLocation;
       } else {
         return Future.error({
           'Success': false,
@@ -517,6 +523,61 @@ class Users {
       return {'Success': false, 'Error': error.message};
     }
   }
+
+// get nearby entries for nearby page ----IN PROGRESS----
+  Future<dynamic> getNearbyEntries(double radius, String timeFrame, bool shareLocation) async {
+    final sharedCollectionRef = FirebaseFirestore.instance.collection('CommunitySharedData');
+    final geoRef = geo.collection(collectionRef: sharedCollectionRef);
+      if (shareLocation) {
+        print('getting nearby users');
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
+
+        var eventsStream =  await geoRef.within(center: geoFireLocation, radius: radius, field: 'userLocation', strictMode: true);
+        print('got stream: $eventsStream');
+
+        final futureList = eventsStream.toList();
+        print('got future list: $futureList');
+        final list = await futureList;
+        print('made list: $list');
+
+
+        // final List<DocumentReference> nearbyReferences = [];
+
+        // // Listen to the stream and collect results
+        // final subscription = eventsStream.listen((events) {
+        //   for (final event in events) {
+        //     nearbyReferences.add(usersCollectionRefLocation.doc(event.id));
+        //   }
+        // });
+        // print('collected results');
+
+        // // Wait for the subscription to complete
+        // await subscription.asFuture<void>();
+        // print('subscription completed');
+
+        // print('here it is: $nearbyReferences');
+        // Future<List<User>> usersFutureList = snapshots.map((snapshot) => User.fromSnapshot(snapshot)).toList();
+        // List<User> usersList = await usersFutureList;
+        // print('users list: $list');
+      } else {
+        return "Location services not enabled";
+      }
+    
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<dynamic> findUsersNear() async {
     // Target location
@@ -555,7 +616,6 @@ Future<dynamic> getNotiTime() async {
         //final userInfo = documentSnapshot.data() as Map<String, dynamic>;
         dynamic notificationPreferences = documentSnapshot["notificationPreferences"];
         dynamic notiTime = notificationPreferences["notificationTime"];
-
 
         return {'Success': true, "response": notiTime};
       }
