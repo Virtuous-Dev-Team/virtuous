@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:virtuetracker/api/users.dart';
 
 import '../App_Configuration/apptheme.dart';
 //import '../widgets/appBarWidget.dart';
@@ -42,6 +43,7 @@ class _NearbyPageState extends State<NearbyPage>
   Widget build(BuildContext context) {
     late List<_ChartData> data;
     late TooltipBehavior _tooltip;
+    //data = Users().getNearbyEntries;
     data = [
       _ChartData('Prudence', 27),
       _ChartData('Self-control', 25),
@@ -116,9 +118,8 @@ class _NearbyPageState extends State<NearbyPage>
                                     height: 30,
                                     width: 160,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'All-time',
+                                      value: 'Last week',
                                       items: <String>[
-                                        'All-time',
                                         'Last week',
                                         'Last 3 months',
                                         'Last 6 months',
@@ -161,9 +162,8 @@ class _NearbyPageState extends State<NearbyPage>
                                     height: 30,
                                     width: 160,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'Worldwide',
+                                      value: '10km',
                                       items: <String>[
-                                        'Worldwide',
                                         '10km',
                                         '50km',
                                         '250km',

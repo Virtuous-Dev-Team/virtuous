@@ -1,19 +1,36 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 
+
 class Users {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static String verifyId = "";
   final geo = GeoFlutterFire();
+  List<DocumentSnapshot> parsedEntryList = [];
+  Map<String, int?> chartData = {
+    "Honesty": 0,
+    "Courage": 0,
+    "Compassion": 0,
+    "Generosity": 0,
+    "Fidelity": 0,
+    "Integrity": 0,
+    "Fairness": 0,
+    "Self-control": 0,
+    "Prudence": 0
+  };
+
 
   // Add different communitiesst, and write getter function per commmunity.
 
@@ -524,43 +541,135 @@ class Users {
     }
   }
 
+  Future<dynamic> parseNearbyEntries (List<DocumentSnapshot> nearbyEntryList, String timeFrame) async {
+    DateTime startDate;
+    DateTime today = DateTime.now();
+    
+    // get start date for qualified entries
+    if(timeFrame == 'Last week') {
+      startDate = today.subtract(const Duration(days: 7));
+    } else if(timeFrame == 'Last 3 months') {
+      startDate = today.subtract(const Duration(days: 90));
+    } else if(timeFrame == 'Last 6 months') {
+      startDate = today.subtract(const Duration(days: 180));
+    }else if(timeFrame == 'Last year') {
+      startDate = today.subtract(const Duration(days: 365));
+    } else {
+      print('invalid time frame');
+      startDate = today.subtract(const Duration(days: 0));
+    }
+
+
+    //get entries within selected time frame
+    for(var i=0; i < nearbyEntryList.length; i++) {
+      final entry = nearbyEntryList[0].data() as Map;
+      Timestamp? entryTime = entry['dateEntried'] as Timestamp?;
+      DateTime? dateEntered =
+              entryTime != null ? entryTime.toDate() : today;
+
+      // if date of entry is within time frame, add to parsed list
+      if(dateEntered.isAfter(startDate)) {
+        parsedEntryList.add(nearbyEntryList[i]);
+      }
+      
+    }
+
+    // collect frequency of each virtue
+    for(var i=0; i < parsedEntryList.length; i++) {
+      final entry = nearbyEntryList[i].data() as Map;
+      String virtue = entry['quadrantUsed'];
+      switch(virtue) {
+        case 'Prudence':{
+          chartData['Prudence'] = chartData['Prudence']! + 1;
+        }
+        break;
+
+        case 'Self-control':{
+          chartData['Self-control'] = chartData['Self-control']! + 1;
+        }
+        break;
+
+        case 'Fairness': {
+          chartData['Fairness'] = chartData['Fairness']! + 1;
+        }
+        break;
+
+        case 'Integrity': {
+          chartData['Integrity'] = chartData['Integrity']! + 1;
+        }
+        break;
+
+        case 'Fidelity': {
+          chartData['Fidelity'] = chartData['Fidelity']! + 1;
+        }
+        break;
+
+        case 'Generosity': {
+          chartData['Generosity'] = chartData['Generosity']! + 1;
+        }
+        break;
+
+        case 'Compassion': {
+          chartData['Compassion'] = chartData['Compassion']! + 1;
+        }
+        break;
+
+        case 'Courage': {
+          chartData['Courage'] = chartData['Courage']! + 1;
+        }
+        break;
+
+        case 'Honesty': {
+          chartData['Honesty'] = chartData['Honesty']! + 1;
+        }
+        break;
+      }
+    }
+
+    print(chartData);
+
+
+    return;
+  }
+
 // get nearby entries for nearby page ----IN PROGRESS----
-  Future<dynamic> getNearbyEntries(double radius, String timeFrame, bool shareLocation) async {
+  Future<dynamic> getNearbyEntries(String radius, String timeFrame, bool shareLocation) async {
     final sharedCollectionRef = FirebaseFirestore.instance.collection('CommunitySharedData');
     final geoRef = geo.collection(collectionRef: sharedCollectionRef);
+
+    // convert radius string to double
+    String strRad = radius.replaceAll(new RegExp(r'[^0-9]'),'');
+    double numRadius = double.parse(strRad);
+    print('radius: $numRadius');
+
+
       if (shareLocation) {
-        print('getting nearby users');
+        print('getting nearby entries');
+
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
         GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
 
-        var eventsStream =  await geoRef.within(center: geoFireLocation, radius: radius, field: 'userLocation', strictMode: true);
-        print('got stream: $eventsStream');
+        var stream = geoRef.within(center: geoFireLocation, radius: numRadius, field: 'userLocation', strictMode: true);
 
-        final futureList = eventsStream.toList();
-        print('got future list: $futureList');
-        final list = await futureList;
-        print('made list: $list');
+        List<DocumentSnapshot> nearbyEntryList = [];
+
+        late StreamSubscription subscription;
+
+        subscription = stream.listen((List<DocumentSnapshot> documentList) {
+
+          for(var i=0; i < documentList.length; i++) {
+            nearbyEntryList.add(documentList[i]);
+          }
+          
+
+          parseNearbyEntries(nearbyEntryList, timeFrame);
+          
+          return;
+        });
 
 
-        // final List<DocumentReference> nearbyReferences = [];
 
-        // // Listen to the stream and collect results
-        // final subscription = eventsStream.listen((events) {
-        //   for (final event in events) {
-        //     nearbyReferences.add(usersCollectionRefLocation.doc(event.id));
-        //   }
-        // });
-        // print('collected results');
-
-        // // Wait for the subscription to complete
-        // await subscription.asFuture<void>();
-        // print('subscription completed');
-
-        // print('here it is: $nearbyReferences');
-        // Future<List<User>> usersFutureList = snapshots.map((snapshot) => User.fromSnapshot(snapshot)).toList();
-        // List<User> usersList = await usersFutureList;
-        // print('users list: $list');
       } else {
         return "Location services not enabled";
       }
@@ -568,41 +677,30 @@ class Users {
   }
 
 
+//   Future<dynamic> findUsersNear() async {
+//     // Target location
+//     GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
+//     final double earthRadius = 6371; // Radius of the Earth in kilometers
+//     double radiusInKm = 10;
+//     // Convert radius from kilometers to degrees
+//     double radiusInDegrees = radiusInKm / earthRadius;
+//     double minLat = targetLocation.latitude - radiusInDegrees;
+//     double maxLat = targetLocation.latitude + radiusInDegrees;
+//     double minLon = targetLocation.longitude - radiusInDegrees;
+//     double maxLon = targetLocation.longitude + radiusInDegrees;
 
+//     GeoPoint max = new GeoPoint(maxLat, maxLon);
+//     GeoPoint min = new GeoPoint(minLat, minLon);
 
+//     print('Max: $max, min: $min');
 
-
-
-
-
-
-
-
-
-  Future<dynamic> findUsersNear() async {
-    // Target location
-    GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
-    final double earthRadius = 6371; // Radius of the Earth in kilometers
-    double radiusInKm = 10;
-    // Convert radius from kilometers to degrees
-    double radiusInDegrees = radiusInKm / earthRadius;
-    double minLat = targetLocation.latitude - radiusInDegrees;
-    double maxLat = targetLocation.latitude + radiusInDegrees;
-    double minLon = targetLocation.longitude - radiusInDegrees;
-    double maxLon = targetLocation.longitude + radiusInDegrees;
-
-    GeoPoint max = new GeoPoint(maxLat, maxLon);
-    GeoPoint min = new GeoPoint(minLat, minLon);
-
-    print('Max: $max, min: $min');
-
-// Query documents within a certain radius
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('CommunitySharedData')
-        .where('userLocation', isLessThanOrEqualTo: max)
-        .where('userLocation', isGreaterThanOrEqualTo: min)
-        .get();
-  }
+// // Query documents within a certain radius
+//     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+//         .collection('CommunitySharedData')
+//         .where('userLocation', isLessThanOrEqualTo: max)
+//         .where('userLocation', isGreaterThanOrEqualTo: min)
+//         .get();
+//   }
 
 Future<dynamic> getNotiTime() async {
     try {

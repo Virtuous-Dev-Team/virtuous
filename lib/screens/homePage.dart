@@ -15,6 +15,8 @@ import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -78,6 +80,45 @@ class _HomePageState extends ConsumerState<HomePage> {
                     padding: EdgeInsets.all(70),
                   ),
                 ),
+                // Center( //----------------------------- test button for testing stuff :) ---------------------------------
+                //   child: Container(
+                //     width: double.infinity,
+                //     child: ElevatedButton(
+                //       onPressed:() async {
+                //         // --------- noti stuff -----------
+                //         // TimeOfDay stringToTimeOfDay(String tod) {
+                //         //   final format = DateFormat.jm();
+                //         //     return TimeOfDay.fromDateTime(format.parse(tod));
+                //         // }
+                //         // TimeOfDay fromString(String time) {
+                //         //   int hh = 0;
+                //         //   if (time.endsWith('PM')) hh = 12;
+                //         //   time = time.split(' ')[0];
+                //         //   return TimeOfDay(
+                //         //     hour: hh + int.parse(time.split(":")[0]) % 24, // in case of a bad time format entered manually by the user
+                //         //     minute: int.parse(time.split(":")[1]) % 60,
+                //         //   );
+                //         // }
+                //         // dynamic time = await Users().getNotiTime();
+                //         // String response = time["response"];
+                //         // TimeOfDay formatTime = fromString(response);
+                //         // print('time: $formatTime');              
+                //         // NotificationService().scheduleNotification(
+                //         //   title: 'Virtuous',
+                //         //   body: 'Make an entry today!',
+                //         //   scheduledNotificationDateTime: scheduleTime
+                //         // );
+                //         // -------------- location stuff ----------------
+                //         Users().getNearbyEntries('10km', "Last week", true);
+                //       },
+                //       child: Text('Get entries'),
+                //       style: ElevatedButton.styleFrom(
+                //         primary: Colors.amber,
+                //         // Change button color to beige
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 Text(' '),
                 Divider(
                   thickness: 1,
