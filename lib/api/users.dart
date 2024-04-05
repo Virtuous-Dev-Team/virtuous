@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
@@ -14,6 +17,18 @@ class Users {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static String verifyId = "";
   final geo = GeoFlutterFire();
+  List<DocumentSnapshot> parsedEntryList = [];
+  Map<String, int?> chartData = {
+    "Honesty": 0,
+    "Courage": 0,
+    "Compassion": 0,
+    "Generosity": 0,
+    "Fidelity": 0,
+    "Integrity": 0,
+    "Fairness": 0,
+    "Self-control": 0,
+    "Prudence": 0
+  };
 
   // Add different communitiesst, and write getter function per commmunity.
 
@@ -141,7 +156,6 @@ class Users {
           .doc(docId)
           .get();
       if (res.exists) {
-        print('get entry ${res.data()}');
         return {'Success': true, 'response': res.data()};
       }
     } catch (error) {
@@ -180,7 +194,6 @@ class Users {
       whereWereYouList.forEach((event) {
         whereWereYouMap[event.eventName!] = event.isSelected!;
       });
-      print('runiing.... $eventsMap');
 
       final totalDataObject = {
         "communityName": communityName,
@@ -200,7 +213,6 @@ class Users {
           .doc(user.uid)
           .collection("totalData")
           .add(totalDataObject);
-      print('runiing....');
 
       // Maybe add a check to see if it completed
       final updateQuadrant =
@@ -240,7 +252,6 @@ class Users {
         'quadrantUsedData.${communityName}.${quadrantUsed}':
             FieldValue.increment(1),
       });
-      print('Updated quadrant Used');
       return {'Success': true, "response": "Entry added"};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -268,7 +279,6 @@ class Users {
       if (querySnapshot.docs.isNotEmpty) {
         // Iterate over the documents
         dynamic recentEntriesList = querySnapshot.docs.map((document) {
-          print('recent entries document: ${document.data()}');
           Timestamp? timestamp = document['dateEntried'] as Timestamp?;
           String dateEntered =
               timestamp != null ? timestamp.toDate().toString() : "Unknown";
@@ -285,7 +295,6 @@ class Users {
         // print(recentEntriesList);
         return {'Success': true, "response": recentEntriesList};
       } else {
-        print('No documents found');
         return {'Success': false, 'Error': "Query is empty"};
       }
     } on FirebaseException catch (error) {
@@ -374,14 +383,11 @@ class Users {
         },
       )
           .onError((error, stackTrace) {
-        print('error in onError');
-
         errorStep();
       });
     } on FirebaseAuthException catch (e) {
       print('firebase auth exception $e');
     } catch (error) {
-      print('error in catch');
       errorStep();
     }
   }
@@ -396,7 +402,6 @@ class Users {
     try {
       currentUser.linkWithCredential(cred).then((value) {
         // Verfied now perform something or exit.
-        print("credential linked");
         return {"Success": true, "response": "User phone number verified"};
       }).catchError((e) {
         // An error occured while linking
@@ -452,7 +457,6 @@ class Users {
       permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
-        print('current $permission');
         if (permission == LocationPermission.denied) {
           return {'Success': false, 'Error': 'Location permissions are denied'};
         }
@@ -470,8 +474,7 @@ class Users {
 
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      print(
-          "latitude: ${position.latitude} and longitude: ${position.longitude}");
+
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
       return {"Success": true, "response": geoFireLocation};
@@ -524,37 +527,11 @@ class Users {
   }
 
   Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
-      bool shareLocation) async* {
+      bool shareLocation, double radius) async* {
     final sharedCollectionRef =
         FirebaseFirestore.instance.collection('CommunitySharedData');
     final geoRef = geo.collection(collectionRef: sharedCollectionRef);
     if (shareLocation) {
-      print('getting nearby users');
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      GeoFirePoint geoFireLocation =
-          geo.point(latitude: position.latitude, longitude: position.longitude);
-
-      var eventsStream = geoRef.within(
-          center: geoFireLocation,
-          radius: 40000,
-          field: 'userLocation',
-          strictMode: true);
-      await for (var event in eventsStream) {
-        print('event in stram user dart $event');
-        yield event; // Yield the list of document snapshots
-      }
-    }
-  }
-
-// get nearby entries for nearby page ----IN PROGRESS----
-  Future<dynamic> getNearbyEntries(
-      double radius, String timeFrame, bool shareLocation) async {
-    final sharedCollectionRef =
-        FirebaseFirestore.instance.collection('CommunitySharedData');
-    final geoRef = geo.collection(collectionRef: sharedCollectionRef);
-    if (shareLocation) {
-      print('getting nearby users');
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
@@ -565,136 +542,174 @@ class Users {
           radius: radius,
           field: 'userLocation',
           strictMode: true);
-      List<_ChartData> listy = [];
-      _ChartData prudence = _ChartData('Prudence', []);
-      _ChartData selfControl = _ChartData('Self-control', []);
-      _ChartData fairness = _ChartData('Fairness', []);
-      _ChartData integrity = _ChartData('Integrity', []);
-      _ChartData fidelity = _ChartData('Fidelity', []);
-      _ChartData generosity = _ChartData('Generosity', []);
-      _ChartData compassion = _ChartData('Compassion', []);
-      _ChartData courage = _ChartData('Courage', []);
-      _ChartData honesty = _ChartData('Honesty', []);
-
-      // Listen to the stream
-      eventsStream.listen((List<DocumentSnapshot> eventList) {
-        // Handle the stream data here
-        for (var event in eventList) {
-          // Access each document in the stream
-          dynamic data = event.data();
-          String virtueUsed = data['quadrantUsed'];
-          switch (virtueUsed) {
-            case "Honesty":
-              {
-                honesty.y.add(data);
-              }
-            case "Courage":
-              {
-                courage.y.add(data);
-              }
-            case "Compassion":
-              {
-                compassion.y.add(data);
-              }
-            case "Generosity":
-              {
-                generosity.y.add(data);
-              }
-            case "Fidelity":
-              {
-                fidelity.y.add(data);
-              }
-            case "Integrity":
-              {
-                integrity.y.add(data);
-              }
-            case "Fairness":
-              {
-                fairness.y.add(data);
-              }
-            case "Self-control":
-              {
-                selfControl.y.add(data);
-              }
-            case "Prudence":
-              {
-                prudence.y.add(data);
-              }
-          }
-          print('Document ID: ${event.id}');
-          print('Document data: ${event.data()}');
-        }
-        listy.addAll([
-          honesty,
-          compassion,
-          courage,
-          selfControl,
-          integrity,
-          fairness,
-          fidelity,
-          prudence,
-          generosity
-        ]);
-      });
-
-      return listy;
-      // await eventsStream.forEach(
-      //   (element) => print(element),
-      // );
-      // print('got stream: ${eventsStream.isEmpty}');
-      // eventsStream.map((event) => print('new event:'));
-      // final futureList = eventsStream.toList();
-      // print('got future list: $futureList');
-      // final list = await futureList;
-      // print('made list: $list');
-
-      // final List<DocumentReference> nearbyReferences = [];
-
-      // // Listen to the stream and collect results
-      // final subscription = eventsStream.listen((events) {
-      //   for (final event in events) {
-      //     nearbyReferences.add(usersCollectionRefLocation.doc(event.id));
-      //   }
-      // });
-      // print('collected results');
-
-      // // Wait for the subscription to complete
-      // await subscription.asFuture<void>();
-      // print('subscription completed');
-
-      // print('here it is: $nearbyReferences');
-      // Future<List<User>> usersFutureList = snapshots.map((snapshot) => User.fromSnapshot(snapshot)).toList();
-      // List<User> usersList = await usersFutureList;
-      // print('users list: $list');
-    } else {
-      // return "Location services not enabled";
+      await for (var event in eventsStream) {
+        yield event; // Yield the list of document snapshots
+      }
     }
   }
 
-  Future<dynamic> findUsersNear() async {
-    // Target location
-    GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
-    final double earthRadius = 6371; // Radius of the Earth in kilometers
-    double radiusInKm = 10;
-    // Convert radius from kilometers to degrees
-    double radiusInDegrees = radiusInKm / earthRadius;
-    double minLat = targetLocation.latitude - radiusInDegrees;
-    double maxLat = targetLocation.latitude + radiusInDegrees;
-    double minLon = targetLocation.longitude - radiusInDegrees;
-    double maxLon = targetLocation.longitude + radiusInDegrees;
+  // Future<dynamic> parseNearbyEntries(
+  //     List<DocumentSnapshot> nearbyEntryList, String timeFrame) async {
+  //   DateTime startDate;
+  //   DateTime today = DateTime.now();
 
-    GeoPoint max = new GeoPoint(maxLat, maxLon);
-    GeoPoint min = new GeoPoint(minLat, minLon);
+  //   // get start date for qualified entries
+  //   if (timeFrame == 'Last week') {
+  //     startDate = today.subtract(const Duration(days: 7));
+  //   } else if (timeFrame == 'Last 3 months') {
+  //     startDate = today.subtract(const Duration(days: 90));
+  //   } else if (timeFrame == 'Last 6 months') {
+  //     startDate = today.subtract(const Duration(days: 180));
+  //   } else if (timeFrame == 'Last year') {
+  //     startDate = today.subtract(const Duration(days: 365));
+  //   } else {
+  //     print('invalid time frame');
+  //     startDate = today.subtract(const Duration(days: 0));
+  //   }
 
-    print('Max: $max, min: $min');
+  //   //get entries within selected time frame
+  //   for (var i = 0; i < nearbyEntryList.length; i++) {
+  //     final entry = nearbyEntryList[0].data() as Map;
+  //     Timestamp? entryTime = entry['dateEntried'] as Timestamp?;
+  //     DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
 
-// Query documents within a certain radius
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-        .collection('CommunitySharedData')
-        .where('userLocation', isLessThanOrEqualTo: max)
-        .where('userLocation', isGreaterThanOrEqualTo: min)
-        .get();
-  }
+  //     // if date of entry is within time frame, add to parsed list
+  //     if (dateEntered.isAfter(startDate)) {
+  //       parsedEntryList.add(nearbyEntryList[i]);
+  //     }
+  //   }
+
+  //   // collect frequency of each virtue
+  //   for (var i = 0; i < parsedEntryList.length; i++) {
+  //     final entry = nearbyEntryList[i].data() as Map;
+  //     String virtue = entry['quadrantUsed'];
+  //     switch (virtue) {
+  //       case 'Prudence':
+  //         {
+  //           chartData['Prudence'] = chartData['Prudence']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Self-control':
+  //         {
+  //           chartData['Self-control'] = chartData['Self-control']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Fairness':
+  //         {
+  //           chartData['Fairness'] = chartData['Fairness']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Integrity':
+  //         {
+  //           chartData['Integrity'] = chartData['Integrity']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Fidelity':
+  //         {
+  //           chartData['Fidelity'] = chartData['Fidelity']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Generosity':
+  //         {
+  //           chartData['Generosity'] = chartData['Generosity']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Compassion':
+  //         {
+  //           chartData['Compassion'] = chartData['Compassion']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Courage':
+  //         {
+  //           chartData['Courage'] = chartData['Courage']! + 1;
+  //         }
+  //         break;
+
+  //       case 'Honesty':
+  //         {
+  //           chartData['Honesty'] = chartData['Honesty']! + 1;
+  //         }
+  //         break;
+  //     }
+  //   }
+
+  //   return;
+  // }
+
+// // get nearby entries for nearby page ----IN PROGRESS----
+//   Future<dynamic> getNearbyEntries(
+//       String radius, String timeFrame, bool shareLocation) async {
+//     final sharedCollectionRef =
+//         FirebaseFirestore.instance.collection('CommunitySharedData');
+//     final geoRef = geo.collection(collectionRef: sharedCollectionRef);
+
+//     // convert radius string to double
+//     String strRad = radius.replaceAll(new RegExp(r'[^0-9]'), '');
+//     double numRadius = double.parse(strRad);
+
+//     if (shareLocation) {
+//       print('getting nearby entries');
+
+//       Position position = await Geolocator.getCurrentPosition(
+//           desiredAccuracy: LocationAccuracy.high);
+//       GeoFirePoint geoFireLocation =
+//           geo.point(latitude: position.latitude, longitude: position.longitude);
+
+//       var stream = geoRef.within(
+//           center: geoFireLocation,
+//           radius: numRadius,
+//           field: 'userLocation',
+//           strictMode: true);
+
+//       List<DocumentSnapshot> nearbyEntryList = [];
+
+//       late StreamSubscription subscription;
+
+//       subscription = stream.listen((List<DocumentSnapshot> documentList) {
+//         for (var i = 0; i < documentList.length; i++) {
+//           nearbyEntryList.add(documentList[i]);
+//         }
+
+//         parseNearbyEntries(nearbyEntryList, timeFrame);
+
+//         return;
+//       });
+//     } else {
+//       return "Location services not enabled";
+//     }
+//   }
+
+//   Future<dynamic> findUsersNear() async {
+//     // Target location
+//     GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
+//     final double earthRadius = 6371; // Radius of the Earth in kilometers
+//     double radiusInKm = 10;
+//     // Convert radius from kilometers to degrees
+//     double radiusInDegrees = radiusInKm / earthRadius;
+//     double minLat = targetLocation.latitude - radiusInDegrees;
+//     double maxLat = targetLocation.latitude + radiusInDegrees;
+//     double minLon = targetLocation.longitude - radiusInDegrees;
+//     double maxLon = targetLocation.longitude + radiusInDegrees;
+
+//     GeoPoint max = new GeoPoint(maxLat, maxLon);
+//     GeoPoint min = new GeoPoint(minLat, minLon);
+
+//     print('Max: $max, min: $min');
+
+// // Query documents within a certain radius
+//     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+//         .collection('CommunitySharedData')
+//         .where('userLocation', isLessThanOrEqualTo: max)
+//         .where('userLocation', isGreaterThanOrEqualTo: min)
+//         .get();
+//   }
 
   Future<dynamic> getNotiTime() async {
     try {

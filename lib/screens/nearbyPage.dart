@@ -8,6 +8,7 @@ import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:virtuetracker/api/users.dart';
 
 import '../App_Configuration/apptheme.dart';
 //import '../widgets/appBarWidget.dart';
@@ -43,11 +44,14 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   }
 
   late bool shareLocation;
+  double radius = 10;
+  String timeFrame = "Last week";
   List<_ChartData> chartData = [];
   @override
   Widget build(BuildContext context) {
     late List<_ChartData> data;
     late TooltipBehavior _tooltip;
+    //data = Users().getNearbyEntries;
     data = [
       _ChartData('Prudence', [1, 1, 1, 1, 1, 1]),
       _ChartData('Self-control', [1, 1, 1, 1, 1, 1]),
@@ -122,9 +126,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     height: 30,
                                     width: 160,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'All-time',
+                                      value: 'Last week',
                                       items: <String>[
-                                        'All-time',
                                         'Last week',
                                         'Last 3 months',
                                         'Last 6 months',
@@ -139,7 +142,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                                       15)), // Match font size here
                                         );
                                       }).toList(),
-                                      onChanged: (String? newValue) {},
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          timeFrame = newValue!;
+                                        });
+                                      },
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 15),
@@ -167,9 +174,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     height: 30,
                                     width: 160,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'Worldwide',
+                                      value: '10km',
                                       items: <String>[
-                                        'Worldwide',
                                         '10km',
                                         '50km',
                                         '250km',
@@ -184,7 +190,17 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                                       15)), // Match font size here
                                         );
                                       }).toList(),
-                                      onChanged: (String? newValue) {},
+                                      onChanged: (String? newValue) async {
+                                        String num = newValue!.substring(0, 2);
+                                        double radius = double.parse(num!);
+                                        setState(() {
+                                          radius = radius;
+                                        });
+                                        // ref
+                                        //     .read(usersRepositoryProvider)
+                                        //     .getThoseEntries(
+                                        //         shareLocation, radius);
+                                      },
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.symmetric(
                                             horizontal: 15),
@@ -204,91 +220,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      // SfCartesianChart(
-                      //   plotAreaBorderWidth: 0, // Remove background margins
-                      //   enableSideBySideSeriesPlacement: false,
-
-                      //   primaryXAxis: CategoryAxis(
-                      //       isVisible: true,
-                      //       axisLine: AxisLine(
-                      //         width: 3,
-                      //         color: Colours.swatch("#534D3F"),
-                      //       ),
-                      //       labelPosition: ChartDataLabelPosition
-                      //           .outside, // X-axis labels inside
-                      //       edgeLabelPlacement: EdgeLabelPlacement
-                      //           .none, // Prevent labels from getting cut off
-                      //       labelStyle: TextStyle(),
-                      //       tickPosition: TickPosition.inside,
-                      //       majorTickLines: MajorTickLines(size: 0, width: 0),
-                      //       minorTickLines: MinorTickLines(size: 0, width: 0),
-                      //       minorGridLines: MinorGridLines(width: 0),
-                      //       majorGridLines: MajorGridLines(width: 0),
-                      //       plotOffset: 4),
-
-                      //   primaryYAxis: NumericAxis(
-                      //       isVisible: true,
-                      //       axisLine: AxisLine(
-                      //           width: 3, color: Colours.swatch("#534D3F")),
-                      //       rangePadding: ChartRangePadding.auto,
-                      //       plotOffset: 2,
-                      //       majorTickLines: MajorTickLines(size: 0, width: 0),
-                      //       minorTickLines: MinorTickLines(size: 0, width: 0),
-                      //       minorGridLines: MinorGridLines(width: 0),
-                      //       majorGridLines: MajorGridLines(width: 0)),
-
-                      //   series: <CartesianSeries<_ChartData, String>>[
-                      //     BarSeries<_ChartData, String>(
-                      //       dataSource: data,
-                      //       xValueMapper: (_ChartData data, _) => data.x,
-                      //       yValueMapper: (_ChartData data, _) => data.y.length,
-                      //       name: 'Analysis',
-                      //       color: Color.fromRGBO(
-                      //           8, 142, 255, 1), // Default color for all bars
-                      //       // Custom color for each bar
-                      //       pointColorMapper: (_ChartData data, _) {
-                      //         // Return custom colors based on your logic
-                      //         if (data.x == 'Honesty') {
-                      //           return Colours.swatch(
-                      //               clrHonesty); // Example custom color for Category1
-                      //         } else if (data.x == 'Courage') {
-                      //           return Colours.swatch(
-                      //               clrCourage); // Example custom color for Category2
-                      //         } else if (data.x == 'Compassion') {
-                      //           return Colours.swatch(
-                      //               clrCompassion); // Example custom color for Category2
-                      //         } else if (data.x == 'Generosity') {
-                      //           return Colours.swatch(
-                      //               clrGenerosity); // Example custom color for Category2
-                      //         } else if (data.x == 'Fidelity') {
-                      //           return Colours.swatch(
-                      //               clrFidelity); // Example custom color for Category2
-                      //         } else if (data.x == 'Integrity') {
-                      //           return Colours.swatch(
-                      //               clrIntegrity); // Example custom color for Category2
-                      //         } else if (data.x == 'Fairness') {
-                      //           return Colours.swatch(
-                      //               clrFairness); // Example custom color for Category2
-                      //         } else if (data.x == 'Self-control') {
-                      //           return Colours.swatch(
-                      //               clrSelfControl); // Example custom color for Category2
-                      //         } else if (data.x == 'Prudence') {
-                      //           return Colours.swatch(
-                      //               clrPrudence); // Example custom color for Category2
-                      //         }
-                      //         // Return default color for other categories
-                      //         return Color.fromRGBO(8, 142, 255, 1);
-                      //       },
-                      //       dataLabelSettings: DataLabelSettings(
-                      //         isVisible: true,
-                      //         textStyle: TextStyle(
-                      //             fontWeight: FontWeight.bold, fontSize: 12),
-                      //         labelAlignment: ChartDataLabelAlignment.auto,
-                      //         alignment: ChartAlignment.near,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
                       renderNearbyBarChart(shareLocation)
                     ],
                   ),
@@ -299,7 +230,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   Widget renderNearbyBarChart(bool shareLocation) {
     return StreamBuilder<List<DocumentSnapshot<Object?>>>(
-      stream: usesAPI.getThoseEntries(shareLocation), // Call your function here
+      stream: usesAPI.getThoseEntries(
+          shareLocation, radius), // Call your function here
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
@@ -307,12 +239,89 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           return Text('Error: ${snapshot.error}');
         } else {
           List<DocumentSnapshot<Object?>> documents = snapshot.data ?? [];
-          List<_ChartData> chartData = buildChartData(documents);
+          List<_ChartData> chartData = buildChartData(documents, timeFrame);
 
           // Use the documents list here
-          return NearbyBarChart(data: chartData);
+          return RenderNearbyBarChart(
+            data: chartData,
+            timeFrame: timeFrame,
+          );
         }
       },
+    );
+  }
+}
+
+class RenderNearbyBarChart extends StatefulWidget {
+  const RenderNearbyBarChart(
+      {super.key, required this.data, required this.timeFrame});
+  final List<_ChartData> data;
+  final String timeFrame;
+
+  @override
+  State<RenderNearbyBarChart> createState() => Render_NearbyBarChartState();
+}
+
+class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SfCartesianChart(
+      plotAreaBorderWidth: 0, // Remove background margins
+      enableSideBySideSeriesPlacement: false,
+
+      primaryXAxis: CategoryAxis(
+          isVisible: true,
+          axisLine: AxisLine(
+            width: 3,
+            color: Colours.swatch("#534D3F"),
+          ),
+          labelPosition: ChartDataLabelPosition.outside, // X-axis labels inside
+          edgeLabelPlacement:
+              EdgeLabelPlacement.none, // Prevent labels from getting cut off
+          labelStyle: TextStyle(),
+          tickPosition: TickPosition.inside,
+          majorTickLines: MajorTickLines(size: 0, width: 0),
+          minorTickLines: MinorTickLines(size: 0, width: 0),
+          minorGridLines: MinorGridLines(width: 0),
+          majorGridLines: MajorGridLines(width: 0),
+          plotOffset: 4),
+
+      primaryYAxis: NumericAxis(
+          isVisible: true,
+          axisLine: AxisLine(width: 3, color: Colours.swatch("#534D3F")),
+          rangePadding: ChartRangePadding.auto,
+          plotOffset: 2,
+          majorTickLines: MajorTickLines(size: 0, width: 0),
+          minorTickLines: MinorTickLines(size: 0, width: 0),
+          minorGridLines: MinorGridLines(width: 0),
+          majorGridLines: MajorGridLines(width: 0)),
+
+      series: <CartesianSeries<_ChartData, String>>[
+        BarSeries<_ChartData, String>(
+          dataSource: widget.data,
+          xValueMapper: (_ChartData data, _) => data.x,
+          yValueMapper: (_ChartData data, _) => data.y.length,
+          name: 'Analysis',
+          color: Color.fromRGBO(8, 142, 255, 1), // Default color for all bars
+          // Custom color for each bar
+          pointColorMapper: (_ChartData data, _) {
+            // Return custom colors based on your logic
+            return legalVirtueColors[data.x];
+          },
+          dataLabelSettings: DataLabelSettings(
+            isVisible: true,
+            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            labelAlignment: ChartDataLabelAlignment.auto,
+            alignment: ChartAlignment.near,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -377,7 +386,7 @@ class NearbyBarChart extends StatelessWidget {
   }
 }
 
-List<_ChartData> buildChartData(dynamic eventList) {
+List<_ChartData> buildChartData(dynamic eventList, String timeFrame) {
   List<_ChartData> listy = [];
   _ChartData prudence = _ChartData('Prudence', []);
   _ChartData selfControl = _ChartData('Self-control', []);
@@ -388,10 +397,33 @@ List<_ChartData> buildChartData(dynamic eventList) {
   _ChartData compassion = _ChartData('Compassion', []);
   _ChartData courage = _ChartData('Courage', []);
   _ChartData honesty = _ChartData('Honesty', []);
+  DateTime startDate;
+  DateTime today = DateTime.now();
+
+  // get start date for qualified entries
+  if (timeFrame == 'Last week') {
+    startDate = today.subtract(const Duration(days: 7));
+  } else if (timeFrame == 'Last 3 months') {
+    startDate = today.subtract(const Duration(days: 90));
+  } else if (timeFrame == 'Last 6 months') {
+    startDate = today.subtract(const Duration(days: 180));
+  } else if (timeFrame == 'Last year') {
+    startDate = today.subtract(const Duration(days: 365));
+  } else {
+    print('invalid time frame');
+    startDate = today.subtract(const Duration(days: 0));
+  }
   for (var event in eventList) {
     // Access each document in the stream
     dynamic data = event.data();
     String virtueUsed = data['quadrantUsed'];
+    Timestamp? entryTime = data['dateEntried'] as Timestamp?;
+    DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
+
+    // if date of entry is within time frame, add to parsed list
+    if (!dateEntered.isAfter(startDate)) {
+      continue;
+    }
     switch (virtueUsed) {
       case "Honesty":
         {
@@ -430,8 +462,6 @@ List<_ChartData> buildChartData(dynamic eventList) {
           prudence.y.add(data);
         }
     }
-    print('Document ID: ${event.id}');
-    print('Document data: ${event.data()}');
   }
   listy.addAll([
     honesty,

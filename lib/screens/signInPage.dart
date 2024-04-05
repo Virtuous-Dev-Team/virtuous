@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, avoid_print, non_constant_identifier_names
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -125,7 +123,9 @@ class SignInPage extends ConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 50),
+              Container(
+                height: MediaQuery.of(context).size.height * .1,
+              ),
               // logo
               Image(
                 image: const AssetImage(
@@ -268,100 +268,101 @@ class SignInPage extends ConsumerWidget {
               SizedBox(height: 50),
 
               // or continue with
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.black,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 0.5,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 25),
+              //   child: Row(
+              //     children: [
+              //       Expanded(
+              //         child: Divider(
+              //           thickness: 0.5,
+              //           color: Colors.black,
+              //         ),
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.symmetric(horizontal: 10),
+              //         child: Text(
+              //           'Or continue with',
+              //           style: TextStyle(color: Colors.black),
+              //         ),
+              //       ),
+              //       Expanded(
+              //         child: Divider(
+              //           thickness: 0.5,
+              //           color: Colors.black,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
-              SizedBox(height: 15),
+              // SizedBox(height: 15),
 
-              // Sign In Buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Google Button
-                  GestureDetector(
-                      onTap: () => Auth().signInWithGoogle(),
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Image.asset(
-                          "assets/images/googleLogo.png",
-                          height: 20,
-                        ),
-                      )),
+              // // Sign In Buttons
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     // Google Button
+              //     GestureDetector(
+              //         onTap: () => Auth().signInWithGoogle(),
+              //         child: Container(
+              //           padding: EdgeInsets.all(20),
+              //           decoration: BoxDecoration(
+              //             border: Border.all(color: Colors.black),
+              //             borderRadius: BorderRadius.circular(16),
+              //           ),
+              //           child: Image.asset(
+              //             "assets/images/googleLogo.png",
+              //             height: 20,
+              //           ),
+              //         )),
 
-                  SizedBox(width: 45),
+              //     SizedBox(width: 45),
 
-                  // Apple Button
-                  GestureDetector(
-                    onTap: () {},
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Image.asset(
-                          "assets/images/appleLogo.png",
-                          height: 20,
-                        ),
-                      ),
-                    ),
-                  ),
+              //     // Apple Button
+              //     GestureDetector(
+              //       onTap: () {},
+              //       child: GestureDetector(
+              //         onTap: () {},
+              //         child: Container(
+              //           padding: EdgeInsets.all(20),
+              //           decoration: BoxDecoration(
+              //             border: Border.all(color: Colors.black),
+              //             borderRadius: BorderRadius.circular(16),
+              //           ),
+              //           child: Image.asset(
+              //             "assets/images/appleLogo.png",
+              //             height: 20,
+              //           ),
+              //         ),
+              //       ),
+              //     ),
 
-                  SizedBox(width: 45),
+              //     SizedBox(width: 45),
 
-                  // Facebook Button
-                  GestureDetector(
-                    onTap: () => Auth().signInWithFacebook(),
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Image.asset(
-                          "assets/images/facebookLogo.png",
-                          height: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              //     // Facebook Button
+              //     GestureDetector(
+              //       onTap: () => Auth().signInWithFacebook(),
+              //       child: GestureDetector(
+              //         onTap: () {},
+              //         child: Container(
+              //           padding: EdgeInsets.all(20),
+              //           decoration: BoxDecoration(
+              //             border: Border.all(color: Colors.black),
+              //             borderRadius: BorderRadius.circular(16),
+              //           ),
+              //           child: Image.asset(
+              //             "assets/images/facebookLogo.png",
+              //             height: 20,
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
 
               // dont have an account?
-              SizedBox(height: 30.0),
+
+              SizedBox(height: 120.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

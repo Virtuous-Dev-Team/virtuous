@@ -132,14 +132,12 @@ class Stats {
           dynamic val = element.data();
           Timestamp dateEntried = val['dateEntried'];
           String virtueUsed = val["quadrantUsed"];
-          print('calendar api, doc: ${element.id}');
           // Timestamp timestamp =
           //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
 
           // Convert the Timestamp to a DateTime object
           // DateTime dateTime = timestamp.toDate();
           DateTime d = parseTimestamp(dateEntried);
-          print(d);
           switch (virtueUsed) {
             case "Honesty":
               {
