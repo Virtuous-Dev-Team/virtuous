@@ -35,43 +35,43 @@ class Users {
   };
 
   // Done,
-  Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
-      quadrantAnswers, shareLocation, shareEntries) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        return {'Success': false, 'Error': 'User not found'};
-      }
-      final totalDataObject = {
-        "communityName": currentCommunity,
-        "quadrantUsed": quadrantUsed,
-        "quadrantColor": quadrantColor,
-        "dateEntried": FieldValue.serverTimestamp(),
-        "quadrantAnswers": quadrantAnswers
-      };
-      // Add virtue entry to totalData subcollection
-      await usersCollectionRef
-          .doc(user.uid)
-          .collection("totalData")
-          .add(totalDataObject);
+  // Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
+  //     quadrantAnswers, shareLocation, shareEntries) async {
+  //   try {
+  //     User? user = FirebaseAuth.instance.currentUser;
+  //     if (user == null) {
+  //       return {'Success': false, 'Error': 'User not found'};
+  //     }
+  //     final totalDataObject = {
+  //       "communityName": currentCommunity,
+  //       "quadrantUsed": quadrantUsed,
+  //       "quadrantColor": quadrantColor,
+  //       "dateEntried": FieldValue.serverTimestamp(),
+  //       "quadrantAnswers": quadrantAnswers
+  //     };
+  //     // Add virtue entry to totalData subcollection
+  //     await usersCollectionRef
+  //         .doc(user.uid)
+  //         .collection("totalData")
+  //         .add(totalDataObject);
 
-      // Maybe add a check to see if it completed
-      await updateQuadrantsUsed(currentCommunity, quadrantUsed);
-      if (shareLocation && shareEntries) {
-        final CommunityShared communitySharedApi = CommunityShared();
-        await communitySharedApi
-            .addSharedVirtueEntry(
-                quadrantUsed, quadrantColor, shareLocation, currentCommunity)
-            .catchError((e) => print(e));
-      }
-      return {'Success': true, "response": "Entry added"};
-    } on FirebaseException catch (error) {
-      print('Error ${error.message}');
-      return {'Success': false, 'Error': error.message};
-    } catch (error) {
-      print(error);
-    }
-  }
+  //     // Maybe add a check to see if it completed
+  //     await updateQuadrantsUsed(currentCommunity, quadrantUsed);
+  //     if (shareLocation && shareEntries) {
+  //       final CommunityShared communitySharedApi = CommunityShared();
+  //       await communitySharedApi
+  //           .addSharedVirtueEntry(
+  //               quadrantUsed, quadrantColor, shareLocation, currentCommunity)
+  //           .catchError((e) => print(e));
+  //     }
+  //     return {'Success': true, "response": "Entry added"};
+  //   } on FirebaseException catch (error) {
+  //     print('Error ${error.message}');
+  //     return {'Success': false, 'Error': error.message};
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
 
   Future<dynamic> editEntry(
       String communityName,
@@ -472,11 +472,9 @@ class Users {
           desiredAccuracy: LocationAccuracy.high);
       print(
           "latitude: ${position.latitude} and longitude: ${position.longitude}");
-      GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
-      return {
-        "Success": true,
-        "response": geoFireLocation
-      };
+      GeoFirePoint geoFireLocation =
+          geo.point(latitude: position.latitude, longitude: position.longitude);
+      return {"Success": true, "response": geoFireLocation};
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
     }
@@ -489,7 +487,8 @@ class Users {
       if (shareLocation) {
         Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high);
-        GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
+        GeoFirePoint geoFireLocation = geo.point(
+            latitude: position.latitude, longitude: position.longitude);
         return geoFireLocation;
       } else {
         return Future.error({
@@ -524,60 +523,153 @@ class Users {
     }
   }
 
-// get nearby entries for nearby page ----IN PROGRESS----
-  Future<dynamic> getNearbyEntries(double radius, String timeFrame, bool shareLocation) async {
-    final sharedCollectionRef = FirebaseFirestore.instance.collection('CommunitySharedData');
+  Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
+      bool shareLocation) async* {
+    final sharedCollectionRef =
+        FirebaseFirestore.instance.collection('CommunitySharedData');
     final geoRef = geo.collection(collectionRef: sharedCollectionRef);
-      if (shareLocation) {
-        print('getting nearby users');
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        GeoFirePoint geoFireLocation = geo.point(latitude: position.latitude, longitude: position.longitude);
+    if (shareLocation) {
+      print('getting nearby users');
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      GeoFirePoint geoFireLocation =
+          geo.point(latitude: position.latitude, longitude: position.longitude);
 
-        var eventsStream =  await geoRef.within(center: geoFireLocation, radius: radius, field: 'userLocation', strictMode: true);
-        print('got stream: $eventsStream');
-
-        final futureList = eventsStream.toList();
-        print('got future list: $futureList');
-        final list = await futureList;
-        print('made list: $list');
-
-
-        // final List<DocumentReference> nearbyReferences = [];
-
-        // // Listen to the stream and collect results
-        // final subscription = eventsStream.listen((events) {
-        //   for (final event in events) {
-        //     nearbyReferences.add(usersCollectionRefLocation.doc(event.id));
-        //   }
-        // });
-        // print('collected results');
-
-        // // Wait for the subscription to complete
-        // await subscription.asFuture<void>();
-        // print('subscription completed');
-
-        // print('here it is: $nearbyReferences');
-        // Future<List<User>> usersFutureList = snapshots.map((snapshot) => User.fromSnapshot(snapshot)).toList();
-        // List<User> usersList = await usersFutureList;
-        // print('users list: $list');
-      } else {
-        return "Location services not enabled";
+      var eventsStream = geoRef.within(
+          center: geoFireLocation,
+          radius: 40000,
+          field: 'userLocation',
+          strictMode: true);
+      await for (var event in eventsStream) {
+        print('event in stram user dart $event');
+        yield event; // Yield the list of document snapshots
       }
-    
+    }
   }
 
+// get nearby entries for nearby page ----IN PROGRESS----
+  Future<dynamic> getNearbyEntries(
+      double radius, String timeFrame, bool shareLocation) async {
+    final sharedCollectionRef =
+        FirebaseFirestore.instance.collection('CommunitySharedData');
+    final geoRef = geo.collection(collectionRef: sharedCollectionRef);
+    if (shareLocation) {
+      print('getting nearby users');
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      GeoFirePoint geoFireLocation =
+          geo.point(latitude: position.latitude, longitude: position.longitude);
 
+      var eventsStream = geoRef.within(
+          center: geoFireLocation,
+          radius: radius,
+          field: 'userLocation',
+          strictMode: true);
+      List<_ChartData> listy = [];
+      _ChartData prudence = _ChartData('Prudence', []);
+      _ChartData selfControl = _ChartData('Self-control', []);
+      _ChartData fairness = _ChartData('Fairness', []);
+      _ChartData integrity = _ChartData('Integrity', []);
+      _ChartData fidelity = _ChartData('Fidelity', []);
+      _ChartData generosity = _ChartData('Generosity', []);
+      _ChartData compassion = _ChartData('Compassion', []);
+      _ChartData courage = _ChartData('Courage', []);
+      _ChartData honesty = _ChartData('Honesty', []);
 
+      // Listen to the stream
+      eventsStream.listen((List<DocumentSnapshot> eventList) {
+        // Handle the stream data here
+        for (var event in eventList) {
+          // Access each document in the stream
+          dynamic data = event.data();
+          String virtueUsed = data['quadrantUsed'];
+          switch (virtueUsed) {
+            case "Honesty":
+              {
+                honesty.y.add(data);
+              }
+            case "Courage":
+              {
+                courage.y.add(data);
+              }
+            case "Compassion":
+              {
+                compassion.y.add(data);
+              }
+            case "Generosity":
+              {
+                generosity.y.add(data);
+              }
+            case "Fidelity":
+              {
+                fidelity.y.add(data);
+              }
+            case "Integrity":
+              {
+                integrity.y.add(data);
+              }
+            case "Fairness":
+              {
+                fairness.y.add(data);
+              }
+            case "Self-control":
+              {
+                selfControl.y.add(data);
+              }
+            case "Prudence":
+              {
+                prudence.y.add(data);
+              }
+          }
+          print('Document ID: ${event.id}');
+          print('Document data: ${event.data()}');
+        }
+        listy.addAll([
+          honesty,
+          compassion,
+          courage,
+          selfControl,
+          integrity,
+          fairness,
+          fidelity,
+          prudence,
+          generosity
+        ]);
+      });
 
+      return listy;
+      // await eventsStream.forEach(
+      //   (element) => print(element),
+      // );
+      // print('got stream: ${eventsStream.isEmpty}');
+      // eventsStream.map((event) => print('new event:'));
+      // final futureList = eventsStream.toList();
+      // print('got future list: $futureList');
+      // final list = await futureList;
+      // print('made list: $list');
 
+      // final List<DocumentReference> nearbyReferences = [];
 
+      // // Listen to the stream and collect results
+      // final subscription = eventsStream.listen((events) {
+      //   for (final event in events) {
+      //     nearbyReferences.add(usersCollectionRefLocation.doc(event.id));
+      //   }
+      // });
+      // print('collected results');
 
+      // // Wait for the subscription to complete
+      // await subscription.asFuture<void>();
+      // print('subscription completed');
 
-
-
-
-
+      // print('here it is: $nearbyReferences');
+      // Future<List<User>> usersFutureList = snapshots.map((snapshot) => User.fromSnapshot(snapshot)).toList();
+      // List<User> usersList = await usersFutureList;
+      // print('users list: $list');
+    } else {
+      // return "Location services not enabled";
+    }
+  }
 
   Future<dynamic> findUsersNear() async {
     // Target location
@@ -604,7 +696,7 @@ class Users {
         .get();
   }
 
-Future<dynamic> getNotiTime() async {
+  Future<dynamic> getNotiTime() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -614,7 +706,8 @@ Future<dynamic> getNotiTime() async {
           await usersCollectionRef.doc(user.uid).get();
       if (documentSnapshot.exists) {
         //final userInfo = documentSnapshot.data() as Map<String, dynamic>;
-        dynamic notificationPreferences = documentSnapshot["notificationPreferences"];
+        dynamic notificationPreferences =
+            documentSnapshot["notificationPreferences"];
         dynamic notiTime = notificationPreferences["notificationTime"];
 
         return {'Success': true, "response": notiTime};
@@ -623,7 +716,6 @@ Future<dynamic> getNotiTime() async {
       return {'Success': false, 'error': error.message};
     }
   }
-
 }
 
 final usersRepositoryProvider = Provider<Users>((ref) {
@@ -658,3 +750,10 @@ final currentUserInfoProvider =
   final userInfo = await ref.read(usersRepositoryProvider).getUserInfo();
   return userInfo;
 });
+
+class _ChartData {
+  _ChartData(this.x, this.y);
+
+  String x;
+  List y;
+}

@@ -19,7 +19,7 @@ class CommunityShared {
         "dateEntried": FieldValue.serverTimestamp(),
         "quadrantUsed": quadrantUsed,
         "quadrantColor": quadrantColor,
-        "userLocation": updatedLocation,
+        "userLocation": updatedLocation.data,
         "communityName": communityName
       };
 

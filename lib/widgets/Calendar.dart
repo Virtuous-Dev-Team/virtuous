@@ -28,15 +28,17 @@ class CustomCalender {
     List<MarkedDate> listy = [];
     listy.add(MarkedDate(color: Colors.black, date: DateTime.now()));
     return Container(
+      margin: EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
           color: Colours.swatch(clrBackground),
           borderRadius: BorderRadius.circular(10)),
       child: CalendarCarousel<Event>(
-        height: MediaQuery.of(context).size.height * 0.50,
+        height: MediaQuery.of(context).size.height * 0.45,
+        width: MediaQuery.of(context).size.width * 0.90,
+
         showOnlyCurrentMonthDate: true,
         weekendTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
         weekDayBackgroundColor: Colours.white,
-
         // childAspectRatio: 1.5,
 
         //background: Colors.white,
@@ -75,6 +77,7 @@ class CustomCalender {
         weekdayTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
         daysTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
         headerTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
+
         // markedDateMoreShowTotal:
         //     true, // null for not showing hidden events indicator
         // markedDateIconBuilder: (event) {
@@ -386,7 +389,7 @@ class CustomCalender {
               shrinkWrap: true,
               itemBuilder: (BuildContext context, index) {
                 Event e = eventsList[index];
-                print('event: ${e.description}');
+                print('event: ${e.date}');
                 return GestureDetector(
                     onTap: () async {
                       print(e.description);
@@ -420,14 +423,6 @@ class CustomCalender {
                               ),
                             )
                           ],
-                        ),
-                        Text(
-                          "12:35 PM",
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                          ),
                         ),
                       ],
                     ));
