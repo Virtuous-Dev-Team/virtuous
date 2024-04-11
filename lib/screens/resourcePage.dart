@@ -36,10 +36,12 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    String communityName = userInfo.currentCommunity;
+    var communityName1 = userInfo.currentCommunity;
+    communityName = userInfo.currentCommunity;
+
     ref
         .read(resourcesControllerProvider.notifier)
-        .getResources(communityName.toLowerCase());
+        .getResources(communityName1.toLowerCase());
     _tabController = TabController(length: 2, vsync: this);
     // final userInfo = ref.read(userInfoProviderr);
     // String communityName = userInfo.currentCommunity;
@@ -54,11 +56,12 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
     super.dispose();
   }
 
+  String communityName = '';
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
     final resourcesController = ref.watch(resourcesControllerProvider);
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
@@ -86,7 +89,9 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                       if (index == 1) {
                         ref
                             .read(resourcesControllerProvider.notifier)
-                            .getResources("legal");
+                            .getResources(communityName.isEmpty
+                                ? 'legal'
+                                : communityName.toLowerCase());
                       }
                     },
                     labelStyle: const TextStyle(

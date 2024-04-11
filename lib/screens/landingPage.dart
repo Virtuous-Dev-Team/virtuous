@@ -28,7 +28,7 @@ class _LandingPageTestState extends ConsumerState<LandingPageTest> {
   void initState() {
     // Call your async method here
     navigate();
-    Future.microtask(() => setUserInfoProvider(ref));
+    // Future.microtask(() => setUserInfoProvider(ref));
     super.initState();
   }
 
@@ -52,6 +52,8 @@ class _LandingPageTestState extends ConsumerState<LandingPageTest> {
       await Future.delayed(Duration.zero); // Ensure the build is complete
       final isNewUser = await getUserInfo();
       if (isNewUser['Success']) {
+        await setUserInfoProvider(ref);
+        // Future.microtask(() => setUserInfoProvider(ref));
         print('go to home page from landing page');
         SchedulerBinding.instance.addPostFrameCallback((_) {
           GoRouter.of(context).go('/home');
@@ -81,6 +83,8 @@ class _LandingPageTestState extends ConsumerState<LandingPageTest> {
 setUserInfoProvider(ref) async {
   final setUserInfo = ref.read(userInfoProviderr);
   final getUserInfo = await ref.read(usersRepositoryProvider).getUserInfo();
+  print('landinf page  ${getUserInfo['response']}');
+
   if (getUserInfo['Success']) {
     final info = getUserInfo['response'];
     setUserInfo.setUserInfo(getUserInfo['response']);

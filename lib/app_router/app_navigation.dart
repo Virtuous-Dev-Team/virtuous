@@ -185,7 +185,7 @@ class AppNavigation {
                       pageBuilder: (context, state) =>
                           CustomTransitionPage<void>(
                         key: state.pageKey,
-                        child: const GridPagey(appBarChoice: 'arrow'),
+                        child: const GridPage(appBarChoice: 'arrow'),
                         transitionsBuilder: (context, animation,
                                 secondaryAnimation, child) =>
                             FadeTransition(opacity: animation, child: child),

@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
@@ -138,6 +140,84 @@ final List<String> quadrantNames = [
 //     );
 //   }
 // }
+class GridPage extends ConsumerStatefulWidget {
+  const GridPage({super.key, required this.appBarChoice});
+  final String appBarChoice;
+  @override
+  _GridPageState createState() => _GridPageState();
+}
+
+class _GridPageState extends ConsumerState<GridPage> {
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final userInfo = ref.read(userInfoProviderr);
+    communityName = userInfo.currentCommunity;
+  }
+
+  String communityName = '';
+  @override
+  Widget build(BuildContext context) {
+    final controller = ref.watch(communitiesControllerProvider((
+      communityName:
+          communityName.isEmpty ? 'legal' : communityName.toLowerCase()
+    )));
+
+    return Scaffold(
+      backgroundColor: Color(0xFFEFE5CC),
+      appBar: AppBarWidget(widget.appBarChoice),
+      body: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            height: 740,
+            child: Container(
+              color: Color(0xFFFFFDF9),
+            ),
+          ),
+          Column(
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+              Text(
+                'Which virtue did you use today?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Divider(
+                thickness: 0.5,
+                color: Colors.black,
+                indent: 30,
+                endIndent: 30,
+              ),
+              Expanded(
+                  child: Container(
+                child: controller.when(
+                  loading: () => CircularProgressIndicator(),
+                  error: (error, stackTrace) => Text('Error: $error'),
+                  data: (quadrantList) => BuildGrid(
+                    listy: quadrantList,
+                  ),
+                ),
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+              ))
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class GridPagey extends ConsumerWidget {
   final String appBarChoice;

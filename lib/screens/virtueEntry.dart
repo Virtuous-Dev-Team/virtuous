@@ -487,50 +487,50 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               }),
             ),
 
-            SizedBox(
-              height: 20,
-            ),
+            // SizedBox(
+            //   height: 20,
+            // ),
 
-            Container(
-              constraints: BoxConstraints(
-                  minHeight: 0,
-                  maxHeight: screenHeight *
-                      0.2), // Adjust the maxHeight according to your layout
-              padding: EdgeInsets.all(3.0),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xFFCEC0A1),
-                  width: 2.0, // Set the border width
-                ),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: DropdownButton<String>(
-                onChanged: (newValue) {
-                  setState(() {
-                    sleepingHours = newValue!;
-                  });
-                },
-                hint: const Text(
-                  "  How much sleep did you get the night before?",
-                  style: TextStyle(fontSize: 14.0),
-                ),
-                items: sleepingHoursList
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                dropdownColor:
-                    Colors.white, // Set the background color of the dropdown
-                isDense: true, // Reduce height
-                icon: Icon(Icons.arrow_drop_down,
-                    color: Colors.black), // Align the arrow to the right
-                isExpanded: true, // Extend the button to the right
-                underline: Container(),
-              ),
-            ),
+            // Container(
+            //   constraints: BoxConstraints(
+            //       minHeight: 0,
+            //       maxHeight: screenHeight *
+            //           0.2), // Adjust the maxHeight according to your layout
+            //   padding: EdgeInsets.all(3.0),
+            //   decoration: BoxDecoration(
+            //     border: Border.all(
+            //       color: Color(0xFFCEC0A1),
+            //       width: 2.0, // Set the border width
+            //     ),
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(5.0),
+            //   ),
+            //   child: DropdownButton<String>(
+            //     onChanged: (newValue) {
+            //       setState(() {
+            //         sleepingHours = newValue!;
+            //       });
+            //     },
+            //     hint: const Text(
+            //       "  How much sleep did you get the night before?",
+            //       style: TextStyle(fontSize: 14.0),
+            //     ),
+            //     items: sleepingHoursList
+            //         .map<DropdownMenuItem<String>>((String value) {
+            //       return DropdownMenuItem<String>(
+            //         value: value,
+            //         child: Text(value),
+            //       );
+            //     }).toList(),
+            //     dropdownColor:
+            //         Colors.white, // Set the background color of the dropdown
+            //     isDense: true, // Reduce height
+            //     icon: Icon(Icons.arrow_drop_down,
+            //         color: Colors.black), // Align the arrow to the right
+            //     isExpanded: true, // Extend the button to the right
+            //     underline: Container(),
+            //   ),
+            // ),
 
             // Other widgets or content can go here
           ],

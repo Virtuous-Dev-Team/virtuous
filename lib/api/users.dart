@@ -46,7 +46,20 @@ class Users {
         "Prudence": 0
       }
     },
-    "other": {}
+    "alcoholics anonymous": {
+      "Honesty": 0,
+      "Hope": 0,
+      "Surrender": 0,
+      "Courage": 0,
+      "Integrity": 0,
+      "Willingness": 0,
+      "Humility": 0,
+      "Love": 0,
+      "Responsibility": 0,
+      "Discipline": 0,
+      "Awareness": 0,
+      "Service": 0,
+    }
   };
 
   // Done,

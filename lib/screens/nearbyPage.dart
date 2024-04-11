@@ -36,6 +36,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     shareLocation = userInfo.shareLocation;
+    communityName = userInfo.currentCommunity.toLowerCase();
   }
 
   @override
@@ -44,6 +45,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   }
 
   late bool shareLocation;
+  late String communityName;
+
   double radius = 10;
   String timeFrame = "Last week";
   List<_ChartData> chartData = [];
@@ -98,7 +101,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                     height: 20,
                   ),
                   Text(
-                    "Legal Community",
+                    "Legal Community ${communityName}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w500,

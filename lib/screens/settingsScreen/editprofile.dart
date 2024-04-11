@@ -2,6 +2,7 @@ import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
@@ -27,13 +28,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newEmail = TextEditingController();
   TextEditingController newCareer = TextEditingController();
   TextEditingController newCareerLength = TextEditingController();
-  String currentCommunity = 'Legal';
+  late String currentCommunity;
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     print('edit profile : ${userInfo.currentCommunity}');
-
+    currentCommunity = userInfo.currentCommunity;
+    // if (currentCommunity == 'legal')
+    //   currentCommunity = currentCommunity.capitalizeFirst!;
     newCareer.text = userInfo.careerInfo.currentPosition;
     newCareerLength.text = userInfo.careerInfo.careerLength;
   }
@@ -51,8 +54,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     // Dropdown values for each page
     List<String> careerDropdownValues = [
-      'Legal',
-      'Education',
+      'legal',
+      'alcoholics anonymous',
       'Technology',
       'Healthcare'
     ];

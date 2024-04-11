@@ -86,6 +86,7 @@ Future testingApi() async {
   final Stats stats = Stats();
   final Auth auth = Auth();
   final Settings settings = Settings();
+  // auth.signOutUser();
   // await u.getNearbyEntries(10, "", true);
   // await u.editEntry(
   //     "legal",

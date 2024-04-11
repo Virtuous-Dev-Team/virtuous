@@ -67,7 +67,7 @@ class SurveyPageState extends State<SurveyPage> {
   // Dropdown values for each page
   List<String> careerDropdownValues = [
     'Legal',
-    'Education',
+    'Alcoholics Anonymous',
     'Technology',
     'Healthcare'
   ];
