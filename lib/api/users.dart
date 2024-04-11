@@ -536,7 +536,7 @@ class Users {
           desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
-
+      print('radius $radius');
       var eventsStream = geoRef.within(
           center: geoFireLocation,
           radius: radius,

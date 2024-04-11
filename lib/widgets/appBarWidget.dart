@@ -59,7 +59,14 @@ class RegularAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: appBarColor, // Replace with your desired color
+      backgroundColor: appBarColor,
+      centerTitle: true, // Replace with your desired color
+
+      title: Image.asset(
+        'assets/images/logo_no_bg.png',
+        width: 200,
+        height: 50,
+      ),
       elevation: 0,
       actions: [
         PopOutMenuWidget(

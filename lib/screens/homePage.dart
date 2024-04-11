@@ -47,87 +47,85 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xFFEFE5CC),
-        appBar: AppBarWidget('regular'),
-        body: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Color(0xFFFFFDF9),
-              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(20),
+    return Scaffold(
+      backgroundColor: Color(0xFFEFE5CC),
+      appBar: AppBarWidget('regular'),
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFFFFDF9),
+            border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(20),
+            ),
+          ),
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
+                child: Text(
+                  'Reflect',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: buttonColor,
+                  shape: CircleBorder(),
+                  elevation: 4,
+                  padding: EdgeInsets.all(70),
+                ),
               ),
-            ),
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
-                  child: Text(
-                    'Reflect',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    primary: buttonColor,
-                    shape: CircleBorder(),
-                    elevation: 4,
-                    padding: EdgeInsets.all(70),
-                  ),
-                ),
-                // Center( //----------------------------- test button for testing stuff :) ---------------------------------
-                //   child: Container(
-                //     width: double.infinity,
-                //     child: ElevatedButton(
-                //       onPressed:() async {
-                //         // --------- noti stuff -----------
-                //         // TimeOfDay stringToTimeOfDay(String tod) {
-                //         //   final format = DateFormat.jm();
-                //         //     return TimeOfDay.fromDateTime(format.parse(tod));
-                //         // }
-                //         // TimeOfDay fromString(String time) {
-                //         //   int hh = 0;
-                //         //   if (time.endsWith('PM')) hh = 12;
-                //         //   time = time.split(' ')[0];
-                //         //   return TimeOfDay(
-                //         //     hour: hh + int.parse(time.split(":")[0]) % 24, // in case of a bad time format entered manually by the user
-                //         //     minute: int.parse(time.split(":")[1]) % 60,
-                //         //   );
-                //         // }
-                //         // dynamic time = await Users().getNotiTime();
-                //         // String response = time["response"];
-                //         // TimeOfDay formatTime = fromString(response);
-                //         // print('time: $formatTime');              
-                //         // NotificationService().scheduleNotification(
-                //         //   title: 'Virtuous',
-                //         //   body: 'Make an entry today!',
-                //         //   scheduledNotificationDateTime: scheduleTime
-                //         // );
-                //         // -------------- location stuff ----------------
-                //         Users().getNearbyEntries('10km', "Last week", true);
-                //       },
-                //       child: Text('Get entries'),
-                //       style: ElevatedButton.styleFrom(
-                //         primary: Colors.amber,
-                //         // Change button color to beige
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                Text(' '),
-                Divider(
-                  thickness: 1,
-                  color: Colors.black,
-                ),
-                SizedBox(height: 15),
-                RecentEntriesWidget(ref: ref)
-              ],
-            ),
+              // Center( //----------------------------- test button for testing stuff :) ---------------------------------
+              //   child: Container(
+              //     width: double.infinity,
+              //     child: ElevatedButton(
+              //       onPressed:() async {
+              //         // --------- noti stuff -----------
+              //         // TimeOfDay stringToTimeOfDay(String tod) {
+              //         //   final format = DateFormat.jm();
+              //         //     return TimeOfDay.fromDateTime(format.parse(tod));
+              //         // }
+              //         // TimeOfDay fromString(String time) {
+              //         //   int hh = 0;
+              //         //   if (time.endsWith('PM')) hh = 12;
+              //         //   time = time.split(' ')[0];
+              //         //   return TimeOfDay(
+              //         //     hour: hh + int.parse(time.split(":")[0]) % 24, // in case of a bad time format entered manually by the user
+              //         //     minute: int.parse(time.split(":")[1]) % 60,
+              //         //   );
+              //         // }
+              //         // dynamic time = await Users().getNotiTime();
+              //         // String response = time["response"];
+              //         // TimeOfDay formatTime = fromString(response);
+              //         // print('time: $formatTime');
+              //         // NotificationService().scheduleNotification(
+              //         //   title: 'Virtuous',
+              //         //   body: 'Make an entry today!',
+              //         //   scheduledNotificationDateTime: scheduleTime
+              //         // );
+              //         // -------------- location stuff ----------------
+              //         Users().getNearbyEntries('10km', "Last week", true);
+              //       },
+              //       child: Text('Get entries'),
+              //       style: ElevatedButton.styleFrom(
+              //         primary: Colors.amber,
+              //         // Change button color to beige
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              Text(' '),
+              Divider(
+                thickness: 1,
+                color: Colors.black,
+              ),
+              SizedBox(height: 15),
+              RecentEntriesWidget(ref: ref)
+            ],
           ),
         ),
       ),

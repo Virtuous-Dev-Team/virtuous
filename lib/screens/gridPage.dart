@@ -149,59 +149,57 @@ class GridPagey extends ConsumerWidget {
     final controller =
         ref.watch(communitiesControllerProvider((communityName: "legal")));
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Color(0xFFEFE5CC),
-        appBar: AppBarWidget(appBarChoice),
-        body: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 10,
-              left: 10,
-              right: 10,
-              height: 740,
-              child: Container(
-                color: Color(0xFFFFFDF9),
+    return Scaffold(
+      backgroundColor: Color(0xFFEFE5CC),
+      appBar: AppBarWidget(appBarChoice),
+      body: Stack(
+        children: <Widget>[
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            height: 740,
+            child: Container(
+              color: Color(0xFFFFFDF9),
+            ),
+          ),
+          Column(
+            children: [
+              SizedBox(
+                height: 50,
               ),
-            ),
-            Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                Text(
-                  'Which virtue did you use today?',
-                  style: GoogleFonts.tinos(
-                    textStyle: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                    ),
+              Text(
+                'Which virtue did you use today?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
                   ),
                 ),
-                SizedBox(
-                  height: 5,
-                ),
-                Divider(
-                  thickness: 0.5,
-                  color: Colors.black,
-                  indent: 30,
-                  endIndent: 30,
-                ),
-                Expanded(
-                    child: Container(
-                  child: controller.when(
-                    loading: () => CircularProgressIndicator(),
-                    error: (error, stackTrace) => Text('Error: $error'),
-                    data: (quadrantList) => BuildGrid(
-                      listy: quadrantList,
-                    ),
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Divider(
+                thickness: 0.5,
+                color: Colors.black,
+                indent: 30,
+                endIndent: 30,
+              ),
+              Expanded(
+                  child: Container(
+                child: controller.when(
+                  loading: () => CircularProgressIndicator(),
+                  error: (error, stackTrace) => Text('Error: $error'),
+                  data: (quadrantList) => BuildGrid(
+                    listy: quadrantList,
                   ),
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                ))
-              ],
-            ),
-          ],
-        ),
+                ),
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+              ))
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -64,171 +64,172 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       _ChartData('Honesty', [1, 1, 1, 1, 1, 1]),
     ];
     _tooltip = TooltipBehavior(enable: false);
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Color(0xFFEFE5CC),
-            appBar: AppBarWidget('regular'),
-            // appBar: AppBar(
-            //   backgroundColor: appBarColor,
-            //   elevation: 0,
-            //   actions: [
-            //     IconButton(
-            //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-            //       onPressed: () {
-            //         // TODO: Implement profile icon functionality.
-            //       },
-            //     ),
-            //     SizedBox(width: 12),
-            //   ],
-            // ),
-            body: Container(
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFDF9),
-                    border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
-                    ),
-                  ),
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        "Legal Community",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ),
-                      ),
-                      SizedBox(height: 25),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 9.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Time Range'),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 160,
-                                    child: DropdownButtonFormField<String>(
-                                      value: 'Last week',
-                                      items: <String>[
-                                        'Last week',
-                                        'Last 3 months',
-                                        'Last 6 months',
-                                        'Last year'
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      15)), // Match font size here
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          timeFrame = newValue!;
-                                        });
-                                      },
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(), // Remove circular border
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 30),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Maximum Distance'),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 160,
-                                    child: DropdownButtonFormField<String>(
-                                      value: '10km',
-                                      items: <String>[
-                                        '10km',
-                                        '50km',
-                                        '250km',
-                                        '1000km',
-                                      ].map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value,
-                                              style: TextStyle(
-                                                  fontSize:
-                                                      15)), // Match font size here
-                                        );
-                                      }).toList(),
-                                      onChanged: (String? newValue) async {
-                                        String num = newValue!.substring(0, 2);
-                                        double radius = double.parse(num!);
-                                        setState(() {
-                                          radius = radius;
-                                        });
-                                        // ref
-                                        //     .read(usersRepositoryProvider)
-                                        //     .getThoseEntries(
-                                        //         shareLocation, radius);
-                                      },
-                                      decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                        border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(), // Remove circular border
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      renderNearbyBarChart(shareLocation)
-                    ],
-                  ),
+    return Scaffold(
+        backgroundColor: Color(0xFFEFE5CC),
+        appBar: AppBarWidget('regular'),
+        // appBar: AppBar(
+        //   backgroundColor: appBarColor,
+        //   elevation: 0,
+        //   actions: [
+        //     IconButton(
+        //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+        //       onPressed: () {
+        //         // TODO: Implement profile icon functionality.
+        //       },
+        //     ),
+        //     SizedBox(width: 12),
+        //   ],
+        // ),
+        body: Container(
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFDF9),
+                border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
                 ),
               ),
-            )));
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Legal Community",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Time Range'),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                height: 30,
+                                width: 160,
+                                child: DropdownButtonFormField<String>(
+                                  value: 'Last week',
+                                  items: <String>[
+                                    'Last week',
+                                    'Last 3 months',
+                                    'Last 6 months',
+                                    'Last year'
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value,
+                                          style: TextStyle(
+                                              fontSize:
+                                                  15)), // Match font size here
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      timeFrame = newValue!;
+                                    });
+                                  },
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                    border: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(), // Remove circular border
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 30),
+                        Flexible(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Maximum Distance'),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              SizedBox(
+                                height: 30,
+                                width: 160,
+                                child: DropdownButtonFormField<String>(
+                                  value: '10km',
+                                  items: <String>[
+                                    '10km',
+                                    '50km',
+                                    '250km',
+                                    '1000km',
+                                  ].map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value,
+                                          style: TextStyle(
+                                              fontSize:
+                                                  15)), // Match font size here
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) async {
+                                    String num = newValue!.replaceAll('km', '');
+                                    double newRadius = double.parse(num!);
+                                    print('radius in onchange: $newRadius');
+                                    setState(() {
+                                      radius = newRadius;
+                                    });
+                                    // ref
+                                    //     .read(usersRepositoryProvider)
+                                    //     .getThoseEntries(
+                                    //         shareLocation, radius);
+                                  },
+                                  decoration: InputDecoration(
+                                    contentPadding:
+                                        EdgeInsets.symmetric(horizontal: 15),
+                                    border: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(), // Remove circular border
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  renderNearbyBarChart(shareLocation)
+                ],
+              ),
+            ),
+          ),
+        ));
   }
 
   Widget renderNearbyBarChart(bool shareLocation) {
+    print('radiues in render $radius');
     return StreamBuilder<List<DocumentSnapshot<Object?>>>(
       stream: usesAPI.getThoseEntries(
           shareLocation, radius), // Call your function here

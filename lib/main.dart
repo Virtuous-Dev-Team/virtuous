@@ -75,26 +75,6 @@ Future<void> main() async {
   // await Geolocator.openAppSettings();
   // await Geolocator.openLocationSettings();
   testingApi();
-  setSharedPreferences();
-}
-
-Future setSharedPreferences() async {
-  final Users user = Users();
-  final result = await user.getUserInfo();
-  if (result['Success']) {
-    final userInfo = result['response'];
-    String currentCommunity = userInfo['currentCommunity'];
-    bool shareLocation = userInfo['shareLocation'];
-    bool shareEntries = userInfo['shareEntries'];
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('currentCommunity', currentCommunity);
-    await prefs.setBool('shareLocation', shareLocation);
-    await prefs.setBool('shareEntries', shareEntries);
-
-    print(
-        'main shared pref \n currentCommunity: $currentCommunity, shareLocation: $shareLocation, shareEntries: $shareEntries');
-  }
 }
 
 Future testingApi() async {
@@ -220,6 +200,7 @@ class MyApp extends ConsumerWidget {
     final goRouter = ref.watch(AppNavigation.router);
 
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: goRouter,
       title: 'Virtue Tacker',
       theme: ThemeData(

@@ -32,136 +32,134 @@ class _ChangePhonePageState extends State<ChangePhonePage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Color(0xFFEFE5CC),
-            appBar: AppBarWidget('regular'),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Container(
-                  width: screenWidth,
-                  height: screenHeight / 1.2,
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFDF9),
-                    border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
+    return Scaffold(
+        backgroundColor: Color(0xFFEFE5CC),
+        appBar: AppBarWidget('regular'),
+        body: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              width: screenWidth,
+              height: screenHeight / 1.2,
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFDF9),
+                border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
+              padding: EdgeInsets.only(
+                top: screenHeight / 50,
+                bottom: screenHeight / 50,
+                left: screenWidth / 30,
+                right: screenWidth / 30,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(
+                    "Phone Number",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
-                  padding: EdgeInsets.only(
-                    top: screenHeight / 50,
-                    bottom: screenHeight / 50,
-                    left: screenWidth / 30,
-                    right: screenWidth / 30,
+                  SizedBox(
+                    height: 30,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 15,
-                      ),
                       Text(
-                        "Phone Number",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                        'Phone Number',
+                        style: GoogleFonts.adamina(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 14),
                         ),
                       ),
                       SizedBox(
-                        height: 30,
+                        height: screenHeight / 70,
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Phone Number',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
+                      Container(
+                        padding: EdgeInsets.all(3.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color(0xFFCEC0A1),
+                            width: 2.0, // Set the border width
                           ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextFormField(
-                              controller: phoneNumber,
-                              keyboardType: TextInputType.phone,
-                              onChanged: (newValue) {
-                                setState(() {});
-                              },
-                              validator: (value) {
-                                if (value!.length != 12)
-                                  return "Invalid phone number";
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: '123-456-7890',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 10,
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 40,
-                      ),
-                      Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colours.swatch(
-                                clrBackground), // Dark purple color
-                            borderRadius: BorderRadius.circular(
-                                5), // Adjusted border radius
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                spreadRadius: 2,
-                                blurRadius: 4,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          width: 310,
-                          height: 60,
-                          child: Center(
-                            child: Text(
-                              "Update Phone Number",
-                              style: GoogleFonts.tinos(
-                                textStyle: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.normal,
-                                ),
-                              ),
-                            ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: TextFormField(
+                          controller: phoneNumber,
+                          keyboardType: TextInputType.phone,
+                          onChanged: (newValue) {
+                            setState(() {});
+                          },
+                          validator: (value) {
+                            if (value!.length != 12)
+                              return "Invalid phone number";
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                            hintText: '123-456-7890',
+                            hintStyle: GoogleFonts.tinos(
+                                textStyle: TextStyle(color: Colors.black)),
+                            border: InputBorder.none, // Hide the default border
                           ),
                         ),
+                      ),
+                      SizedBox(
+                        height: screenHeight / 10,
                       ),
                     ],
                   ),
-                ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color:
+                            Colours.swatch(clrBackground), // Dark purple color
+                        borderRadius:
+                            BorderRadius.circular(5), // Adjusted border radius
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 4,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      width: 310,
+                      height: 60,
+                      child: Center(
+                        child: Text(
+                          "Update Phone Number",
+                          style: GoogleFonts.tinos(
+                            textStyle: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            )));
+            ),
+          ),
+        ));
   }
 
   void _formatPhoneNumberOnType() {

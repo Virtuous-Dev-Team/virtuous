@@ -122,70 +122,68 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
             });
           },
         );
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: mainBackgroundColor,
-        //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
-        appBar: AppBar(
-          backgroundColor: appBarColor,
-          elevation: 0,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-              onPressed: () {
-                // TODO: Implement profile icon functionality.
-              },
-            ),
-            SizedBox(width: 12),
-          ],
-        ),
-        body: Center(
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Color(0xFFFFFDF9),
-              border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    children: [
-                      buildVirtueEntry1(context, screenWidth, screenHeight),
-                      buildVirtueEntry2(context, screenWidth, screenHeight,
-                          quadrantName: quadrantName,
-                          definition: definition,
-                          color: color),
-                    ],
-                  ),
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: mainBackgroundColor,
+      //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
+      appBar: AppBar(
+        backgroundColor: appBarColor,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+            onPressed: () {
+              // TODO: Implement profile icon functionality.
+            },
+          ),
+          SizedBox(width: 12),
+        ],
+      ),
+      body: Center(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Color(0xFFFFFDF9),
+            border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  children: [
+                    buildVirtueEntry1(context, screenWidth, screenHeight),
+                    buildVirtueEntry2(context, screenWidth, screenHeight,
+                        quadrantName: quadrantName,
+                        definition: definition,
+                        color: color),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SmoothPageIndicator(
-                    controller: _pageController,
-                    count: 2,
-                    effect: WormEffect(
-                      dotColor: Colours.swatch("#EFE5CC"),
-                      activeDotColor: Colours.swatch("#C5B898"),
-                    ),
-                    onDotClicked: (index) {
-                      _pageController.animateToPage(
-                        index,
-                        duration: Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
-                    },
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SmoothPageIndicator(
+                  controller: _pageController,
+                  count: 2,
+                  effect: WormEffect(
+                    dotColor: Colours.swatch("#EFE5CC"),
+                    activeDotColor: Colours.swatch("#C5B898"),
                   ),
+                  onDotClicked: (index) {
+                    _pageController.animateToPage(
+                      index,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  },
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-// Bottom navigation bar code would be here
       ),
+// Bottom navigation bar code would be here
     );
   }
 

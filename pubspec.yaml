@@ -53,6 +53,8 @@ flutter:
 
   assets:
     - assets/images/virtuous_circle_outline.png
+    - assets/images/logo_no_bg.png
+    - assets/images/virtuous_no_bg.png
     - assets/images/googleLogo.png
     - assets/images/facebookLogo.png
     - assets/images/appleLogo.png

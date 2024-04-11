@@ -69,276 +69,273 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             }
           });
         });
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: Color(0xFFEFE5CC),
-            appBar: AppBarWidget('regular'),
-            body: Container(
-              child: Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xFFFFFDF9),
-                    border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(20),
+    return Scaffold(
+        backgroundColor: Color(0xFFEFE5CC),
+        appBar: AppBarWidget('regular'),
+        body: Container(
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Color(0xFFFFFDF9),
+                border: Border.all(color: Color(0xFFFEFE5CC), width: 9.0),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(20),
+                ),
+              ),
+              padding: EdgeInsets.only(
+                top: screenHeight / 50,
+                bottom: screenHeight / 50,
+                left: screenWidth / 30,
+                right: screenWidth / 30,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 15,
                     ),
-                  ),
-                  padding: EdgeInsets.only(
-                    top: screenHeight / 50,
-                    bottom: screenHeight / 50,
-                    left: screenWidth / 30,
-                    right: screenWidth / 30,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    Text(
+                      "Notifications",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          height: 15,
-                        ),
-                        Text(
-                          "Notifications",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                        InkWell(
+                          onTap: () {
+                            GoRouter.of(context).go(
+                                '/SettingsPage/NotificationsPage/UpdatePhoneNumber');
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Phone number",
+                                style: GoogleFonts.adamina(
+                                  textStyle: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_right,
+                                size: 25,
+                              )
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                GoRouter.of(context).go(
-                                    '/SettingsPage/NotificationsPage/UpdatePhoneNumber');
-                              },
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Phone number",
-                                    style: GoogleFonts.adamina(
-                                      textStyle: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_right,
-                                    size: 25,
-                                  )
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Daily Reminders  ",
-                                  style: GoogleFonts.adamina(
-                                    textStyle: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: screenWidth / 50,
-                                ),
-                                Checkbox(
-                                  visualDensity: VisualDensity.compact,
-                                  fillColor: MaterialStateProperty.resolveWith(
-                                      getColor),
-                                  side: BorderSide(
-                                    color: Colours.swatch(clrWhite),
-                                  ),
-                                  checkColor: Colors.white,
-                                  value: enableNotifications,
-                                  onChanged: (bool? value) {
-                                    print(value);
-
-                                    setState(() {
-                                      enableNotifications = value!;
-                                      onChanged = true;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            InkWell(
-                              onTap: () {
-                                _selectTime(context, notificationTime);
-                                onChanged = true;
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colours.swatch(
-                                      clrBackground), // Dark purple color
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                width: screenWidth / 1.1,
-                                height: 40,
-                                child: Center(
-                                  child: Text(
-                                    "Select a time to receive notifications",
-                                    style: GoogleFonts.tinos(
-                                      textStyle: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
+                            Text(
+                              "Daily Reminders  ",
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
                             SizedBox(
-                              height: screenHeight / 60,
+                              width: screenWidth / 50,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Notification Time",
-                                  style: GoogleFonts.adamina(
-                                    textStyle: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: screenWidth / 50,
-                                ),
-                                Container(
-                                  width: screenWidth / 4,
-                                  padding: EdgeInsets.all(3.0),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Color(0xFFCEC0A1),
-                                      width: 2.0, // Set the border width
-                                    ),
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5.0),
-                                  ),
-                                  child:
-                                      //textFieldTimeInput(context,notificationTime,"Start Time"),
-                                      TextField(
-                                    enabled: false,
-                                    controller: notificationTime,
-                                    onChanged: (newValue) {
-                                      setState(() {});
-                                    },
-                                    decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.zero,
-                                      isDense: true,
-                                      hintText: '   12:00pm',
-                                      hintStyle: GoogleFonts.tinos(
-                                          textStyle:
-                                              TextStyle(color: Colors.black)),
-                                      border: InputBorder
-                                          .none, // Hide the default border
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            Checkbox(
+                              visualDensity: VisualDensity.compact,
+                              fillColor:
+                                  MaterialStateProperty.resolveWith(getColor),
+                              side: BorderSide(
+                                color: Colours.swatch(clrWhite),
+                              ),
+                              checkColor: Colors.white,
+                              value: enableNotifications,
+                              onChanged: (bool? value) {
+                                print(value);
+
+                                setState(() {
+                                  enableNotifications = value!;
+                                  onChanged = true;
+                                });
+                              },
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        // Center(
-                        //   child: Container(
-                        //     decoration: BoxDecoration(
-                        //       color: Colours.swatch(
-                        //           clrBackground), // Dark purple color
-                        //       borderRadius: BorderRadius.circular(
-                        //           5), // Adjusted border radius
-                        //       boxShadow: [
-                        //         BoxShadow(
-                        //           color: Colors.grey.withOpacity(0.5),
-                        //           spreadRadius: 2,
-                        //           blurRadius: 4,
-                        //           offset: Offset(0, 3),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //     width: 310,
-                        //     height: 60,
-                        //     child: Center(
-                        //       child: Text(
-                        //         "Submit",
-                        //         style: GoogleFonts.tinos(
-                        //           textStyle: TextStyle(
-                        //             fontSize: 18,
-                        //             fontWeight: FontWeight.normal,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
-                        Center(
-                          child: MaterialButton(
-                            onPressed: () {
-                              if (onChanged) {
-                                ref
-                                    .read(settingsControllerProvider.notifier)
-                                    .updateNotificationPreferences(
-                                        enableNotifications,
-                                        notificationTime.text);
-
-                                ref.invalidate(settingsControllerProvider);
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colours.swatch(
-                                    clrBackground), // Dark purple color
-                                borderRadius: BorderRadius.circular(
-                                    5), // Adjusted border radius
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.5),
-                                    spreadRadius: 2,
-                                    blurRadius: 4,
-                                    offset: Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              width: 210,
-                              height: 50,
-                              child: Center(
-                                child: Text(
-                                  "Update Notifications",
-                                  style: GoogleFonts.tinos(
-                                    textStyle: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.normal,
-                                    ),
+                        InkWell(
+                          onTap: () {
+                            _selectTime(context, notificationTime);
+                            onChanged = true;
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colours.swatch(
+                                  clrBackground), // Dark purple color
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            width: screenWidth / 1.1,
+                            height: 40,
+                            child: Center(
+                              child: Text(
+                                "Select a time to receive notifications",
+                                style: GoogleFonts.tinos(
+                                  textStyle: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.normal,
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
+                        SizedBox(
+                          height: screenHeight / 60,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Notification Time",
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: screenWidth / 50,
+                            ),
+                            Container(
+                              width: screenWidth / 4,
+                              padding: EdgeInsets.all(3.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color(0xFFCEC0A1),
+                                  width: 2.0, // Set the border width
+                                ),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              child:
+                                  //textFieldTimeInput(context,notificationTime,"Start Time"),
+                                  TextField(
+                                enabled: false,
+                                controller: notificationTime,
+                                onChanged: (newValue) {
+                                  setState(() {});
+                                },
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.zero,
+                                  isDense: true,
+                                  hintText: '   12:00pm',
+                                  hintStyle: GoogleFonts.tinos(
+                                      textStyle:
+                                          TextStyle(color: Colors.black)),
+                                  border: InputBorder
+                                      .none, // Hide the default border
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                  ),
+                    SizedBox(
+                      height: 40,
+                    ),
+                    // Center(
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colours.swatch(
+                    //           clrBackground), // Dark purple color
+                    //       borderRadius: BorderRadius.circular(
+                    //           5), // Adjusted border radius
+                    //       boxShadow: [
+                    //         BoxShadow(
+                    //           color: Colors.grey.withOpacity(0.5),
+                    //           spreadRadius: 2,
+                    //           blurRadius: 4,
+                    //           offset: Offset(0, 3),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //     width: 310,
+                    //     height: 60,
+                    //     child: Center(
+                    //       child: Text(
+                    //         "Submit",
+                    //         style: GoogleFonts.tinos(
+                    //           textStyle: TextStyle(
+                    //             fontSize: 18,
+                    //             fontWeight: FontWeight.normal,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    Center(
+                      child: MaterialButton(
+                        onPressed: () {
+                          if (onChanged) {
+                            ref
+                                .read(settingsControllerProvider.notifier)
+                                .updateNotificationPreferences(
+                                    enableNotifications, notificationTime.text);
+
+                            ref.invalidate(settingsControllerProvider);
+                          }
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colours.swatch(
+                                clrBackground), // Dark purple color
+                            borderRadius: BorderRadius.circular(
+                                5), // Adjusted border radius
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          width: 210,
+                          height: 50,
+                          child: Center(
+                            child: Text(
+                              "Update Notifications",
+                              style: GoogleFonts.tinos(
+                                textStyle: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )));
+            ),
+          ),
+        ));
   }
 
   Widget textFieldTimeInput(
