@@ -5,6 +5,7 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin = FlutterLocalNotificationsPlugin();
 
+  // initialize notifications plugin
   Future<void> initNotification() async {
     AndroidInitializationSettings initializationSettingsAndroid = const AndroidInitializationSettings('app_icon');
     var initializationSettingsIOS = DarwinInitializationSettings(
@@ -25,7 +26,7 @@ class NotificationService {
     );
   }
 
-
+  // show notification on screen 
   Future showNotification(
     {
       int id = 0,
@@ -45,10 +46,12 @@ class NotificationService {
     String? payload,
     required DateTime scheduledNotificationDateTime
   }) async {
-    return notificationsPlugin.zonedSchedule(id, title, body, tz.TZDateTime.from(scheduledNotificationDateTime, tz.local,),
+    var localTime = tz.local;
+    return notificationsPlugin.zonedSchedule(id, title, body, tz.TZDateTime.from(scheduledNotificationDateTime, localTime,),
       await notificationDetails(),
-      androidAllowWhileIdle: true,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime);
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      //matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime
+      );
   }
 
 
