@@ -15,7 +15,6 @@ import 'package:virtuetracker/screens/analysisPage.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
-import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/nearbyPage.dart';
 import 'package:virtuetracker/screens/resourcePage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
@@ -53,15 +52,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // runApp(ProviderScope(child: MyApp()));
-  // runApp(
-  //   MultiProvider(
-  //     providers: [
-  //       ChangeNotifierProvider(create: (_) => UserInfoProvider()),
-  //     ],
-  //     child: MyApp(),
-  //   ),
-  // );
+
   runApp(
     ProviderScope(
       child: ChangeNotifierProvider(
@@ -72,100 +63,18 @@ Future<void> main() async {
     ),
   );
 
-  // await Geolocator.openAppSettings();
-  // await Geolocator.openLocationSettings();
-  testingApi();
+  // testingApi();
 }
 
 Future testingApi() async {
 // Testing api
 
-  final Communities c = Communities();
-  final Users u = Users();
-  final CommunityShared shared = CommunityShared();
-  final Stats stats = Stats();
-  final Auth auth = Auth();
-  final Settings settings = Settings();
-  // auth.signOutUser();
-  // await u.getNearbyEntries(10, "", true);
-  // await u.editEntry(
-  //     "legal",
-  //     "Integrity",
-  //     "0xFFF3A3CA",
-  //     true,
-  //     true,
-  //     "1-2 hours",
-  //     "asoh",
-  //     "whatHappenedAnswer",
-  //     [],
-  //     [],
-  //     [],
-  //     "3/29/2024, 3:33pm",
-  //     "wFgwG6p1GCPrEyY7nGWd");
-  // await stats
-  //     .getQuadrantsUsedList("legal")
-  //     .then((value) => print('main: $value'));
-  // await stats
-  //     .buildCalendar()
-  //     .then((value) => print(value['response'].toString()));
-  // await stats.getAllStats("legal");
-
-  // await auth.forgotPassword("tyyee@gmail.com").then((value) => print(value));
-  // await u.findUsersNear().catchError((e) => print(e));
-
-  // await settings
-  //     .updateProfile(
-  //         "testio1234@gmail.com", "TESTIOOOO", "newCareer", "legal", "4 Years")
-  //     .catchError((e) => print(e));
-
-  // await settings.updatePrivacy(true, false).catchError((e) => print(e));
-
-  // await settings
-  //     .updateNotificationPreferences(false, "12:01pm")
-  //     .catchError((e) => print(e));
-
-  // Finished Testing addVirtue api
-  // u
-  //     .addVirtueEntry("legal", "Integrity", "0xFFF3A3CA",
-  //         ["Answer 1", "Answer 2", "Answer 3sss", "Anserssssss"], true, true)
-  //     .then((value) => {print(value["Success"])})
-  //     .catchError((error) => {print('error in main: $error')});
-
-  // Finished Testing surveyInfo api, need to add more
-  // u
-  //     .surveyInfo(
-  //         "best attorney ever in the world, even better than saul",
-  //         "3 years",
-  //         "legal",
-  //         "I need to a",
-  //         true,
-  //         true,
-  //         true,
-  //         123 - 456 - 789,
-  //         "12:18pm")
-  //     .catchError((error) => {print('error in main: $error')});
-
-  // await u
-  //     .getUpdatedLocation(true)
-  //     .then((value) => print(value))
-  //     .catchError((e) => print(e));
-  // await u.addUserLocation().then((value) => print(value));
-  // await shared
-  //     .addSharedVirtueEntry("Honesty", "0xFFF3A3CA", true, "legal")
-  //     .then((val) => print(val))
-  //     .catchError((e) => print(e));
-  // u.getUserLocation();
-  // u.getMostRecentEntries("legal");
-  // dynamic userObject = await u.getUserInfo();
-  // auth.signInWithGoogle();
-  // print(userObject);
-
-  // Tested and working
-  // await u.updateQuadrantsUsed("legal", "Compassion");
-  // auth.signOutUser();
-
-  // stats.getQuadrantsUsedList("legal");
-  // Testing api ending
+  // final Communities c = Communities();
+  // final Users u = Users();
+  // final CommunityShared shared = CommunityShared();
+  // final Stats stats = Stats();
+  // final Auth auth = Auth();
+  // final Settings settings = Settings();
 }
 
 // Test screens and widgets with this
@@ -173,21 +82,16 @@ Future testingApi() async {
 //   @override
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Virtue Tracker',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//         visualDensity: VisualDensity.adaptivePlatformDensity,
-//       ),
+//         debugShowCheckedModeBanner: false,
+//         title: 'Virtue Tracker',
+//         theme: ThemeData(
+//           primarySwatch: Colors.blue,
+//           visualDensity: VisualDensity.adaptivePlatformDensity,
+//         ),
 
-//       // routerConfig: AppRouter.router,
-//       // home: HomePage(), // closed for testing
-//       home: VirtueEntry(
-//         quadrantName: '',
-//         definition: '',
-//         color: '',
-//       ),
-//     );
+//         // routerConfig: AppRouter.router,
+//         // home: HomePage(), // closed for testing
+//         home: SurveyPage());
 //   }
 // }
 

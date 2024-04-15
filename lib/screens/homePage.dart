@@ -11,7 +11,6 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/userControllers.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
-import 'package:virtuetracker/screens/navController.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
@@ -124,7 +123,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 color: Colors.black,
               ),
               SizedBox(height: 15),
-              RecentEntriesWidget(ref: ref)
+              const RecentEntries()
+              // RecentEntriesWidget(ref: ref)
             ],
           ),
         ),
@@ -153,6 +153,44 @@ class RecentEntriesWidget extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()));
     // child: BuildRecentEntriesList(listy: []),
+  }
+}
+
+class RecentEntries extends ConsumerStatefulWidget {
+  const RecentEntries({super.key});
+
+  @override
+  _RecentEntriesState createState() => _RecentEntriesState();
+}
+
+class _RecentEntriesState extends ConsumerState<RecentEntries> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ref.watch(virtueEntryControllerProvider).when(
+        error: (error, stacktrace) => Text(
+              "You currently don't have any entries, click the Reflect button to make your first entry!",
+              style: TextStyle(fontStyle: FontStyle.italic),
+            ),
+        data: (response) {
+          if (response != null) {
+            if (response['Function'] == "getMostRecentEntries") {
+              List recentEntriesList = response['list'];
+
+              return BuildRecentEntriesList(listy: recentEntriesList ?? []);
+            } else {
+              return Text('Not sure');
+            }
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+        loading: () => const Center(child: CircularProgressIndicator()));
   }
 }
 

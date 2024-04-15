@@ -137,7 +137,7 @@ class SurveyPageState extends State<SurveyPage> {
           );
       return SafeArea(
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
+          // resizeToAvoidBottomInset: false,
           backgroundColor: mainBackgroundColor,
           appBar: AppBar(
             backgroundColor: appBarColor,

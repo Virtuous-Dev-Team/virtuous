@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/screens/homePage.dart';
-import 'package:virtuetracker/screens/navController.dart';
 //import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
