@@ -7,7 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
+import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/statsController.dart';
+import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/main.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
@@ -29,12 +32,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newCareer = TextEditingController();
   TextEditingController newCareerLength = TextEditingController();
   late String currentCommunity;
+  bool newListExist = false;
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     print('edit profile : ${userInfo.currentCommunity}');
     currentCommunity = userInfo.currentCommunity;
+
     // if (currentCommunity == 'legal')
     //   currentCommunity = currentCommunity.capitalizeFirst!;
     newCareer.text = userInfo.careerInfo.currentPosition;
@@ -54,10 +59,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     double screenWidth = MediaQuery.of(context).size.width;
     // Dropdown values for each page
     List<String> careerDropdownValues = [
-      'legal',
-      'alcoholics anonymous',
-      'Technology',
-      'Healthcare'
+      'Legal',
+      'Alcoholics Anonymous',
     ];
     // var count = ref.watch<UserInfoProvider>().currentCommunity;
 
@@ -86,7 +89,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             });
           },
           data: (response) async {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
               if (response['Function'] == "updateProfile") {
                 showToasty(response['msg'], true, context);
                 newProfileName.clear();
@@ -94,8 +97,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 newCareer.clear();
                 newCareerLength.clear();
                 // Update UserInfo Provider
-                setUserInfoProvider(ref);
-
+                await setUserInfoProvider(ref);
+                await ref
+                    .read(resourcesControllerProvider.notifier)
+                    .getResources(currentCommunity);
+                await ref
+                    .read(virtueEntryControllerProvider.notifier)
+                    .getMostRecentEntries(currentCommunity);
+                await ref
+                    .read(statsControllerProvider.notifier)
+                    .getAllStats(currentCommunity);
                 GoRouter.of(context).pop();
 
                 // newProfileName.
@@ -374,21 +385,30 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 newCareerLength.text.isEmpty) {
                               return;
                             }
+                            final userInfo = ref.read(userInfoProviderr);
+                            final quadrantUsedData = userInfo.quadrantUsedData;
+                            final newListExistInProfile =
+                                quadrantUsedData[currentCommunity];
+                            print("edit profile page $newListExistInProfile");
+                            if (newListExistInProfile != null) {
+                              print('in here');
+                              newListExist = true;
+                            }
                             ref
                                 .read(settingsControllerProvider.notifier)
                                 .updateProfile(
                                     newEmail: newEmail.text,
                                     newProfileName: newProfileName.text,
                                     newCareer: newCareer.text,
-                                    newCommunity:
-                                        currentCommunity.toLowerCase(),
+                                    newCommunity: currentCommunity,
                                     newCareerLength: newCareerLength.text,
                                     authError: () => {
                                           print('need to reauth'),
                                           // _dialogBuilder(context)
                                           ReauthenticateShowDialogWidget()
                                               .dialogBuilder(context),
-                                        });
+                                        },
+                                    newListExist: newListExist);
                             ref.invalidate(settingsControllerProvider);
                           },
                           child: Container(

@@ -23,7 +23,7 @@ import '../App_Configuration/apptheme.dart';
 class CustomCalender {
   Widget customCalender(BuildContext context, List<LegalCalendarModel> markers,
       EventList<Event> _markedDateMap, ref) {
-    addListToCalender(markers, context);
+    // addListToCalender(markers, context);
     return Container(
       margin: EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
@@ -65,8 +65,10 @@ class CustomCalender {
         // markedDateShowIcon: true,
         // markedDateIconMaxShown: 1,
         disableDayPressed: false,
-        onDayPressed: (p0, p1) {
-          _selectSubjectDialog(context, p1, ref);
+        onDayPressed: (p0, p1) async {
+          final userInfo = await ref.read(userInfoProviderr);
+          String communityName = userInfo.currentCommunity;
+          _selectSubjectDialog(context, p1, ref, communityName);
         },
 
         weekdayTextStyle: TextStyle(color: Colours.swatch(clrBlack)),
@@ -293,7 +295,7 @@ class CustomCalender {
   }
 
   Future<String?> _selectSubjectDialog(
-      BuildContext context, List<Event> eventsList, ref) async {
+      BuildContext context, List<Event> eventsList, ref, communityName) async {
     return showDialog(
       context: context,
       builder: (context) {
@@ -322,7 +324,9 @@ class CustomCalender {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                  color: legalVirtueColors['${e.title}'],
+                                  color: communityName == "Legal"
+                                      ? legalVirtueColors['${e.title}']
+                                      : alAnVirtueColors['${e.title}'],
                                   borderRadius: BorderRadius.circular(20)),
                               width: 25,
                               height: 25,

@@ -127,15 +127,13 @@ class PopOutMenuWidget extends StatelessWidget {
 
       itemBuilder: (BuildContext context) => [
         const PopupMenuItem<String>(
-          value: 'signOut',
-          child: Center(child: Text('Sign Out')),
-        ),
-        const PopupMenuItem<String>(
           value: 'settings',
           child: Center(child: Text('Settings')),
         ),
-
-        // TODO: Add other menu items as needed
+        const PopupMenuItem<String>(
+          value: 'signOut',
+          child: Center(child: Text('Sign Out')),
+        ),
       ],
     );
   }

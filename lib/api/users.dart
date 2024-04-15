@@ -32,9 +32,9 @@ class Users {
 
   // Add different communitiesst, and write getter function per commmunity.
 
-  final quadrantLists = {
-    "legal": {
-      "legal": {
+  final Map<String, Map<String, Map<String, dynamic>>> quadrantLists = {
+    "Legal": {
+      "Legal": {
         "Honesty": 0,
         "Courage": 0,
         "Compassion": 0,
@@ -46,19 +46,21 @@ class Users {
         "Prudence": 0
       }
     },
-    "alcoholics anonymous": {
-      "Honesty": 0,
-      "Hope": 0,
-      "Surrender": 0,
-      "Courage": 0,
-      "Integrity": 0,
-      "Willingness": 0,
-      "Humility": 0,
-      "Love": 0,
-      "Responsibility": 0,
-      "Discipline": 0,
-      "Awareness": 0,
-      "Service": 0,
+    "Alcoholics Anonymous": {
+      "Alcoholics Anonymous": {
+        "Honesty": 0,
+        "Hope": 0,
+        "Surrender": 0,
+        "Courage": 0,
+        "Integrity": 0,
+        "Willingness": 0,
+        "Humility": 0,
+        "Love": 0,
+        "Responsibility": 0,
+        "Discipline": 0,
+        "Awareness": 0,
+        "Service": 0,
+      }
     }
   };
 
@@ -354,11 +356,13 @@ class Users {
         "fcmToken": null,
         "phoneVerified": phoneVerified
       };
+
       userObject["careerInfo"] = careerInfo;
       userObject["notificationPreferences"] = notificationPreferences;
-      userObject["quadrantUsedData"] =
-          quadrantLists[currentCommunity.toLowerCase()] ?? 'Error';
 
+      userObject["quadrantUsedData"] =
+          quadrantLists[currentCommunity] ?? 'Error';
+      print('$userObject');
       await usersCollectionRef
           .doc(user.uid)
           .set(userObject, SetOptions(merge: true));

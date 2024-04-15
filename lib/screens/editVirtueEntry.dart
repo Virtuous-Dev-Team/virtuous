@@ -111,10 +111,10 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 setUserInfoProvider(ref);
                 await ref
                     .read(virtueEntryControllerProvider.notifier)
-                    .getMostRecentEntries(communityName.toLowerCase());
+                    .getMostRecentEntries(communityName);
                 await ref
                     .read(statsControllerProvider.notifier)
-                    .getAllStats(communityName.toLowerCase());
+                    .getAllStats(communityName);
                 GoRouter.of(context).go('/home');
 
                 // newProfileName.
@@ -591,7 +591,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                 await ref
                     .read(virtueEntryControllerProvider.notifier)
                     .editEntry(
-                        communityName.toLowerCase(),
+                        communityName,
                         quadrantName,
                         color,
                         shareLocation,

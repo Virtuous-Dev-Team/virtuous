@@ -71,7 +71,8 @@ class SettingsController extends _$SettingsController {
       required String newCareer,
       required String newCommunity,
       required String newCareerLength,
-      required Function authError}) async {
+      required Function authError,
+      required bool newListExist}) async {
     try {
       final settingsRepo = ref.read(settingsRepositoryProvider);
       final result = await AsyncValue.guard(() => settingsRepo.updateProfile(
@@ -80,7 +81,8 @@ class SettingsController extends _$SettingsController {
           newCareer,
           newCommunity,
           newCareerLength,
-          authError));
+          authError,
+          newListExist));
 
       if (result.value['Success']) {
         state = AsyncData({

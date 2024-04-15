@@ -9,6 +9,37 @@ class Settings {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   static String verifyId = "";
 
+  final quadrantLists = {
+    "Legal": {
+      "Legal": {
+        "Honesty": 0,
+        "Courage": 0,
+        "Compassion": 0,
+        "Generosity": 0,
+        "Fidelity": 0,
+        "Integrity": 0,
+        "Fairness": 0,
+        "Self-control": 0,
+        "Prudence": 0
+      }
+    },
+    "Alcoholics Anonymous": {
+      "Alcoholics Anonymous": {
+        "Honesty": 0,
+        "Hope": 0,
+        "Surrender": 0,
+        "Courage": 0,
+        "Integrity": 0,
+        "Willingness": 0,
+        "Humility": 0,
+        "Love": 0,
+        "Responsibility": 0,
+        "Discipline": 0,
+        "Awareness": 0,
+        "Service": 0,
+      }
+    }
+  };
   Future<dynamic> updatePassword(
       {required String newPassword, required Function authError}) async {
     try {
@@ -64,7 +95,8 @@ class Settings {
       String newCareer,
       String newCommunity,
       String newCareerLength,
-      Function authError) async {
+      Function authError,
+      bool newListExist) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) {
@@ -85,6 +117,15 @@ class Settings {
       final Map<String, dynamic> updateMap = {};
       if (newCommunity.isNotEmpty) {
         updateMap['currentCommunity'] = newCommunity;
+        print('settings api profile $newListExist');
+        if (newListExist == false) {
+          final Map<String, dynamic> userObject = {};
+          userObject["quadrantUsedData"] =
+              quadrantLists[newCommunity] ?? 'Error';
+          await usersCollectionRef
+              .doc(user.uid)
+              .set(userObject, SetOptions(merge: true));
+        }
       }
       if (newCareer.isNotEmpty) {
         updateMap['careerInfo.currentPosition'] = newCareer;

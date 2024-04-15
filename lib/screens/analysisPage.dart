@@ -31,10 +31,10 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
     // TODO: implement initState
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    String communityName = userInfo.currentCommunity;
+    communityName = userInfo.currentCommunity;
     ref
         .read(statsControllerProvider.notifier)
-        .getAllStats(communityName.toLowerCase());
+        .getAllStats(userInfo.currentCommunity);
     // ref
     //     .read(statsControllerProvider.notifier)
     //     .getQuadrantsUsedList(communityName.toLowerCase());
@@ -45,10 +45,8 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
   void callFunctions(String communityName) {
     ref
         .read(statsControllerProvider.notifier)
-        .getQuadrantsUsedList(communityName.toLowerCase());
-    ref
-        .read(statsControllerProvider.notifier)
-        .getAllStats(communityName.toLowerCase());
+        .getQuadrantsUsedList(communityName);
+    ref.read(statsControllerProvider.notifier).getAllStats(communityName);
     // ref.invalidate(statsControllerProvider);
 
     // ref.read(statsControllerProvider.notifier).buildCalendar();
@@ -60,6 +58,7 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
   Map<String, int>? bottomThreeVirtues;
   List<ChartData> chartData = [];
   CustomCalender calendar = CustomCalender();
+  String communityName = 'Legal';
   @override
   Widget build(BuildContext context) {
     ref.watch(statsControllerProvider).when(
@@ -83,7 +82,10 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
                 });
               }
             } else if (success[0] && success[1] == false) {
-            } else if (success[0] == false && success[1]) {}
+              print('herte');
+            } else if (success[0] == false && success[1]) {
+              print('herte');
+            }
           }
           print('response in redner bto $response');
           Text('loading');
@@ -126,6 +128,7 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
                     RenderQuadrantUsedList(
                       topThreeVirtues: topThreeVirtues,
                       bottomThreeVirtues: bottomThreeVirtues,
+                      communityName: communityName,
                     )
                   ],
                 )
@@ -161,9 +164,13 @@ class RenderPieChart extends ConsumerWidget {
 
 class RenderQuadrantUsedList extends StatelessWidget {
   const RenderQuadrantUsedList(
-      {super.key, this.topThreeVirtues, this.bottomThreeVirtues});
+      {super.key,
+      this.topThreeVirtues,
+      this.bottomThreeVirtues,
+      required this.communityName});
   final Map<String, int>? topThreeVirtues;
   final Map<String, int>? bottomThreeVirtues;
+  final String communityName;
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -191,6 +198,7 @@ class RenderQuadrantUsedList extends StatelessWidget {
                     ))
                 : TopBottomVirtuesWidget(
                     virtueList: topThreeVirtues,
+                    communityName: communityName,
                   )
           ]),
         )),
@@ -217,6 +225,7 @@ class RenderQuadrantUsedList extends StatelessWidget {
                     ))
                 : TopBottomVirtuesWidget(
                     virtueList: bottomThreeVirtues,
+                    communityName: communityName,
                   )
           ]),
         )),
@@ -226,12 +235,11 @@ class RenderQuadrantUsedList extends StatelessWidget {
 }
 
 class TopBottomVirtuesWidget extends StatelessWidget {
-  const TopBottomVirtuesWidget({
-    super.key,
-    this.virtueList,
-  });
+  const TopBottomVirtuesWidget(
+      {super.key, this.virtueList, required this.communityName});
 
   final Map<String, int>? virtueList;
+  final String communityName;
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -252,7 +260,9 @@ class TopBottomVirtuesWidget extends StatelessWidget {
                   width: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(1),
-                    color: legalVirtueColors['$key'],
+                    color: communityName == "Legal"
+                        ? legalVirtueColors['$key']
+                        : alAnVirtueColors['$key'],
                   ),
                 ),
                 Expanded(

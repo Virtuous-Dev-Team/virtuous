@@ -36,12 +36,9 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    var communityName1 = userInfo.currentCommunity;
     communityName = userInfo.currentCommunity;
 
-    ref
-        .read(resourcesControllerProvider.notifier)
-        .getResources(communityName1.toLowerCase());
+    ref.read(resourcesControllerProvider.notifier).getResources(communityName);
     _tabController = TabController(length: 2, vsync: this);
     // final userInfo = ref.read(userInfoProviderr);
     // String communityName = userInfo.currentCommunity;
@@ -56,7 +53,7 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
     super.dispose();
   }
 
-  String communityName = '';
+  String communityName = 'Alcoholics Anonymous';
 
   @override
   Widget build(BuildContext context) {
@@ -89,9 +86,7 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                       if (index == 1) {
                         ref
                             .read(resourcesControllerProvider.notifier)
-                            .getResources(communityName.isEmpty
-                                ? 'legal'
-                                : communityName.toLowerCase());
+                            .getResources(communityName);
                       }
                     },
                     labelStyle: const TextStyle(
@@ -197,7 +192,7 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                   // ),
                   child: Center(
                     child: Text(
-                        "Using virtues can have a positive impact on one’s mental state. Focusing on the positive aspects of life greatly increases one’s outlook and mood. and stuff",
+                        "Using virtues can have a positive impact on one’s mental state. Focusing on the positive aspects of life greatly increases one’s outlook and mood.",
                         style: GoogleFonts.tinos(
                           textStyle: TextStyle(),
                           fontSize: 16,

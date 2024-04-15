@@ -123,10 +123,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                 setUserInfoProvider(ref);
                 await ref
                     .read(virtueEntryControllerProvider.notifier)
-                    .getMostRecentEntries(communityName.toLowerCase());
+                    .getMostRecentEntries(communityName);
                 await ref
                     .read(statsControllerProvider.notifier)
-                    .getAllStats(communityName.toLowerCase());
+                    .getAllStats(communityName);
                 GoRouter.of(context).go('/home');
 
                 // newProfileName.
@@ -609,7 +609,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   isLoading = true;
                 });
                 await ref.read(virtueEntryControllerProvider.notifier).addEntry(
-                      communityName.toLowerCase(),
+                      communityName,
                       widget.quadrantName!,
                       widget.color!,
                       shareLocation,

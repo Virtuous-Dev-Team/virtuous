@@ -36,7 +36,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     shareLocation = userInfo.shareLocation;
-    communityName = userInfo.currentCommunity.toLowerCase();
+    communityName = userInfo.currentCommunity;
   }
 
   @override
@@ -101,7 +101,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                     height: 20,
                   ),
                   Text(
-                    "Legal Community ${communityName}",
+                    "${communityName}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w500,

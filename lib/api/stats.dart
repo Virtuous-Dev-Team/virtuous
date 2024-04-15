@@ -15,7 +15,8 @@ class Stats {
   Future<dynamic> getAllStats(String communityName) async {
     try {
       final quadrantLists = await getQuadrantsUsedList(communityName);
-      final calendar = await buildCalendar();
+      print(quadrantLists);
+      final calendar = await buildCalendar(communityName);
       if (quadrantLists['Success'] && calendar['Success']) {
         return {
           'Success': [true, true],
@@ -66,7 +67,12 @@ class Stats {
         List<ChartData> charty = [];
         quadrantsUsedList.forEach((key, value) {
           double num = value.floorToDouble();
-          charty.add(ChartData(key, num, legalVirtueColors['$key']));
+          charty.add(ChartData(
+              key,
+              num,
+              communityName == "Legal"
+                  ? legalVirtueColors['$key']
+                  : alAnVirtueColors['$key']));
         });
         List<MapEntry<String, int>> sortedList =
             quadrantsUsedList.entries.toList();
@@ -91,6 +97,7 @@ class Stats {
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
     } catch (error) {
+      print('error in stats.dart $error');
       return {'Success': false, 'Error': error};
     }
   }
@@ -100,248 +107,36 @@ class Stats {
     return DateTime(dateTime.year, dateTime.month, dateTime.day);
   }
 
-  Future<dynamic> buildCalendar() async {
+  Future<dynamic> buildCalendar(String communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
-      List<DateTime> HonestyDates = [];
-      List<DateTime> CourageDates = [];
-      List<DateTime> CompassionDates = [];
-      List<DateTime> GenerosityDates = [];
-      List<DateTime> FidelityDates = [];
-      List<DateTime> IntegrityDates = [];
-      List<DateTime> FairnessDates = [];
-      List<DateTime> SelfControlDates = [];
-      List<DateTime> PrudenceDates = [];
+
       EventList<Event> _markedDateMap = new EventList<Event>(
         events: {},
       );
       QuerySnapshot querySnapshot = await userCollectionRef
           .doc(user.uid)
           .collection("totalData")
-          .where('communityName', isEqualTo: 'legal')
+          .where('communityName', isEqualTo: communityName)
           .get();
       // print(querySnapshot.docs);
       if (querySnapshot.docs.isNotEmpty) {
-        querySnapshot.docs.forEach((element) {
-          // DocumentSnapshot documentSnapshot = element["dateEntried"];
-
-          dynamic val = element.data();
-          Timestamp dateEntried = val['dateEntried'];
-          String virtueUsed = val["quadrantUsed"];
-          // Timestamp timestamp =
-          //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
-
-          // Convert the Timestamp to a DateTime object
-          // DateTime dateTime = timestamp.toDate();
-          DateTime d = parseTimestamp(dateEntried);
-          switch (virtueUsed) {
-            case "Honesty":
-              {
-                HonestyDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Courage":
-              {
-                CourageDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Compassion":
-              {
-                CompassionDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Generosity":
-              {
-                GenerosityDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Fidelity":
-              {
-                FidelityDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Integrity":
-              {
-                IntegrityDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Fairness":
-              {
-                FairnessDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Self-control":
-              {
-                SelfControlDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-            case "Prudence":
-              {
-                PrudenceDates.add(d);
-                _markedDateMap.add(
-                  d,
-                  Event(
-                    date: d,
-                    title: virtueUsed,
-                    description: element.id,
-                    dot: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 1.0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: legalVirtueColors['$virtueUsed'],
-                      ),
-                      width: 6,
-                      height: 6,
-                    ),
-                  ),
-                );
-              }
-          }
-        });
-        LegalCalendarModel model = LegalCalendarModel(
-            CompassionList: CompassionDates,
-            CourageList: CourageDates,
-            FairnessList: FairnessDates,
-            FidelityList: FidelityDates,
-            GenerosityList: GenerosityDates,
-            HonestyList: HonestyDates,
-            IntegrityList: IntegrityDates,
-            PrudenceList: PrudenceDates,
-            SelfControlList: SelfControlDates);
-        List<LegalCalendarModel> calendarData = [];
-        calendarData.add(model);
+        //
+        switch (communityName) {
+          case 'Legal':
+            {
+              _markedDateMap = buildLegalCalendarList(querySnapshot);
+            }
+          case 'Alcoholics Anonymous':
+            {
+              _markedDateMap = buildAACalendarList(querySnapshot);
+            }
+        }
+        print('stats dart $_markedDateMap');
         return {'Success': true, 'response': _markedDateMap};
         // dynamic totalData = querySnapshot['totalData'];
         // print(totalData);
@@ -353,6 +148,540 @@ class Stats {
     } catch (error) {
       return {'Success': false, 'Error': error};
     }
+  }
+
+  EventList<Event> buildLegalCalendarList(QuerySnapshot querySnapshot) {
+    List<DateTime> HonestyDates = [];
+    List<DateTime> CourageDates = [];
+    List<DateTime> CompassionDates = [];
+    List<DateTime> GenerosityDates = [];
+    List<DateTime> FidelityDates = [];
+    List<DateTime> IntegrityDates = [];
+    List<DateTime> FairnessDates = [];
+    List<DateTime> SelfControlDates = [];
+    List<DateTime> PrudenceDates = [];
+    EventList<Event> _markedDateMap = new EventList<Event>(
+      events: {},
+    );
+    querySnapshot.docs.forEach((element) {
+      // DocumentSnapshot documentSnapshot = element["dateEntried"];
+
+      dynamic val = element.data();
+      Timestamp dateEntried = val['dateEntried'];
+      String virtueUsed = val["quadrantUsed"];
+      // Timestamp timestamp =
+      //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
+
+      // Convert the Timestamp to a DateTime object
+      // DateTime dateTime = timestamp.toDate();
+      DateTime d = parseTimestamp(dateEntried);
+      switch (virtueUsed) {
+        case "Honesty":
+          {
+            HonestyDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Courage":
+          {
+            CourageDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Compassion":
+          {
+            CompassionDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Generosity":
+          {
+            GenerosityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Fidelity":
+          {
+            FidelityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Integrity":
+          {
+            IntegrityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Fairness":
+          {
+            FairnessDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Self-control":
+          {
+            SelfControlDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Prudence":
+          {
+            PrudenceDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: legalVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+      }
+    });
+    LegalCalendarModel model = LegalCalendarModel(
+        CompassionList: CompassionDates,
+        CourageList: CourageDates,
+        FairnessList: FairnessDates,
+        FidelityList: FidelityDates,
+        GenerosityList: GenerosityDates,
+        HonestyList: HonestyDates,
+        IntegrityList: IntegrityDates,
+        PrudenceList: PrudenceDates,
+        SelfControlList: SelfControlDates);
+    List<LegalCalendarModel> calendarData = [];
+    calendarData.add(model);
+
+    return _markedDateMap;
+  }
+
+  EventList<Event> buildAACalendarList(QuerySnapshot querySnapshot) {
+    List<DateTime> HonestyDates = [];
+    List<DateTime> HopeDates = [];
+    List<DateTime> SurrenderDates = [];
+
+    List<DateTime> CourageDates = [];
+    List<DateTime> IntegrityDates = [];
+    List<DateTime> WillingnessDates = [];
+    List<DateTime> HumilityDates = [];
+    List<DateTime> LoveDates = [];
+    List<DateTime> ResponsibilityDates = [];
+    List<DateTime> DisciplineDates = [];
+    List<DateTime> AwarenessDates = [];
+    List<DateTime> ServiceDates = [];
+
+    EventList<Event> _markedDateMap = new EventList<Event>(
+      events: {},
+    );
+    querySnapshot.docs.forEach((element) {
+      // DocumentSnapshot documentSnapshot = element["dateEntried"];
+
+      dynamic val = element.data();
+      Timestamp dateEntried = val['dateEntried'];
+      String virtueUsed = val["quadrantUsed"];
+      // Timestamp timestamp =
+      //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
+
+      // Convert the Timestamp to a DateTime object
+      // DateTime dateTime = timestamp.toDate();
+      DateTime d = parseTimestamp(dateEntried);
+      switch (virtueUsed) {
+        case "Honesty":
+          {
+            HonestyDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Courage":
+          {
+            CourageDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Hope":
+          {
+            HopeDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Surrender":
+          {
+            SurrenderDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Integrity":
+          {
+            IntegrityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Willingness":
+          {
+            WillingnessDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Humility":
+          {
+            HumilityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Love":
+          {
+            LoveDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Responsibility":
+          {
+            ResponsibilityDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Discipline":
+          {
+            DisciplineDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Awareness":
+          {
+            AwarenessDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+        case "Service":
+          {
+            ServiceDates.add(d);
+            _markedDateMap.add(
+              d,
+              Event(
+                date: d,
+                title: virtueUsed,
+                description: element.id,
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: alAnVirtueColors['$virtueUsed'],
+                  ),
+                  width: 6,
+                  height: 6,
+                ),
+              ),
+            );
+          }
+      }
+    });
+    // LegalCalendarModel model = LegalCalendarModel(
+    //     CompassionList: CompassionDates,
+    //     CourageList: CourageDates,
+    //     FairnessList: FairnessDates,
+    //     FidelityList: FidelityDates,
+    //     GenerosityList: GenerosityDates,
+    //     HonestyList: HonestyDates,
+    //     IntegrityList: IntegrityDates,
+    //     PrudenceList: PrudenceDates,
+    //     SelfControlList: SelfControlDates);
+    // List<LegalCalendarModel> calendarData = [];
+    // calendarData.add(model);
+
+    return _markedDateMap;
   }
 }
 

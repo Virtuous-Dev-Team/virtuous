@@ -42,7 +42,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     String communityName = userInfo.currentCommunity;
     ref
         .read(virtueEntryControllerProvider.notifier)
-        .getMostRecentEntries(communityName.toLowerCase());
+        .getMostRecentEntries(communityName);
   }
 
   @override
