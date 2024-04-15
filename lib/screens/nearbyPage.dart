@@ -101,7 +101,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                     height: 20,
                   ),
                   Text(
-                    "${communityName}",
+                    " ${communityName}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w500,
@@ -126,14 +126,14 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               ),
                               SizedBox(
                                 height: 30,
-                                width: 160,
+                                width: 180,
                                 child: DropdownButtonFormField<String>(
                                   value: 'Last week',
                                   items: <String>[
                                     'Last week',
-                                    'Last 3 months',
-                                    'Last 6 months',
-                                    'Last year'
+                                    'Last 3 mo',
+                                    'Last 6 mo',
+                                    'Last yr'
                                   ].map<DropdownMenuItem<String>>(
                                       (String value) {
                                     return DropdownMenuItem<String>(
@@ -150,8 +150,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     });
                                   },
                                   decoration: InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.symmetric(horizontal: 15),
+                                    contentPadding: EdgeInsets.only(left: 10),
                                     border: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(), // Remove circular border
@@ -174,24 +173,18 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               ),
                               SizedBox(
                                 height: 30,
-                                width: 160,
+                                width: 190,
                                 child: DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderSide:
+                                            BorderSide()), // Remove the border from the dropdown field
+                                    contentPadding: EdgeInsets.only(
+                                        left: 10), // Remove content padding
+                                  ),
                                   value: '10km',
-                                  items: <String>[
-                                    '10km',
-                                    '50km',
-                                    '250km',
-                                    '1000km',
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value,
-                                          style: TextStyle(
-                                              fontSize:
-                                                  15)), // Match font size here
-                                    );
-                                  }).toList(),
+                                  iconSize:
+                                      24, // Set the size of the dropdown icon
                                   onChanged: (String? newValue) async {
                                     String num = newValue!.replaceAll('km', '');
                                     double newRadius = double.parse(num!);
@@ -204,14 +197,17 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     //     .getThoseEntries(
                                     //         shareLocation, radius);
                                   },
-                                  decoration: InputDecoration(
-                                    contentPadding:
-                                        EdgeInsets.symmetric(horizontal: 15),
-                                    border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(), // Remove circular border
-                                    ),
-                                  ),
+                                  items: <String>[
+                                    '10km',
+                                    '50km',
+                                    '250km',
+                                    '1000km',
+                                  ].map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             ],
@@ -407,11 +403,11 @@ List<_ChartData> buildChartData(dynamic eventList, String timeFrame) {
   // get start date for qualified entries
   if (timeFrame == 'Last week') {
     startDate = today.subtract(const Duration(days: 7));
-  } else if (timeFrame == 'Last 3 months') {
+  } else if (timeFrame == 'Last 3 mo') {
     startDate = today.subtract(const Duration(days: 90));
-  } else if (timeFrame == 'Last 6 months') {
+  } else if (timeFrame == 'Last 6 mo') {
     startDate = today.subtract(const Duration(days: 180));
-  } else if (timeFrame == 'Last year') {
+  } else if (timeFrame == 'Last yr') {
     startDate = today.subtract(const Duration(days: 365));
   } else {
     print('invalid time frame');

@@ -491,7 +491,8 @@ class Users {
 
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-
+// 28.60152443425164, -81.2006825411253
+// 31.421881285522936, -81.73234979879797
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
       return {"Success": true, "response": geoFireLocation};
@@ -551,6 +552,7 @@ class Users {
     if (shareLocation) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+      // 28.60152443425164, -81.2006825411253
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
       print('radius $radius');
