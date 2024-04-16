@@ -407,8 +407,10 @@ class SurveyPageState extends State<SurveyPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(5.0),
             ),
-            child: TextField(
-              maxLines: 3,
+            child: SingleChildScrollView(
+                child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
@@ -424,7 +426,7 @@ class SurveyPageState extends State<SurveyPage> {
                   answers[3] = newValue;
                 });
               },
-            ),
+            )),
           ),
         ],
       );
