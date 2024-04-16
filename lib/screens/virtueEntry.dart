@@ -760,6 +760,8 @@ Widget textFieldNoteInput(
         cursorRadius: const Radius.circular(0),
         controller: controller,
         maxLines: 4,
+        textInputAction: TextInputAction.done,
+        keyboardType: TextInputType.text,
         readOnly: readOnly,
         style: TextStyle(color: iconColor, fontSize: 16),
         decoration: InputDecoration(
