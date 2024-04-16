@@ -409,8 +409,9 @@ class SurveyPageState extends State<SurveyPage> {
             ),
             child: SingleChildScrollView(
                 child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
+              textInputAction: TextInputAction.done,
+              keyboardType: TextInputType.text,
+              maxLines: 3,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
