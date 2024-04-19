@@ -2,17 +2,21 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Communities {
-  Future getQuadrantList() async {
+  final communityCollectionRef =
+      FirebaseFirestore.instance.collection('Communities');
+  Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) print('No user found');
-      final communityCollectionRef =
-          FirebaseFirestore.instance.collection('Communities');
+      if (user == null) {
+        return {'Success': false, 'Error': "User not found"};
+      }
+
       // Query all documents in the community collection and search for specific community
       QuerySnapshot querySnapshot = await communityCollectionRef
-          .where("communityName", isEqualTo: "legal")
+          .where("communityName", isEqualTo: communityName)
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
@@ -21,16 +25,21 @@ class Communities {
             querySnapshot.docs.single['quadrantInformation'].map((doc) {
           return {
             'quadrantName': doc['quadrantName'] ?? 'Error',
-            'quadrantColor': doc['quadrantColor'] ?? 'Error'
+            'quadrantColor': doc['quadrantColor'] ?? 'Error',
+            'quadrantDefinition': doc['quadrantDefinition'] ?? 'Error'
           };
         }).toList();
-        print(gridPageList);
+        // print(gridPageList);
         return {'Success': true, "response": gridPageList};
       } else {
-        return Future.error({'Success': false, 'Error': "Query is empty"});
+        return {'Success': false, 'Error': "Query is empty"};
       }
-    } catch (e) {
-      return Future.error(e);
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
     }
   }
 }
+
+final communitiesRepositoryProvider = Provider<Communities>((ref) {
+  return Communities();
+});
