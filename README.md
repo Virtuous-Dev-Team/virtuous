@@ -14,7 +14,7 @@ This year we will be building a mobile application called Virtue Tracker. This a
 
 **To test screens** 
 - navigate to -> main.dart
-Currently we are using GoRouter to handle our routes so we are automatically sent to either signIn or home. If you want to test a screen comment out the MyApp widget and uncomment the one above which will navigate to whichever screen you want.
+- Currently we are using GoRouter to handle our routes so we are automatically sent to either signIn or home. If you want to test a screen comment out the MyApp widget and uncomment the one above which will navigate to whichever screen you want.
 
 **RiverPod controllers (api controllers)**
 
