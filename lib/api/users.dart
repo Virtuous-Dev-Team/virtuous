@@ -13,9 +13,14 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 
 class Users {
+  // Instance of Users collection from database
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
+
+  // Instance of Firebase auth class to call Firebase methods
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static String verifyId = "";
+
+  // Instance of GeoFlutterFire, class used for location services
   final geo = GeoFlutterFire();
   List<DocumentSnapshot> parsedEntryList = [];
   Map<String, int?> chartData = {
@@ -30,8 +35,7 @@ class Users {
     "Prudence": 0
   };
 
-  // Add different communitiesst, and write getter function per commmunity.
-
+  // // Quadrantlist for every community we have, used when a user changes to a new community
   final Map<String, Map<String, Map<String, dynamic>>> quadrantLists = {
     "Legal": {
       "Legal": {
@@ -63,45 +67,6 @@ class Users {
       }
     }
   };
-
-  // Done,
-  // Future<dynamic> addVirtueEntry(currentCommunity, quadrantUsed, quadrantColor,
-  //     quadrantAnswers, shareLocation, shareEntries) async {
-  //   try {
-  //     User? user = FirebaseAuth.instance.currentUser;
-  //     if (user == null) {
-  //       return {'Success': false, 'Error': 'User not found'};
-  //     }
-  //     final totalDataObject = {
-  //       "communityName": currentCommunity,
-  //       "quadrantUsed": quadrantUsed,
-  //       "quadrantColor": quadrantColor,
-  //       "dateEntried": FieldValue.serverTimestamp(),
-  //       "quadrantAnswers": quadrantAnswers
-  //     };
-  //     // Add virtue entry to totalData subcollection
-  //     await usersCollectionRef
-  //         .doc(user.uid)
-  //         .collection("totalData")
-  //         .add(totalDataObject);
-
-  //     // Maybe add a check to see if it completed
-  //     await updateQuadrantsUsed(currentCommunity, quadrantUsed);
-  //     if (shareLocation && shareEntries) {
-  //       final CommunityShared communitySharedApi = CommunityShared();
-  //       await communitySharedApi
-  //           .addSharedVirtueEntry(
-  //               quadrantUsed, quadrantColor, shareLocation, currentCommunity)
-  //           .catchError((e) => print(e));
-  //     }
-  //     return {'Success': true, "response": "Entry added"};
-  //   } on FirebaseException catch (error) {
-  //     print('Error ${error.message}');
-  //     return {'Success': false, 'Error': error.message};
-  //   } catch (error) {
-  //     print(error);
-  //   }
-  // }
 
   Future<dynamic> editEntry(
       String communityName,
@@ -276,7 +241,6 @@ class Users {
     }
   }
 
-  // Done
   Future getMostRecentEntries(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -303,11 +267,9 @@ class Users {
             "quadrantUsed": document["quadrantUsed"] ?? "Error",
             "quadrantColor": document["quadrantColor"],
             "dateEntried": dateEntered,
-            // add other stuff
           };
         }).toList();
 
-        // print(recentEntriesList);
         return {'Success': true, "response": recentEntriesList};
       } else {
         return {'Success': false, 'Error': "Query is empty"};
@@ -374,7 +336,7 @@ class Users {
     }
   }
 
-  // phone number verification
+  // phone number verification, tested but couldn't work on some members computers
   Future<dynamic> sendOtp({
     required String phone,
     required Function errorStep,
@@ -409,7 +371,7 @@ class Users {
     }
   }
 
-  // verify otp code
+  // verify otp code, tested but couldn't work on some members computers
   Future<dynamic> confirmOtp({required String otp}) async {
     final cred =
         PhoneAuthProvider.credential(verificationId: verifyId, smsCode: otp);
@@ -428,25 +390,8 @@ class Users {
       // General error
       return {"Success": false, "Error": e};
     }
-
-    // try {
-    //   final user = await _firebaseAuth.signInWithCredential(cred);
-    //   if(user.user != null) {
-    //     return "Success";
-    //   } else {
-    //     return "error in OTP verification";
-    //   }
-    // }
-    // on FirebaseAuthException catch(e) {
-    //   return e.message.toString();
-    // }
-    // catch(e) {
-    //   return e.toString();
-    // }
   }
 
-  // Used whenever we need to to ask for user permissions for location
-  // Done and tested
   // updated to geoflutterfire
   Future<dynamic> addUserLocation() async {
     try {
@@ -455,16 +400,6 @@ class Users {
 
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        // await Geolocator.openAppSettings();
-        // bool opened = await Geolocator.openLocationSettings();
-        // if (opened) {
-        //   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-        //   print('here after $serviceEnabled');
-        //   if (serviceEnabled) {
-        //     return await addUserLocation();
-        //   }
-        // }
-
         return {'Success': false, 'Error': 'Location services are disabled'};
       }
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -491,8 +426,6 @@ class Users {
 
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-// 28.60152443425164, -81.2006825411253
-// 31.421881285522936, -81.73234979879797
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
       return {"Success": true, "response": geoFireLocation};
@@ -501,8 +434,6 @@ class Users {
     }
   }
 
-  // Done and tested
-  // updated to geoflutterfire
   Future<dynamic> getUpdatedLocation(shareLocation) async {
     try {
       if (shareLocation) {
@@ -523,7 +454,6 @@ class Users {
     }
   }
 
-  // Done
   Future<Map<String, dynamic>> getUserInfo() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -544,6 +474,7 @@ class Users {
     }
   }
 
+  // Get entries for nearby feature
   Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
       bool shareLocation, double radius) async* {
     final sharedCollectionRef =
@@ -552,10 +483,8 @@ class Users {
     if (shareLocation) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      // 28.60152443425164, -81.2006825411253
       GeoFirePoint geoFireLocation =
           geo.point(latitude: position.latitude, longitude: position.longitude);
-      print('radius $radius');
       var eventsStream = geoRef.within(
           center: geoFireLocation,
           radius: radius,
@@ -566,169 +495,6 @@ class Users {
       }
     }
   }
-
-  // Future<dynamic> parseNearbyEntries(
-  //     List<DocumentSnapshot> nearbyEntryList, String timeFrame) async {
-  //   DateTime startDate;
-  //   DateTime today = DateTime.now();
-
-  //   // get start date for qualified entries
-  //   if (timeFrame == 'Last week') {
-  //     startDate = today.subtract(const Duration(days: 7));
-  //   } else if (timeFrame == 'Last 3 months') {
-  //     startDate = today.subtract(const Duration(days: 90));
-  //   } else if (timeFrame == 'Last 6 months') {
-  //     startDate = today.subtract(const Duration(days: 180));
-  //   } else if (timeFrame == 'Last year') {
-  //     startDate = today.subtract(const Duration(days: 365));
-  //   } else {
-  //     print('invalid time frame');
-  //     startDate = today.subtract(const Duration(days: 0));
-  //   }
-
-  //   //get entries within selected time frame
-  //   for (var i = 0; i < nearbyEntryList.length; i++) {
-  //     final entry = nearbyEntryList[0].data() as Map;
-  //     Timestamp? entryTime = entry['dateEntried'] as Timestamp?;
-  //     DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
-
-  //     // if date of entry is within time frame, add to parsed list
-  //     if (dateEntered.isAfter(startDate)) {
-  //       parsedEntryList.add(nearbyEntryList[i]);
-  //     }
-  //   }
-
-  //   // collect frequency of each virtue
-  //   for (var i = 0; i < parsedEntryList.length; i++) {
-  //     final entry = nearbyEntryList[i].data() as Map;
-  //     String virtue = entry['quadrantUsed'];
-  //     switch (virtue) {
-  //       case 'Prudence':
-  //         {
-  //           chartData['Prudence'] = chartData['Prudence']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Self-control':
-  //         {
-  //           chartData['Self-control'] = chartData['Self-control']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Fairness':
-  //         {
-  //           chartData['Fairness'] = chartData['Fairness']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Integrity':
-  //         {
-  //           chartData['Integrity'] = chartData['Integrity']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Fidelity':
-  //         {
-  //           chartData['Fidelity'] = chartData['Fidelity']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Generosity':
-  //         {
-  //           chartData['Generosity'] = chartData['Generosity']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Compassion':
-  //         {
-  //           chartData['Compassion'] = chartData['Compassion']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Courage':
-  //         {
-  //           chartData['Courage'] = chartData['Courage']! + 1;
-  //         }
-  //         break;
-
-  //       case 'Honesty':
-  //         {
-  //           chartData['Honesty'] = chartData['Honesty']! + 1;
-  //         }
-  //         break;
-  //     }
-  //   }
-
-  //   return;
-  // }
-
-// // get nearby entries for nearby page ----IN PROGRESS----
-//   Future<dynamic> getNearbyEntries(
-//       String radius, String timeFrame, bool shareLocation) async {
-//     final sharedCollectionRef =
-//         FirebaseFirestore.instance.collection('CommunitySharedData');
-//     final geoRef = geo.collection(collectionRef: sharedCollectionRef);
-
-//     // convert radius string to double
-//     String strRad = radius.replaceAll(new RegExp(r'[^0-9]'), '');
-//     double numRadius = double.parse(strRad);
-
-//     if (shareLocation) {
-//       print('getting nearby entries');
-
-//       Position position = await Geolocator.getCurrentPosition(
-//           desiredAccuracy: LocationAccuracy.high);
-//       GeoFirePoint geoFireLocation =
-//           geo.point(latitude: position.latitude, longitude: position.longitude);
-
-//       var stream = geoRef.within(
-//           center: geoFireLocation,
-//           radius: numRadius,
-//           field: 'userLocation',
-//           strictMode: true);
-
-//       List<DocumentSnapshot> nearbyEntryList = [];
-
-//       late StreamSubscription subscription;
-
-//       subscription = stream.listen((List<DocumentSnapshot> documentList) {
-//         for (var i = 0; i < documentList.length; i++) {
-//           nearbyEntryList.add(documentList[i]);
-//         }
-
-//         parseNearbyEntries(nearbyEntryList, timeFrame);
-
-//         return;
-//       });
-//     } else {
-//       return "Location services not enabled";
-//     }
-//   }
-
-//   Future<dynamic> findUsersNear() async {
-//     // Target location
-//     GeoPoint targetLocation = const GeoPoint(37.7749, -122.4194);
-//     final double earthRadius = 6371; // Radius of the Earth in kilometers
-//     double radiusInKm = 10;
-//     // Convert radius from kilometers to degrees
-//     double radiusInDegrees = radiusInKm / earthRadius;
-//     double minLat = targetLocation.latitude - radiusInDegrees;
-//     double maxLat = targetLocation.latitude + radiusInDegrees;
-//     double minLon = targetLocation.longitude - radiusInDegrees;
-//     double maxLon = targetLocation.longitude + radiusInDegrees;
-
-//     GeoPoint max = new GeoPoint(maxLat, maxLon);
-//     GeoPoint min = new GeoPoint(minLat, minLon);
-
-//     print('Max: $max, min: $min');
-
-// // Query documents within a certain radius
-//     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-//         .collection('CommunitySharedData')
-//         .where('userLocation', isLessThanOrEqualTo: max)
-//         .where('userLocation', isGreaterThanOrEqualTo: min)
-//         .get();
-//   }
 
   Future<dynamic> getNotiTime() async {
     try {
@@ -752,33 +518,11 @@ class Users {
   }
 }
 
+// Provider to use Users class in other files
 final usersRepositoryProvider = Provider<Users>((ref) {
   return Users();
 });
-// final currentUserInfoProvider = StateProvider.autoDispose(
-//     (ref) => ref.watch(usersRepositoryProvider).getUserInfo());
-// final currentUserInfo =
-//     StateProvider((ref) => ref.watch(usersRepositoryProvider).getUserInfo());
-// final currentUserInfoProvider = StateProvider<Map<String, dynamic>>((ref) {
-//   // This will call getUserInfo() once when the provider is first accessed
-//   final dynamic userInfo = ref.watch(usersRepositoryProvider).getUserInfo();
-//   return userInfo['response'] as Map<String, dynamic>? ??
-//       {}; // Return response from getUserInfo(), or an empty map if it's null
-// });
-// final userInfoProvider = Provider<UserInfoe>((ref) {
-//   // Return the UserInfo object here
-//   final dynamic userInfo =
-//       ref.watch(usersRepositoryProvider).getUserInfo().then((value) => {});
-//   print(userInfo);
-//   return UserInfoe(
-//     id: '123',
-//     email: 'user@example.com',
-//     displayName: 'John Doe',
-//     currentCommunity: 'Community A',
-//     currentPosition: 'Developer',
-//     careerLength: '3 years',
-//   );
-// });
+
 final currentUserInfoProvider =
     FutureProvider<Map<String, dynamic>>((ref) async {
   final userInfo = await ref.read(usersRepositoryProvider).getUserInfo();

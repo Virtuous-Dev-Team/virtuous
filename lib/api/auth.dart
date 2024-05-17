@@ -1,21 +1,16 @@
-import 'dart:io';
-
-import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class Auth {
+  // Instance of Firebase auth class to call Firebase methods
   final auth = FirebaseAuth.instance;
-
   User? get currentUser => auth.currentUser;
+
+  // Watch changes to user state
   Stream<User?> authStateChanges() => auth.authStateChanges();
-  bool _accountCreated = false;
+  final bool _accountCreated = false;
   bool get accountCreated => _accountCreated;
   Future<dynamic> createAccount(email, password, fullName) async {
     try {
@@ -66,7 +61,7 @@ class Auth {
     }
   }
 
-  //  Working on
+  //  Not using, but if you want to verify emails
   Future sendEmailVerification() async {
     User? user = FirebaseAuth.instance.currentUser;
     try {
@@ -79,6 +74,7 @@ class Auth {
     }
   }
 
+  // Tested but not working
   Future verifyPhoneNumber() async {
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '',
@@ -100,7 +96,7 @@ class Auth {
     }
   }
 
-  // --- google sign in ---
+  // --- google sign in ---, couldn't test due to computer
   Future<UserCredential?> signInWithGoogle() async {
     // Trigger the authentication flow
 
@@ -117,8 +113,6 @@ class Auth {
         idToken: googleAuth?.idToken,
       );
 
-      print(credential);
-
       final gSignIn =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
@@ -127,7 +121,6 @@ class Auth {
       // want to call this function after checking if the uid is already in the Users collection
       // createNewUser(user?.uid, googleUser?.displayName);
 
-      print(gSignIn.credential);
       // Once signed in, return the UserCredential
       return gSignIn;
     } catch (e) {
@@ -158,6 +151,7 @@ class Auth {
   }
 }
 
+// Provider to use Auth class in other files
 final authRepositoryProvider = Provider<Auth>((ref) {
   return Auth();
 });

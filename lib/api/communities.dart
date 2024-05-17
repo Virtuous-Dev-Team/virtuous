@@ -1,12 +1,12 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Communities {
+  // Instance of Community collection from database
   final communityCollectionRef =
       FirebaseFirestore.instance.collection('Communities');
+
   Future getQuadrantList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -40,6 +40,7 @@ class Communities {
   }
 }
 
+// Provider to use Communities class in other files
 final communitiesRepositoryProvider = Provider<Communities>((ref) {
   return Communities();
 });

@@ -8,6 +8,7 @@ class LegalVirtueColors {
   // Define more colors as needed
 }
 
+// Colors for Legal commmunity grid
 Map<String, Color> legalVirtueColors = {
   'Honesty': Color(0xFFF3A3CA),
   'Courage': Color(0xFFCBF1D1),
@@ -19,6 +20,24 @@ Map<String, Color> legalVirtueColors = {
   'Self-control': Color(0xFF7AB0D8),
   'Prudence': Color(0xFF7FA881),
 };
+
+String clrHonesty = "#F3A3CA";
+String clrCourage = "#CBF1D1";
+String clrCompassion = "#B0E5F6";
+String clrGenerosity = "#F6EEA2";
+String clrFidelity = "#C58686";
+String clrIntegrity = "#FADAB4";
+String clrFairness = "#DEBFF5";
+String clrSelfControl = "#7AB0D8";
+String clrPrudence = "#7FA881";
+String clrBlack = "#000000";
+String clrBackground = "C5B898";
+String clrWhite = "#FFFFFF";
+String clrText = "#534D3F";
+String clrPurple = '#9C98C5';
+
+// Colors for Alcoholics Anonymous commmunity grid
+
 final Map<String, Color> alAnVirtueColors = {
   "Honesty": Color(0xFF97AABD), // Pastel Blue
   "Hope": Color(0xFF9AD9DB), // Pastel Cyan

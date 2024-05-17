@@ -5,10 +5,14 @@ import 'package:get/get.dart';
 import 'package:virtuetracker/api/users.dart';
 
 class Settings {
+  // Instance of Firebase auth class to call Firebase methods
   final auth = FirebaseAuth.instance;
+
+  // Instance of Users collection from database
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   static String verifyId = "";
 
+  // Quadrantlist for every community we have, used when a user changes to a new community
   final quadrantLists = {
     "Legal": {
       "Legal": {
@@ -143,11 +147,6 @@ class Settings {
       if (updateMap.isNotEmpty) {
         await usersCollectionRef.doc(user.uid).update(updateMap);
       }
-      // final response = await usersCollectionRef.doc(user.uid).update({
-      //   'currentCommunity': newCommunity,
-      //   'careerInfo.currentPosition': newCareer,
-      //   'careerInfo.careerLength': newCareerLength
-      // });
 
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
@@ -178,7 +177,7 @@ class Settings {
     }
   }
 
-  // Re-authenticate the user with their email and password
+  // Re-authenticate the user with their email and password, sometimes when changing settings we have to reauthenticate
   Future<dynamic> reauthenticateUser(String email, String password) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -199,6 +198,7 @@ class Settings {
     }
   }
 
+  // Not using
   Future<dynamic> updatePhoneNumber({
     required String newPhoneNumber,
     required Function errorStep,
@@ -239,7 +239,7 @@ class Settings {
   }
 }
 
-// verify otp code
+// verify otp code, Not using
 Future<dynamic> confirmOtp({
   required String otp,
   required String oldPhoneNumber,
@@ -273,6 +273,7 @@ Future<dynamic> confirmOtp({
   }
 }
 
+// Provider to use Resources class in other files
 final settingsRepositoryProvider = Provider<Settings>((ref) {
   return Settings();
 });
