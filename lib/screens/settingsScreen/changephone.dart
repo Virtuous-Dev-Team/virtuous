@@ -2,6 +2,7 @@ import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:virtuetracker/App_Configuration/appColors.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';

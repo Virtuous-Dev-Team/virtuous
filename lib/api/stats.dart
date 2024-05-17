@@ -12,6 +12,7 @@ import 'package:virtuetracker/Models/ChartDataModel.dart';
 class Stats {
   final userCollectionRef = FirebaseFirestore.instance.collection("Users");
 
+  // Get stats for Calendar and piechart/top_bottom virtues
   Future<dynamic> getAllStats(String communityName) async {
     try {
       final quadrantLists = await getQuadrantsUsedList(communityName);
@@ -123,7 +124,6 @@ class Stats {
           .collection("totalData")
           .where('communityName', isEqualTo: communityName)
           .get();
-      // print(querySnapshot.docs);
       if (querySnapshot.docs.isNotEmpty) {
         //
         switch (communityName) {
@@ -163,17 +163,13 @@ class Stats {
     EventList<Event> _markedDateMap = new EventList<Event>(
       events: {},
     );
-    querySnapshot.docs.forEach((element) {
-      // DocumentSnapshot documentSnapshot = element["dateEntried"];
 
+    // Creates calendar from totalData subcollection
+    querySnapshot.docs.forEach((element) {
       dynamic val = element.data();
       Timestamp dateEntried = val['dateEntried'];
       String virtueUsed = val["quadrantUsed"];
-      // Timestamp timestamp =
-      //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
 
-      // Convert the Timestamp to a DateTime object
-      // DateTime dateTime = timestamp.toDate();
       DateTime d = parseTimestamp(dateEntried);
       switch (virtueUsed) {
         case "Honesty":
@@ -401,17 +397,13 @@ class Stats {
     EventList<Event> _markedDateMap = new EventList<Event>(
       events: {},
     );
-    querySnapshot.docs.forEach((element) {
-      // DocumentSnapshot documentSnapshot = element["dateEntried"];
 
+    // Creates calendar from totalData subcollection
+    querySnapshot.docs.forEach((element) {
       dynamic val = element.data();
       Timestamp dateEntried = val['dateEntried'];
       String virtueUsed = val["quadrantUsed"];
-      // Timestamp timestamp =
-      //     Timestamp.fromMillisecondsSinceEpoch(val['dateEntried']);
 
-      // Convert the Timestamp to a DateTime object
-      // DateTime dateTime = timestamp.toDate();
       DateTime d = parseTimestamp(dateEntried);
       switch (virtueUsed) {
         case "Honesty":
@@ -668,41 +660,12 @@ class Stats {
           }
       }
     });
-    // LegalCalendarModel model = LegalCalendarModel(
-    //     CompassionList: CompassionDates,
-    //     CourageList: CourageDates,
-    //     FairnessList: FairnessDates,
-    //     FidelityList: FidelityDates,
-    //     GenerosityList: GenerosityDates,
-    //     HonestyList: HonestyDates,
-    //     IntegrityList: IntegrityDates,
-    //     PrudenceList: PrudenceDates,
-    //     SelfControlList: SelfControlDates);
-    // List<LegalCalendarModel> calendarData = [];
-    // calendarData.add(model);
 
     return _markedDateMap;
   }
 }
 
+// Provider to use Stats class in other files
 final statsRepositoryProvider = Provider<Stats>((ref) {
   return Stats();
 });
-
-
-
-// List<DateTime> SelfControlDates = [
-//       DateTime(2024, 02, 22),
-//       DateTime(2024, 02, 24),
-//       DateTime(2024, 02, 26),
-//     ];
-//     calendarData.add(CalendarModel(
-        // CompassionList: CompassionDates,
-        // CourageList: CourageDates,
-        // FairnessList: FairnessDates,
-        // FidelityList: FidelityDates,
-        // GenerosityList: GenerosityDates,
-        // HonestyList: HonestyDates,
-        // IntegrityList: IntegrityDates,
-        // PrudenceList: PrudenceDates,
-        // SelfControlList: SelfControlDates));

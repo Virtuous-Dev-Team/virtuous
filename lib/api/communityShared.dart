@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:virtuetracker/api/users.dart';
 
 class CommunityShared {
-  // Tested and finished, need to api doc
+  // Tested and finished, called by another function in users.dart
   Future<dynamic> addSharedVirtueEntry(
       quadrantUsed, quadrantColor, shareLocation, communityName) async {
     try {

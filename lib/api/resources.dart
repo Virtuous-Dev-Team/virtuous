@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Resources {
+  // Instance of Community collection from database, since we have no resources at the moment
   final communityCollectionRef =
       FirebaseFirestore.instance.collection('Communities');
   Future<dynamic> resourcesMyCommunityInfo(String communityName) async {
@@ -31,6 +32,7 @@ class Resources {
   }
 }
 
+// Provider to use Resources class in other files
 final resourcesRepositoryProvider = Provider<Resources>((ref) {
   return Resources();
 });
