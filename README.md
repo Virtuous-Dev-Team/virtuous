@@ -24,3 +24,10 @@ This year we will be updating a mobile application called Virtuous. This applica
 
 - All flutter packages used can be found in pubsec.yaml, to look at their documentation you can search for the package here: https://pub.dev/
 
+**Links to previous stuff**
+
+Trello
+https://trello.com/b/mBqdQsib/agile-board-virtues-tracker-app-trello
+
+**Github Guidelines**
+https://trello.com/b/mBqdQsib/agile-board-virtues-tracker-app-trello
