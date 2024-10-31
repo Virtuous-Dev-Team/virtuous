@@ -4,7 +4,7 @@ import 'package:virtuetracker/api/users.dart';
 class CommunityShared {
   // Tested and finished, called by another function in users.dart
   Future<dynamic> addSharedVirtueEntry(
-      quadrantUsed, quadrantColor, shareLocation, communityName) async {
+      virtueUsed, virtueColor, shareLocation, communityName) async {
     try {
       Users usersApi = Users();
       dynamic response = await usersApi.addUserLocation();
@@ -17,15 +17,16 @@ class CommunityShared {
 
       final sharedEntry = {
         "dateEntried": FieldValue.serverTimestamp(),
-        "quadrantUsed": quadrantUsed,
-        "quadrantColor": quadrantColor,
         "userLocation": updatedLocation.data,
-        "communityName": communityName
       };
 
-      final communitySharedDataCollection =
-          FirebaseFirestore.instance.collection("CommunitySharedData");
-      await communitySharedDataCollection.add(sharedEntry);
+      final collectionRef =
+          FirebaseFirestore.instance.collection("CommunitiesDemo")
+            .doc(communityName)
+            .collection("Virtues")
+            .doc(virtueUsed)
+            .collection("sharedEntries");
+      await collectionRef.add(sharedEntry);
 
       return {"Success": true, "response": "Submitted in shared database"};
     } on FirebaseException catch (error) {
