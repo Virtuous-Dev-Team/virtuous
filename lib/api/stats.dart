@@ -19,7 +19,7 @@ class Stats {
     // Future communities here
   };
 
-  // Get stats for Calendar and piechart/top_bottom virtues
+  // Get stats for Calendar and pie chart/top and bottom virtues
   Future<dynamic> getAllStats(String communityName) async {
     try {
       // Make the pie chart and get the top and bottom 3 virtues
@@ -78,17 +78,17 @@ class Stats {
         Map<String, int> quadrantsUsedList =
             Map<String, int>.from(quadrantsUsedData[communityName]);
 
-        // Add each to a pie chart
-        // TODO: make the color usage more easily reused
+        // Determine which color map to use
+        Map<String, Color> communityColors = communityColorLists[communityName] ?? {};
+
+        // Add each entry to a pie chart
         List<ChartData> charty = [];
         quadrantsUsedList.forEach((key, value) {
           double num = value.floorToDouble();
           charty.add(ChartData(
               key,
               num,
-              communityName == "Legal"
-                  ? legalVirtueColors[key]
-                  : alAnVirtueColors[key]));
+              communityColors[key]));
         });
         // Sort the results to find and return the top and bottom virtues
         List<MapEntry<String, int>> sortedList =
