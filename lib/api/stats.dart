@@ -6,12 +6,13 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:virtuetracker/App_Configuration/appColors.dart';
-import 'package:virtuetracker/Models/LegalCalendarModel.dart';
 import 'package:virtuetracker/Models/ChartDataModel.dart';
 
 class Stats {
   final userCollectionRef = FirebaseFirestore.instance.collection("Users");
 
+  // Map for getting colors from community name.
+  // Maybe move to config in the future
   Map<String, Map<String, Color>> communityColorLists = {
     'Legal': legalVirtueColors,
     'Alcoholics Anonymous': alAnVirtueColors
@@ -21,9 +22,13 @@ class Stats {
   // Get stats for Calendar and piechart/top_bottom virtues
   Future<dynamic> getAllStats(String communityName) async {
     try {
+      // Make the pie chart and get the top and bottom 3 virtues
       final quadrantLists = await getQuadrantsUsedList(communityName);
       print(quadrantLists);
+      // Get the calendar information
       final calendar = await buildCalendar(communityName);
+      // Logic for requests
+      // TODO: is there a better/cleaner way to do this?
       if (quadrantLists['Success'] && calendar['Success']) {
         return {
           'Success': [true, true],
@@ -54,6 +59,7 @@ class Stats {
     }
   }
 
+  // Build the pie chart and get the top and bottom 3 virtues
   Future<dynamic> getQuadrantsUsedList(communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -68,9 +74,12 @@ class Stats {
       if (documentSnapshot.exists) {
         dynamic quadrantsUsedData = documentSnapshot["quadrantUsedData"];
 
+        // Grab the existing information about how often a user has used each virtue
         Map<String, int> quadrantsUsedList =
             Map<String, int>.from(quadrantsUsedData[communityName]);
 
+        // Add each to a pie chart
+        // TODO: make the color usage more easily reused
         List<ChartData> charty = [];
         quadrantsUsedList.forEach((key, value) {
           double num = value.floorToDouble();
@@ -78,21 +87,22 @@ class Stats {
               key,
               num,
               communityName == "Legal"
-                  ? legalVirtueColors['$key']
-                  : alAnVirtueColors['$key']));
+                  ? legalVirtueColors[key]
+                  : alAnVirtueColors[key]));
         });
+        // Sort the results to find and return the top and bottom virtues
         List<MapEntry<String, int>> sortedList =
             quadrantsUsedList.entries.toList();
         sortedList.sort((a, b) => b.value.compareTo(a.value));
         // print('sorted list: $sortedList');
-        Map<String, int> top3Map = Map.fromEntries(sortedList.take(3));
 
+        //Get the top 3 entries
+        Map<String, int> top3Map = Map.fromEntries(sortedList.take(3));
         // Get the bottom 3 entries
         Map<String, int> bottom3Map =
             Map.fromEntries(sortedList.skip(sortedList.length - 3));
 
-        // Make an object for top 3 and bottom 3 and write method to sort them
-
+        // Build the final object to respond with
         final response = {};
         response["pieChart"] = charty;
         response["topThreeVirtues"] = top3Map;
@@ -109,11 +119,13 @@ class Stats {
     }
   }
 
+  // Parsing time stamp function
   DateTime parseTimestamp(Timestamp timestamp) {
     DateTime dateTime = timestamp.toDate();
     return DateTime(dateTime.year, dateTime.month, dateTime.day);
   }
 
+  // Queries for virtue information, then uses buildCalendarList to create calendar
   Future<dynamic> buildCalendar(String communityName) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
@@ -122,16 +134,17 @@ class Stats {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      EventList<Event> _markedDateMap = new EventList<Event>(
+      EventList<Event> _markedDateMap = EventList<Event>(
         events: {},
       );
+      // Query for all virtues matching the community
       QuerySnapshot querySnapshot = await userCollectionRef
           .doc(user.uid)
           .collection("totalData")
           .where('communityName', isEqualTo: communityName)
           .get();
       if (querySnapshot.docs.isNotEmpty) {
-        //
+        // Build calendar from results
         _markedDateMap = buildCalendarList(querySnapshot, communityName);
 
         print('stats dart $_markedDateMap');
@@ -148,20 +161,23 @@ class Stats {
     }
   }
 
+  // Builds the calendar using the information from the query
   EventList<Event> buildCalendarList(QuerySnapshot querySnapshot, String communityName) {
 
-    EventList<Event> _markedDateMap = new EventList<Event>(
+    EventList<Event> _markedDateMap = EventList<Event>(
       events: {},
     );
 
-    // Creates calendar from totalData subcollection
+    // Creates calendar from queried totalData subcollection
     querySnapshot.docs.forEach((element) {
       dynamic val = element.data();
-      Timestamp dateEntried = val['dateEntried'];
+      Timestamp dateEntered = val['dateEntried'];
       String virtueUsed = val["quadrantUsed"];
+      // Get matching communityColors for current community
       Map<String, Color> communityColors = communityColorLists[communityName] ?? {};
+      DateTime d = parseTimestamp(dateEntered);
 
-      DateTime d = parseTimestamp(dateEntried);
+      // Combine each entry into a list of events
       _markedDateMap.add(
         d,
         Event(
@@ -169,10 +185,10 @@ class Stats {
           title: virtueUsed,
           description: element.id,
           dot: Container(
-            margin: EdgeInsets.symmetric(horizontal: 1.0),
+            margin: const EdgeInsets.symmetric(horizontal: 1.0),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: communityColors['$virtueUsed'],
+              color: communityColors[virtueUsed],
             ),
             width: 6,
             height: 6,
