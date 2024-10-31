@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-const Color iconColor = Color(0xFF000000);
+const Color inputTextColor = Color(0xFF000000);
 
 Widget textFieldNoteInput(BuildContext context, TextEditingController controller, bool readOnly) 
 {
@@ -21,7 +21,7 @@ Widget textFieldNoteInput(BuildContext context, TextEditingController controller
       style: GoogleFonts.tinos(
         textStyle: TextStyle(
           fontSize: 16,
-          color: iconColor,
+          color: inputTextColor,
         ),
       ), 
       decoration: InputDecoration(
