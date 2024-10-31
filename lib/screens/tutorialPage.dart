@@ -432,7 +432,14 @@ class _TutorialPageState extends State<TutorialPage> {
           controller: controller,
           maxLines: 4,
           readOnly: readOnly,
-          style: TextStyle(color: iconColor, fontSize: 16),
+          style: GoogleFonts.tinos(
+            textStyle: TextStyle(
+              fontSize: 16,
+              color: iconColor,
+            ),
+          ), 
+          
+          //TextStyle(color: iconColor, fontSize: 16),
           decoration: InputDecoration(
               enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black),

@@ -745,7 +745,12 @@ Widget textFieldNoteInput(
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.text,
         readOnly: readOnly,
-        style: TextStyle(color: iconColor, fontSize: 16),
+        style: GoogleFonts.tinos(
+            textStyle: TextStyle(
+              fontSize: 16,
+              color: iconColor,
+            ),
+        ), 
         decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black),

@@ -569,7 +569,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Take a moment to write about what happened.               What made it meaningful to you?",
+                  "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 14,
@@ -589,7 +589,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give    someone about modeling this virtue throughout            the day?",
+                  "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 14,
@@ -763,7 +763,12 @@ Widget textFieldNoteInput(
         textInputAction: TextInputAction.done,
         keyboardType: TextInputType.text,
         readOnly: readOnly,
-        style: TextStyle(color: iconColor, fontSize: 16),
+        style: GoogleFonts.tinos(
+            textStyle: TextStyle(
+              fontSize: 16,
+              color: iconColor,
+            ),
+        ), 
         decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.black),
