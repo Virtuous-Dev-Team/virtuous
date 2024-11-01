@@ -474,7 +474,8 @@ class Users {
     }
   }
 
-  // Get entries for nearby feature
+  /*
+  // Get entries for nearby feature (replaced below)
   Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
       bool shareLocation, double radius) async* {
     final sharedCollectionRef =
@@ -495,6 +496,81 @@ class Users {
       }
     }
   }
+*/
+
+  // Get entries for nearby feature
+  Stream<Map<String, List<DocumentSnapshot<Object?>>>> getNearbyEntries(
+      bool shareLocation, double radius, String communityName) async* {
+    print('trying to access $communityName');
+    final communityDocRef =
+    FirebaseFirestore.instance.collection('CommunitiesDemo').doc('AlcoholicsAnonymous').collection('Virtues');
+
+    // Get each virtue document from the community document
+    final virtueSnapshots = await communityDocRef.get();
+    print('Retrieved Virtue Snapshots:');
+    for (var virtueDoc in virtueSnapshots.docs) {
+      print('Virtue ID: ${virtueDoc.id}, Data: ${virtueDoc.data()}');
+    }
+
+
+    if (shareLocation) {
+      // Build a map associating each array of virtue entries with its name
+      final Map<String, List<DocumentSnapshot>> virtueEntriesMap = {};
+      print('in shareLocation');
+
+      // Get current position and setup Geolocator
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      GeoFirePoint geoFireLocation =
+      geo.point(latitude: position.latitude, longitude: position.longitude);
+
+      // Search for matching entries for each virtue
+      for (final virtueDoc in virtueSnapshots.docs) {
+        print('before looking at virtues');
+        final sharedEntriesCollectionRef = virtueDoc.reference.collection('sharedEntries');
+
+        print('Accessing shared entries for Virtue: ${virtueDoc.id}');
+
+        // Retrieve all documents within 'sharedEntries' and log them
+        final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
+        print('Documents in sharedEntries for Virtue ${virtueDoc.id}:');
+        for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
+          print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
+        }
+
+
+        print('looking at all virtues');
+        final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
+        final List<DocumentSnapshot> virtueEntries = []; // Changed line
+        // Set a timeout duration for waiting for entries
+        const timeoutDuration = Duration(milliseconds: 100);
+
+        try {
+          await for (var event in geoRef.within(
+            center: geoFireLocation,
+            radius: radius,
+            field: 'userLocation',
+            strictMode: true,
+          ).timeout(timeoutDuration)) {
+            print('adding all virtues');
+            virtueEntries.addAll(event); // Add documents to the virtue entries list
+          }
+        } on TimeoutException catch (e) {
+          print('Timeout occurred while waiting for events: $e');
+        } catch (e) {
+          print('Error occurred while awaiting events: $e');
+        }
+
+        print('looking at virtues after and before mapping');
+        // Add to the map with the virtue ID as the key
+        virtueEntriesMap[virtueDoc.id] = virtueEntries;
+        print('added virtues to the map');
+
+      }
+      yield virtueEntriesMap;
+    }
+  }
+
 
   Future<dynamic> getNotiTime() async {
     try {

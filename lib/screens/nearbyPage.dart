@@ -228,18 +228,17 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   }
 
   Widget renderNearbyBarChart(bool shareLocation) {
-    print('radiues in render $radius');
-    return StreamBuilder<List<DocumentSnapshot<Object?>>>(
-      stream: usesAPI.getThoseEntries(
-          shareLocation, radius), // Call your function here
+    print('radius in render $radius');
+    return StreamBuilder<Map<String, List<DocumentSnapshot<Object?>>>>(
+      stream: usesAPI.getNearbyEntries(shareLocation, radius, communityName),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          List<DocumentSnapshot<Object?>> documents = snapshot.data ?? [];
-          List<_ChartData> chartData = buildChartData(documents, timeFrame);
+          Map<String, List<DocumentSnapshot<Object?>>> virtueEntriesMap = snapshot.data!;
+          List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
           // Use the documents list here
           return RenderNearbyBarChart(
@@ -386,20 +385,8 @@ class NearbyBarChart extends StatelessWidget {
   }
 }
 
-List<_ChartData> buildChartData(dynamic eventList, String timeFrame) {
-  List<_ChartData> listy = [];
-  _ChartData prudence = _ChartData('Prudence', []);
-  _ChartData selfControl = _ChartData('Self-control', []);
-  _ChartData fairness = _ChartData('Fairness', []);
-  _ChartData integrity = _ChartData('Integrity', []);
-  _ChartData fidelity = _ChartData('Fidelity', []);
-  _ChartData generosity = _ChartData('Generosity', []);
-  _ChartData compassion = _ChartData('Compassion', []);
-  _ChartData courage = _ChartData('Courage', []);
-  _ChartData honesty = _ChartData('Honesty', []);
+DateTime getStartDate(String timeFrame, DateTime today) {
   DateTime startDate;
-  DateTime today = DateTime.now();
-
   // get start date for qualified entries
   if (timeFrame == 'Last week') {
     startDate = today.subtract(const Duration(days: 7));
@@ -413,68 +400,45 @@ List<_ChartData> buildChartData(dynamic eventList, String timeFrame) {
     print('invalid time frame');
     startDate = today.subtract(const Duration(days: 0));
   }
-  for (var event in eventList) {
-    // Access each document in the stream
-    dynamic data = event.data();
-    String virtueUsed = data['quadrantUsed'];
-    Timestamp? entryTime = data['dateEntried'] as Timestamp?;
-    DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
 
-    // if date of entry is within time frame, add to parsed list
-    if (!dateEntered.isAfter(startDate)) {
-      continue;
+  return startDate;
+
+}
+
+
+
+
+List<_ChartData> buildChartData(Map<String, List<DocumentSnapshot<Object?>>> virtueEntriesMap, String timeFrame) {
+
+  // Contain the new chart data
+  List<_ChartData> chartDataList = [];
+
+  DateTime today = DateTime.now();
+  DateTime startDate = getStartDate(timeFrame, today);
+
+  // for each virtue from the map
+  for (var entry in virtueEntriesMap.entries) {
+    String virtueUsed = entry.key;
+    List<DocumentSnapshot<Object?>> virtueEntries = entry.value;
+
+    _ChartData virtueData = _ChartData(virtueUsed, []);
+
+    // Decide whether to add each entry
+    for (var doc in virtueEntries) {
+      dynamic data = doc.data();
+      // Check the time of each entry
+      Timestamp? entryTime = data['dateEntried'] as Timestamp?;
+      DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
+      if (!dateEntered.isAfter(startDate)) {
+        continue;
+      }
+      virtueData.y.add(data);
     }
-    switch (virtueUsed) {
-      case "Honesty":
-        {
-          honesty.y.add(data);
-        }
-      case "Courage":
-        {
-          courage.y.add(data);
-        }
-      case "Compassion":
-        {
-          compassion.y.add(data);
-        }
-      case "Generosity":
-        {
-          generosity.y.add(data);
-        }
-      case "Fidelity":
-        {
-          fidelity.y.add(data);
-        }
-      case "Integrity":
-        {
-          integrity.y.add(data);
-        }
-      case "Fairness":
-        {
-          fairness.y.add(data);
-        }
-      case "Self-control":
-        {
-          selfControl.y.add(data);
-        }
-      case "Prudence":
-        {
-          prudence.y.add(data);
-        }
-    }
+    chartDataList.add(virtueData);
   }
-  listy.addAll([
-    honesty,
-    compassion,
-    courage,
-    selfControl,
-    integrity,
-    fairness,
-    fidelity,
-    prudence,
-    generosity
-  ]);
-  return listy;
+  return chartDataList;
+
+
 }
 
 class _ChartData {
