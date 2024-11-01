@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/controllers/authControllers.dart';
-import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
 import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
@@ -75,33 +74,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     SizedBox(
                       height: 40,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        GoRouter.of(context)
-                            .go('/SettingsPage/EditProfilePage');
-                        // Navigator.pushReplacement(
-                        //   context,
-                        //   CupertinoPageRoute(builder: (context) => EditProfilePage()),
-                        // );
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Edit Profile",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_right,
-                            size: 25,
-                          )
-                        ],
-                      ),
                     ),
                     SizedBox(
                       height: 10,

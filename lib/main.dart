@@ -21,7 +21,7 @@ import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
 import 'package:virtuetracker/screens/settingsScreen/settings.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
-import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';

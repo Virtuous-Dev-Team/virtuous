@@ -7,7 +7,7 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/screens/editVirtueEntry.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
-import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
@@ -84,6 +84,8 @@ class AppNavigation {
       GlobalKey<NavigatorState>(debugLabel: 'shellNearby');
   static final _shellNavigatorResources =
       GlobalKey<NavigatorState>(debugLabel: 'shellResources');
+  static final _shellNavigatorEditProfile =
+      GlobalKey<NavigatorState>(debugLabel: 'shellEditProfile');
   // GoRouter configuration
 
   // Call the navigation function after the build is complete
@@ -199,11 +201,6 @@ class AppNavigation {
                     builder: (context, state) => SettingsPage(),
                     routes: [
                       GoRoute(
-                        path: 'EditProfilePage',
-                        name: 'EditProfilePage',
-                        builder: (context, state) => EditProfilePage(),
-                      ),
-                      GoRoute(
                           path: 'NotificationsPage',
                           name: 'NotificationsPage',
                           builder: (context, state) => NotificationsPage(),
@@ -235,6 +232,19 @@ class AppNavigation {
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
                     ]),
+              ],
+            ),
+
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorEditProfile,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: "/editProfilePage",
+                  name: "EditProfilePage",
+                  builder: (BuildContext context, GoRouterState state) => 
+                    EditProfilePage(),
+                  routes: [],
+                ),
               ],
             ),
 
@@ -274,7 +284,7 @@ class AppNavigation {
               ],
             ),
 
-            /// Brach Resources
+            /// Branch Resources
             StatefulShellBranch(
               navigatorKey: _shellNavigatorResources,
               routes: <RouteBase>[
@@ -293,3 +303,4 @@ class AppNavigation {
     );
   });
 }
+
