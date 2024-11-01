@@ -502,8 +502,10 @@ class Users {
   Stream<Map<String, List<DocumentSnapshot<Object?>>>> getNearbyEntries(
       bool shareLocation, double radius, String communityName) async* {
     print('trying to access $communityName');
+    String communityLookup = communityName.replaceAll(' ', '');
+    print(communityLookup);
     final communityDocRef =
-    FirebaseFirestore.instance.collection('CommunitiesDemo').doc('AlcoholicsAnonymous').collection('Virtues');
+    FirebaseFirestore.instance.collection('CommunitiesDemo').doc(communityLookup).collection('Virtues');
 
     // Get each virtue document from the community document
     final virtueSnapshots = await communityDocRef.get();
@@ -541,7 +543,7 @@ class Users {
 
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
-        final List<DocumentSnapshot> virtueEntries = []; // Changed line
+        final List<DocumentSnapshot> virtueEntries = []; 
         // Set a timeout duration for waiting for entries
         const timeoutDuration = Duration(milliseconds: 100);
 
