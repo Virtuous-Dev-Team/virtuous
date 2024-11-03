@@ -63,6 +63,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             children: [
               SizedBox(height: 10),
               ElevatedButton(
+                key: const Key('reflectButton'),
                 onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
                 child: Text(
                   'Reflect',

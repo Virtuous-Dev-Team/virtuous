@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ffi';
 
 import 'package:colours/colours.dart';
@@ -204,7 +206,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               height: 30,
             ),
             Text(
-              '     What were you doing when you modeled this virtue?',
+              'What were you doing when you modeled this virtue?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -532,13 +534,27 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
           children: [
             Column(
               children: [
-                Text(quadrantName),
+                Text(
+                  quadrantName,
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 5,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(definition),
+                  child: Text(
+                    definition,
+                    style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  ),
                 )
               ],
             ),
@@ -550,7 +566,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Take a moment to write about what happened.               What made it meaningful to you?",
+                  "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 14,
@@ -562,7 +578,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               ),
             ),
             SizedBox(height: 3.0),
-            textFieldNoteInput(context, tfDescription, false),
+            textFieldNoteInput(context, tfDescription, false, 'meaningfulEditAns'),
             SizedBox(
               height: 8.0,
             ),
@@ -570,7 +586,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give    someone about modeling this virtue throughout            the day?",
+                  "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 14,
@@ -582,7 +598,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, tfAdvice, false),
+            textFieldNoteInput(context, tfAdvice, false, 'adviceEditAns'),
             SizedBox(height: 28.0),
             MaterialButton(
               onPressed: () async {

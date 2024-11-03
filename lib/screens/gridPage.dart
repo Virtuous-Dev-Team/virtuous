@@ -305,6 +305,7 @@ class BuildGrid extends StatelessWidget {
               final Map<String, dynamic> item =
                   listy![index] as Map<String, dynamic>;
               return Rectangle(
+                key: Key('rectangle_${item['quadrantName']}'),
                 quadrantName: item['quadrantName'],
                 quadrantColor:
                     int.tryParse(item['quadrantColor'].toString()) ?? 0,

@@ -5,12 +5,13 @@ import 'package:google_fonts/google_fonts.dart';
 
 const Color inputTextColor = Color(0xFF000000);
 
-Widget textFieldNoteInput(BuildContext context, TextEditingController controller, bool readOnly) 
+Widget textFieldNoteInput(BuildContext context, TextEditingController controller, bool readOnly, String keyname) 
 {
   return SizedBox(
     width: MediaQuery.of(context).size.width / 1.0,
     height: 120,
     child: TextFormField(
+      key: Key(keyname),
       cursorColor: Colors.black,
       cursorRadius: const Radius.circular(0),
       controller: controller,

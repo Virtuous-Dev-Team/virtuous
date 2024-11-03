@@ -168,7 +168,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                 child: PageView(
                   controller: _pageController,
                   children: [
-                    buildVirtueEntry1(context, screenWidth, screenHeight),
+                    buildVirtueEntry1(context, screenWidth, screenHeight,
+                        quadrantName: widget.quadrantName!,
+                        definition: widget.definition!,
+                        color: widget.color!),
                     buildVirtueEntry2(context, screenWidth, screenHeight,
                         quadrantName: widget.quadrantName!,
                         definition: widget.definition!,
@@ -206,6 +209,9 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
     BuildContext context,
     double screenWidth,
     double screenHeight,
+    {required String quadrantName,
+      required String definition,
+      required String color}
   ) {
     return SingleChildScrollView(
       child: Padding(
@@ -217,8 +223,19 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             SizedBox(
               height: 30,
             ),
+            /*Center(child: Text(quadrantName)),
+            SizedBox(
+              height: 5,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(definition),
+            ),
+            SizedBox(height: 5,),*/
             Text(
-              '     What were you doing when you modeled this virtue?',
+              'What were you doing when you modeled this virtue?',
+              //TextAlign isn't working for some reason
+              textAlign: TextAlign.center,
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -233,7 +250,8 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
+              color: Color(int.parse(color)),
+              //legalVirtueColors[widget.quadrantName!],
             ),
 
             Padding(
@@ -341,6 +359,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                         // borderRadius: BorderRadius.circular(10)
                         ),
                     child: OutlinedButton(
+                      key: Key('event_${eventList[index].eventName}'),
                       onPressed: () {
                         setState(() {
                           if (eventList[index].isSelected == true) {
@@ -396,6 +415,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                         // borderRadius: BorderRadius.circular(10)
                         ),
                     child: OutlinedButton(
+                      key: Key('who_${whoWereWithYouList[index].eventName}'),
                       onPressed: () {
                         setState(() {
                           if (whoWereWithYouList[index].isSelected == true) {
@@ -457,6 +477,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                         // borderRadius: BorderRadius.circular(10)
                         ),
                     child: OutlinedButton(
+                      key: Key('where_${whereWereYouList[index].eventName}'),
                       onPressed: () {
                         setState(() {
                           if (whereWereYouList[index].isSelected == true) {
@@ -547,6 +568,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
+    print(definition);
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -554,19 +576,33 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
           children: [
             Column(
               children: [
-                Text(quadrantName),
+                Text(
+                  quadrantName,
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 5,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(definition),
+                  child: Text(
+                    definition,
+                    style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  ),
                 )
               ],
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
+              color: Color(int.parse(color)),
             ),
             Container(
               child: Padding(
@@ -584,7 +620,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               ),
             ),
             SizedBox(height: 3.0),
-            textFieldNoteInput(context, tfDescription, false),
+            textFieldNoteInput(context, tfDescription, false, 'meaningfulAns'),
             SizedBox(
               height: 8.0,
             ),
@@ -604,7 +640,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, tfAdvice, false),
+            textFieldNoteInput(context, tfAdvice, false, 'adviceAns'),
             SizedBox(height: 28.0),
             MaterialButton(
               onPressed: () async {
@@ -629,6 +665,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   isLoading = false;
                 });
               },
+              key: Key('saveEntry'),
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(

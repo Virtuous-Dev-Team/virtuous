@@ -265,7 +265,9 @@ class TopBottomVirtuesWidget extends StatelessWidget {
   final String communityName;
   @override
   Widget build(BuildContext context) {
+    //print(communityName);
     return ListView.builder(
+      
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -273,6 +275,18 @@ class TopBottomVirtuesWidget extends StatelessWidget {
         final key = entry.key;
         final value = entry.value;
         print('key: $key and val: $value');
+        print(communityName);
+        Color? color;
+        switch (communityName) {
+          case "Legal":
+            color = legalVirtueColors['$key'];
+            break;
+          case "Alcoholics Anonymous":
+            color = alAnVirtueColors['$key'];
+            break;
+          default:
+            color = Colors.red;
+        }
         return Container(
             padding: EdgeInsets.only(top: 8, bottom: 8),
             child: Row(
@@ -283,9 +297,7 @@ class TopBottomVirtuesWidget extends StatelessWidget {
                   width: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(1),
-                    color: communityName == "Legal"
-                        ? legalVirtueColors['$key']
-                        : alAnVirtueColors['$key'],
+                    color: color,
                   ),
                 ),
                 Expanded(

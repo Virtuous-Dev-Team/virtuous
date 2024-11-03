@@ -50,5 +50,5 @@ final Map<String, Color> alAnVirtueColors = {
   "Responsibility": Color(0xFFE8CCB5), // Pastel Apricot
   "Discipline": Color(0xFFD4BFFF), // Pastel Purple
   "Awareness": Color(0xFFB6E2D7), // Pastel Aqua
-  "Service": Color(0xFFB5EAD7) // Pastel Mint
+  "Service": Color(0xFFB5EAD7), // Pastel Mint
 };
