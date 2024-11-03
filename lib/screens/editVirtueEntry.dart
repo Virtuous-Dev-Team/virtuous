@@ -22,6 +22,9 @@ import '../App_Configuration/apptheme.dart';
 import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
 
+String? globalCommunityName;
+Color? virtueColor;
+
 class EditVirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
   final String? definition;
@@ -43,6 +46,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     shareEntry = userInfo.shareEntries;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
     tfDescription.text = virtueEntryInfo.whatHappenedAnswer;
     tfAdvice.text = virtueEntryInfo.adviceAnswer;
     eventList = virtueEntryInfo.eventList;
@@ -195,6 +199,17 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     double screenWidth,
     double screenHeight,
   ) {
+    switch (globalCommunityName) {
+          case "Legal":
+            virtueColor = legalVirtueColors[quadrantName];
+            break;
+          case "Alcoholics Anonymous":
+            virtueColor = alAnVirtueColors[quadrantName];
+            break;
+          default:
+            virtueColor = Colors.red;
+        }
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -221,7 +236,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[quadrantName],
+              color: virtueColor,
             ),
             Text(
               'Date of occurance ${tfDate.text}, ${tfTime.text}',
@@ -527,6 +542,17 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
+    switch (globalCommunityName) {
+          case "Legal":
+            virtueColor = legalVirtueColors[quadrantName];
+            break;
+          case "Alcoholics Anonymous":
+            virtueColor = alAnVirtueColors[quadrantName];
+            break;
+          default:
+            virtueColor = Colors.red;
+        }
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -560,7 +586,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[quadrantName],
+              color: virtueColor,
             ),
             Container(
               child: Padding(
@@ -569,7 +595,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                   "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -589,7 +615,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
                   "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),

@@ -44,11 +44,11 @@ final Map<String, Color> alAnVirtueColors = {
   "Surrender": Color(0xFFB39CD0), // Pastel Lavender
   "Courage": Color(0xFFDE9AA4), // Pastel Pink
   "Integrity": Color(0xFFB7D1A1), // Pastel Green
-  "Willingness": Color(0xFFE3CDB8), // Pastel Peach
+  "Willingness": Color(0xFFB0B5ED), // Pastel something
   "Humility": Color(0xFFF7E4AC), // Pastel Yellow
   "Love": Color(0xFFF5B4C6), // Pastel Rose
   "Responsibility": Color(0xFFE8CCB5), // Pastel Apricot
   "Discipline": Color(0xFFD4BFFF), // Pastel Purple
-  "Awareness": Color(0xFFB6E2D7), // Pastel Aqua
+  "Awareness": Color(0xFFC4B7BB), // Pastel something
   "Service": Color(0xFFB5EAD7), // Pastel Mint
 };

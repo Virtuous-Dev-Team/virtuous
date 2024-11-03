@@ -21,6 +21,10 @@ import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import '../App_Configuration/apptheme.dart';
 import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
+import 'package:virtuetracker/App_Configuration/appColors.dart';
+
+String? globalCommunityName;
+Color? virtueColor;
 
 class VirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
@@ -45,6 +49,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
     shareEntry = userInfo.shareEntries;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
     tfDescription.text = '';
     tfAdvice.text = '';
     DateTime now = DateTime.now();
@@ -137,6 +142,8 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             });
           },
         );
+    
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: mainBackgroundColor,
@@ -213,6 +220,17 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       required String definition,
       required String color}
   ) {
+    switch (globalCommunityName) {
+          case "Legal":
+            virtueColor = legalVirtueColors[quadrantName];
+            break;
+          case "Alcoholics Anonymous":
+            virtueColor = alAnVirtueColors[quadrantName];
+            break;
+          default:
+            virtueColor = Colors.red;
+        }
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -250,7 +268,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: Color(int.parse(color)),
+              color: virtueColor,
               //legalVirtueColors[widget.quadrantName!],
             ),
 
@@ -569,6 +587,16 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       required String definition,
       required String color}) {
     print(definition);
+    switch (globalCommunityName) {
+          case "Legal":
+            virtueColor = legalVirtueColors[quadrantName];
+            break;
+          case "Alcoholics Anonymous":
+            virtueColor = alAnVirtueColors[quadrantName];
+            break;
+          default:
+            virtueColor = Colors.red;
+        }
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -602,7 +630,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: Color(int.parse(color)),
+              color: virtueColor,
             ),
             Container(
               child: Padding(
@@ -611,7 +639,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -631,7 +659,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
