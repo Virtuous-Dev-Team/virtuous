@@ -334,17 +334,7 @@ class Rectangle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color? entryColor;
-    switch (globalCommunityName) {
-          case "Legal":
-            entryColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            entryColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            entryColor = Colors.red;
-        }
-    
+    entryColor = VirtueColor(globalCommunityName, quadrantName);
     
     return AspectRatio(
       aspectRatio: 1.0, // Maintain a 1:1 aspect ratio (adjust as needed)

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 
 class LegalVirtueColors {
   static const Color primaryColor = Color(0xFF0A4BDA);
@@ -52,3 +53,21 @@ final Map<String, Color> alAnVirtueColors = {
   "Awareness": Color(0xFFC4B7BB), // Pastel something
   "Service": Color(0xFFB5EAD7), // Pastel Mint
 };
+
+Color? VirtueColor (String? communityName, String virtueName) {
+
+  Color? color;
+  switch (communityName) 
+  {
+    case "Legal":
+      color = legalVirtueColors[virtueName];
+      break;
+    case "Alcoholics Anonymous":
+      color = alAnVirtueColors[virtueName];
+      break;
+    default:
+      color = Colors.red;
+  }
+  return color;
+
+}

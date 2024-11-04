@@ -199,16 +199,8 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     double screenWidth,
     double screenHeight,
   ) {
-    switch (globalCommunityName) {
-          case "Legal":
-            virtueColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            virtueColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            virtueColor = Colors.red;
-        }
+    virtueColor = VirtueColor(globalCommunityName, quadrantName);
+    
     
     return SingleChildScrollView(
       child: Padding(
@@ -542,16 +534,6 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
-    switch (globalCommunityName) {
-          case "Legal":
-            virtueColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            virtueColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            virtueColor = Colors.red;
-        }
     
     return SingleChildScrollView(
       child: Padding(

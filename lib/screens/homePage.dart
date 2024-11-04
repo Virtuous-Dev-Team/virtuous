@@ -246,16 +246,7 @@ class RecentEntryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     
     final Color? entryColor;
-    switch (globalCommunityName) {
-          case "Legal":
-            entryColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            entryColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            entryColor = Colors.red;
-        }
+    entryColor = VirtueColor(globalCommunityName, quadrantName);
     
     return GestureDetector(
       onTap: () async {

@@ -220,16 +220,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       required String definition,
       required String color}
   ) {
-    switch (globalCommunityName) {
-          case "Legal":
-            virtueColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            virtueColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            virtueColor = Colors.red;
-        }
+    virtueColor = VirtueColor(communityName, quadrantName);
     
     return SingleChildScrollView(
       child: Padding(
@@ -587,16 +578,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       required String definition,
       required String color}) {
     print(definition);
-    switch (globalCommunityName) {
-          case "Legal":
-            virtueColor = legalVirtueColors[quadrantName];
-            break;
-          case "Alcoholics Anonymous":
-            virtueColor = alAnVirtueColors[quadrantName];
-            break;
-          default:
-            virtueColor = Colors.red;
-        }
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),

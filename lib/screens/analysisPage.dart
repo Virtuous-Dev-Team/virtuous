@@ -276,17 +276,8 @@ class TopBottomVirtuesWidget extends StatelessWidget {
         final value = entry.value;
         print('key: $key and val: $value');
         print(communityName);
-        Color? color;
-        switch (communityName) {
-          case "Legal":
-            color = legalVirtueColors['$key'];
-            break;
-          case "Alcoholics Anonymous":
-            color = alAnVirtueColors['$key'];
-            break;
-          default:
-            color = Colors.red;
-        }
+        Color? color = VirtueColor(communityName, '$key');
+        
         return Container(
             padding: EdgeInsets.only(top: 8, bottom: 8),
             child: Row(
