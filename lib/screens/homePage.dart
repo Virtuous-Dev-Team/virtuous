@@ -16,6 +16,7 @@ import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:virtuetracker/App_Configuration/appColors.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -24,6 +25,7 @@ const Color buttonColor = Color(0xFFCEC0A1);
 const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
+String? globalCommunityName;
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -42,6 +44,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     ref
         .read(virtueEntryControllerProvider.notifier)
         .getMostRecentEntries(communityName);
+    globalCommunityName = communityName;
   }
 
   @override
@@ -63,6 +66,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             children: [
               SizedBox(height: 10),
               ElevatedButton(
+                key: const Key('reflectButton'),
                 onPressed: () => {GoRouter.of(context).go('/home/gridPage')},
                 child: Text(
                   'Reflect',
@@ -240,6 +244,10 @@ class RecentEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+    final Color? entryColor;
+    entryColor = VirtueColor(globalCommunityName, quadrantName);
+    
     return GestureDetector(
       onTap: () async {
         print('Clicked virtue $docId');
@@ -271,7 +279,7 @@ class RecentEntryWidget extends StatelessWidget {
                   width: 55,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
-                    color: Color(quadrantColor),
+                    color: entryColor,
                   ),
                   child: Text("")),
             ),

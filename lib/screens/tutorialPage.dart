@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/screens/homePage.dart';
+import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
 //import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -413,39 +414,12 @@ class _TutorialPageState extends State<TutorialPage> {
             ),
           ),
           SizedBox(height: 8.0),
-          textFieldNoteInput(context, tfDescription, false)
+          textFieldNoteInput(context, tfDescription, false, 'usedAns'),
 
 // Other widgets or content can go here
         ],
       ),
     );
-  }
-
-  Widget textFieldNoteInput(
-      BuildContext context, TextEditingController controller, bool readOnly) {
-    return SizedBox(
-        width: MediaQuery.of(context).size.width / 1.2,
-        height: 120,
-        child: TextFormField(
-          cursorColor: Colors.black,
-          cursorRadius: const Radius.circular(0),
-          controller: controller,
-          maxLines: 4,
-          readOnly: readOnly,
-          style: TextStyle(color: iconColor, fontSize: 16),
-          decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              filled: true,
-              fillColor: Colors.white),
-        ));
   }
 
   Widget buildTutorialScreen4() {

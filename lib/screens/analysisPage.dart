@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -142,23 +144,44 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
 class RenderPieChart extends ConsumerWidget {
   const RenderPieChart({super.key, required this.chartData});
   final List<ChartData> chartData;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return chartData.isEmpty
+    // Filter out any entries with zero values
+    final filteredData = chartData
+        .where((data) => data.y > 0)
+        .toList()
+      ..sort((a, b) => b.y.compareTo(a.y));
+
+
+    return filteredData.isEmpty
         ? SizedBox(
             height: 200,
             child: Center(
-              child: Text('No data found, sumbit entries'),
-            ))
-        : SfCircularChart(series: <CircularSeries>[
-            // Render pie chart
-
-            PieSeries<ChartData, String>(
-                dataSource: chartData,
+              child: Text('No data found, submit entries'),
+            ),
+          )
+        : SfCircularChart(
+            legend: Legend(
+              isVisible: true,
+              position: LegendPosition.right,
+              overflowMode: LegendItemOverflowMode.wrap,
+              textStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
+            series: <CircularSeries>[
+              // Render pie chart
+              PieSeries<ChartData, String>(
+                dataSource: filteredData,
                 pointColorMapper: (ChartData data, _) => data.color,
                 xValueMapper: (ChartData data, _) => data.x,
-                yValueMapper: (ChartData data, _) => data.y)
-          ]);
+                yValueMapper: (ChartData data, _) => data.y,
+                dataLabelSettings: DataLabelSettings(isVisible: false,),
+              )
+            ],
+          );
   }
 }
 
@@ -242,7 +265,9 @@ class TopBottomVirtuesWidget extends StatelessWidget {
   final String communityName;
   @override
   Widget build(BuildContext context) {
+    //print(communityName);
     return ListView.builder(
+      
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) {
@@ -250,6 +275,9 @@ class TopBottomVirtuesWidget extends StatelessWidget {
         final key = entry.key;
         final value = entry.value;
         print('key: $key and val: $value');
+        print(communityName);
+        Color? color = VirtueColor(communityName, '$key');
+        
         return Container(
             padding: EdgeInsets.only(top: 8, bottom: 8),
             child: Row(
@@ -260,9 +288,7 @@ class TopBottomVirtuesWidget extends StatelessWidget {
                   width: 30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(1),
-                    color: communityName == "Legal"
-                        ? legalVirtueColors['$key']
-                        : alAnVirtueColors['$key'],
+                    color: color,
                   ),
                 ),
                 Expanded(

@@ -9,8 +9,8 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
-import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:virtuetracker/App_Configuration/appColors.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -43,6 +43,8 @@ final List<String> quadrantNames = [
   'Self-control',
   'Prudence',
 ];
+
+String? globalCommunityName;
 
 // Example 1 on how to use Stateful widgets to load data from api call
 
@@ -153,6 +155,7 @@ class _GridPageState extends ConsumerState<GridPage> {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
   }
 
   String communityName = '';
@@ -305,6 +308,7 @@ class BuildGrid extends StatelessWidget {
               final Map<String, dynamic> item =
                   listy![index] as Map<String, dynamic>;
               return Rectangle(
+                key: Key('rectangle_${item['quadrantName']}'),
                 quadrantName: item['quadrantName'],
                 quadrantColor:
                     int.tryParse(item['quadrantColor'].toString()) ?? 0,
@@ -329,6 +333,9 @@ class Rectangle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color? entryColor;
+    entryColor = VirtueColor(globalCommunityName, quadrantName);
+    
     return AspectRatio(
       aspectRatio: 1.0, // Maintain a 1:1 aspect ratio (adjust as needed)
       child: Container(
@@ -357,7 +364,7 @@ class Rectangle extends StatelessWidget {
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(quadrantColor),
+            backgroundColor: entryColor,
             elevation: 4,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0)),
