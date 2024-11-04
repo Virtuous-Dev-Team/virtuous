@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,8 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+
+import '../App_Configuration/appColors.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -66,6 +69,12 @@ class Users {
         "Service": 0,
       }
     }
+  };
+
+  Map<String, Map<String, Color>> communityColorLists = {
+    'Legal': legalVirtueColors,
+    'Alcoholics Anonymous': alAnVirtueColors
+    // Future communities here
   };
 
   Future<dynamic> editEntry(
@@ -543,30 +552,19 @@ class Users {
 
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
-        final List<DocumentSnapshot> virtueEntries = []; 
-        // Set a timeout duration for waiting for entries
-        const timeoutDuration = Duration(milliseconds: 100);
 
-        try {
-          await for (var event in geoRef.within(
-            center: geoFireLocation,
-            radius: radius,
-            field: 'userLocation',
-            strictMode: true,
-          ).timeout(timeoutDuration)) {
-            print('adding all virtues');
-            virtueEntries.addAll(event); // Add documents to the virtue entries list
-          }
-        } on TimeoutException catch (e) {
-          print('Timeout occurred while waiting for events: $e');
-        } catch (e) {
-          print('Error occurred while awaiting events: $e');
-        }
+        // Query the points within the radius once
+        final List<DocumentSnapshot> virtueEntries = await geoRef
+            .within(
+          center: geoFireLocation,
+          radius: radius,
+          field: 'userLocation',
+          strictMode: true,
+        )
+            .first; // Fetch only a one time batch of results
 
-        print('looking at virtues after and before mapping');
-        // Add to the map with the virtue ID as the key
+        print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
         virtueEntriesMap[virtueDoc.id] = virtueEntries;
-        print('added virtues to the map');
 
       }
       yield virtueEntriesMap;

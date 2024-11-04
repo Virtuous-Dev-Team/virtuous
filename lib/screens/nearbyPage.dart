@@ -8,7 +8,6 @@ import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
-import 'package:virtuetracker/api/users.dart';
 
 import '../App_Configuration/apptheme.dart';
 //import '../widgets/appBarWidget.dart';
@@ -52,20 +51,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   List<_ChartData> chartData = [];
   @override
   Widget build(BuildContext context) {
-    late List<_ChartData> data;
     late TooltipBehavior _tooltip;
-    //data = Users().getNearbyEntries;
-    data = [
-      _ChartData('Prudence', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Self-control', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Fairness', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Integrity', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Fidelity', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Generosity', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Compassion', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Courage', [1, 1, 1, 1, 1, 1]),
-      _ChartData('Honesty', [1, 1, 1, 1, 1, 1]),
-    ];
+
     _tooltip = TooltipBehavior(enable: false);
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
@@ -257,6 +244,8 @@ class RenderNearbyBarChart extends StatefulWidget {
   final List<_ChartData> data;
   final String timeFrame;
 
+
+
   @override
   State<RenderNearbyBarChart> createState() => Render_NearbyBarChartState();
 }
@@ -267,6 +256,12 @@ class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
     // TODO: implement initState
     super.initState();
   }
+
+  final Map<String, Map<String, Color>> communityColorLists = {
+    'Legal': legalVirtueColors,
+    'Alcoholics Anonymous': alAnVirtueColors,
+    // Add other communities here if needed
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -328,6 +323,9 @@ class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
 class NearbyBarChart extends StatelessWidget {
   const NearbyBarChart({super.key, required this.data});
   final List<_ChartData> data;
+
+
+
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
