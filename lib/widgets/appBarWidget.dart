@@ -121,11 +121,17 @@ class PopOutMenuWidget extends StatelessWidget {
           ref.invalidate(authControllerProvider);
         } else if (value == 'settings') {
           GoRouter.of(context).go('/SettingsPage');
+        } else if (value == 'editProfile') {
+          GoRouter.of(context).go('/EditProfilePage');
         }
         // TODO: Handle other menu items if needed
       },
 
       itemBuilder: (BuildContext context) => [
+         const PopupMenuItem<String>(
+          value: 'editProfile',
+          child: Center(child: Text('Profile')),
+        ),
         const PopupMenuItem<String>(
           value: 'settings',
           child: Center(child: Text('Settings')),

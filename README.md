@@ -1,5 +1,8 @@
-# VirtueTracker
-This year we will be building a mobile application called Virtue Tracker. This application will mainly serve the legal industry and will give a user a chance to report what virtues they did or didn’t use. By using our app daily they will be able to observe their progress over time as we share their data and previous reports.
+# Virtuous
+
+This is the correct repo to clone, moved repos so that it is connected to a dev account
+
+This year we will be updating a mobile application called Virtuous. This application will mainly serve the legal industry and will give a user a chance to report what virtues they did or didn’t use. By using our app daily they will be able to observe their progress over time as we share their data and previous reports.
 
 **Main Branch** - Should be for only tested code and production use
 
@@ -24,3 +27,10 @@ This year we will be building a mobile application called Virtue Tracker. This a
 
 - All flutter packages used can be found in pubsec.yaml, to look at their documentation you can search for the package here: https://pub.dev/
 
+**Links to previous stuff**
+
+Trello
+https://trello.com/b/mBqdQsib/agile-board-virtues-tracker-app-trello
+
+**Github Guidelines**
+https://trello.com/b/mBqdQsib/agile-board-virtues-tracker-app-trello
