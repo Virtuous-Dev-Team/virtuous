@@ -483,32 +483,8 @@ class Users {
     }
   }
 
-  /*
-  // Get entries for nearby feature (replaced below)
-  Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
-      bool shareLocation, double radius) async* {
-    final sharedCollectionRef =
-        FirebaseFirestore.instance.collection('CommunitySharedData');
-    final geoRef = geo.collection(collectionRef: sharedCollectionRef);
-    if (shareLocation) {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      GeoFirePoint geoFireLocation =
-          geo.point(latitude: position.latitude, longitude: position.longitude);
-      var eventsStream = geoRef.within(
-          center: geoFireLocation,
-          radius: radius,
-          field: 'userLocation',
-          strictMode: true);
-      await for (var event in eventsStream) {
-        yield event; // Yield the list of document snapshots
-      }
-    }
-  }
-*/
-
   // Get entries for nearby feature
-  Stream<Map<String, List<DocumentSnapshot<Object?>>>> getNearbyEntries(
+  Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
       bool shareLocation, double radius, String communityName) async* {
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
@@ -526,7 +502,7 @@ class Users {
 
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
-      final Map<String, List<DocumentSnapshot>> virtueEntriesMap = {};
+      final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
       print('in shareLocation');
 
       // Get current position and setup Geolocator
@@ -549,6 +525,14 @@ class Users {
           print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
         }
 
+        // Retrieve color data for the virtue (assuming a color field exists)
+        var virtueColor = virtueDoc.data()['color'];
+
+        // Add the color field to the map with an empty list for entries
+        virtueEntriesMap[virtueDoc.id] = {
+          'color': virtueColor,
+          'entries': <DocumentSnapshot>[],
+        };
 
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
@@ -564,7 +548,7 @@ class Users {
             .first; // Fetch only a one time batch of results
 
         print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
-        virtueEntriesMap[virtueDoc.id] = virtueEntries;
+        virtueEntriesMap[virtueDoc.id]?['entries'] = virtueEntries;
 
       }
       yield virtueEntriesMap;
