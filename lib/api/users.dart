@@ -38,38 +38,6 @@ class Users {
     "Prudence": 0
   };
 
-  // // Quadrantlist for every community we have, used when a user changes to a new community
-  final Map<String, Map<String, Map<String, dynamic>>> quadrantLists = {
-    "Legal": {
-      "Legal": {
-        "Honesty": 0,
-        "Courage": 0,
-        "Compassion": 0,
-        "Generosity": 0,
-        "Fidelity": 0,
-        "Integrity": 0,
-        "Fairness": 0,
-        "Self-control": 0,
-        "Prudence": 0
-      }
-    },
-    "Alcoholics Anonymous": {
-      "Alcoholics Anonymous": {
-        "Honesty": 0,
-        "Hope": 0,
-        "Surrender": 0,
-        "Courage": 0,
-        "Integrity": 0,
-        "Willingness": 0,
-        "Humility": 0,
-        "Love": 0,
-        "Responsibility": 0,
-        "Discipline": 0,
-        "Awareness": 0,
-        "Service": 0,
-      }
-    }
-  };
 
   Map<String, Map<String, Color>> communityColorLists = {
     'Legal': legalVirtueColors,
@@ -291,6 +259,43 @@ class Users {
     }
   }
 
+  // Return a map with list of virtues in community, with each equal to zero
+  // used to initialize virtue stats independent of what communities exist
+  Future<Map<String, Map<String, dynamic>>> generateVirtueStats(String currentCommunity) async {
+    final communityRef = FirebaseFirestore.instance.collection("Communities");
+    Map<String, Map<String, dynamic>> newVirtueStats = {
+      currentCommunity: {}
+    }; 
+
+    final QuerySnapshot communitySnapshot = await communityRef
+      .where("communityName", isEqualTo: currentCommunity)
+      .get();
+
+    try {
+      // make sure community exists
+      if (communitySnapshot.docs.isNotEmpty) {
+        Map<String, dynamic> communityData = 
+          communitySnapshot.docs.first.data() as Map<String, dynamic>;
+
+        print("THIS IS HAPPENING!!!!1");
+        // for every virtue in the array of virtues, add to new map
+        for (var virtue in communityData['quadrantInformation']) {
+          newVirtueStats[currentCommunity]?[virtue['quadrantName']] = 0;
+        }
+      } 
+      else {
+        // community doesnt exist in Communities collection
+        print("Community does not exist");
+        return {};
+      }
+    } catch (e) {
+      print("Error getting community: $e");
+      return {};
+    }
+
+    return newVirtueStats;
+  }
+
   // Working, need to add phone number verification
   Future<dynamic> surveyInfo(
       String currentPosition,
@@ -331,8 +336,8 @@ class Users {
       userObject["careerInfo"] = careerInfo;
       userObject["notificationPreferences"] = notificationPreferences;
 
-      userObject["quadrantUsedData"] =
-          quadrantLists[currentCommunity] ?? 'Error';
+      userObject["quadrantUsedData"] = await generateVirtueStats(currentCommunity);
+
       print('$userObject');
       await usersCollectionRef
           .doc(user.uid)
