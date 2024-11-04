@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,8 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+
+import '../App_Configuration/appColors.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -66,6 +69,12 @@ class Users {
         "Service": 0,
       }
     }
+  };
+
+  Map<String, Map<String, Color>> communityColorLists = {
+    'Legal': legalVirtueColors,
+    'Alcoholics Anonymous': alAnVirtueColors
+    // Future communities here
   };
 
   Future<dynamic> editEntry(
@@ -474,7 +483,8 @@ class Users {
     }
   }
 
-  // Get entries for nearby feature
+  /*
+  // Get entries for nearby feature (replaced below)
   Stream<List<DocumentSnapshot<Object?>>> getThoseEntries(
       bool shareLocation, double radius) async* {
     final sharedCollectionRef =
@@ -495,6 +505,72 @@ class Users {
       }
     }
   }
+*/
+
+  // Get entries for nearby feature
+  Stream<Map<String, List<DocumentSnapshot<Object?>>>> getNearbyEntries(
+      bool shareLocation, double radius, String communityName) async* {
+    print('trying to access $communityName');
+    String communityLookup = communityName.replaceAll(' ', '');
+    print(communityLookup);
+    final communityDocRef =
+    FirebaseFirestore.instance.collection('CommunitiesDemo').doc(communityLookup).collection('Virtues');
+
+    // Get each virtue document from the community document
+    final virtueSnapshots = await communityDocRef.get();
+    print('Retrieved Virtue Snapshots:');
+    for (var virtueDoc in virtueSnapshots.docs) {
+      print('Virtue ID: ${virtueDoc.id}, Data: ${virtueDoc.data()}');
+    }
+
+
+    if (shareLocation) {
+      // Build a map associating each array of virtue entries with its name
+      final Map<String, List<DocumentSnapshot>> virtueEntriesMap = {};
+      print('in shareLocation');
+
+      // Get current position and setup Geolocator
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      GeoFirePoint geoFireLocation =
+      geo.point(latitude: position.latitude, longitude: position.longitude);
+
+      // Search for matching entries for each virtue
+      for (final virtueDoc in virtueSnapshots.docs) {
+        print('before looking at virtues');
+        final sharedEntriesCollectionRef = virtueDoc.reference.collection('sharedEntries');
+
+        print('Accessing shared entries for Virtue: ${virtueDoc.id}');
+
+        // Retrieve all documents within 'sharedEntries' and log them
+        final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
+        print('Documents in sharedEntries for Virtue ${virtueDoc.id}:');
+        for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
+          print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
+        }
+
+
+        print('looking at all virtues');
+        final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
+
+        // Query the points within the radius once
+        final List<DocumentSnapshot> virtueEntries = await geoRef
+            .within(
+          center: geoFireLocation,
+          radius: radius,
+          field: 'userLocation',
+          strictMode: true,
+        )
+            .first; // Fetch only a one time batch of results
+
+        print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
+        virtueEntriesMap[virtueDoc.id] = virtueEntries;
+
+      }
+      yield virtueEntriesMap;
+    }
+  }
+
 
   Future<dynamic> getNotiTime() async {
     try {
