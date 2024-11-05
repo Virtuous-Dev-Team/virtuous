@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -364,12 +366,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               dropdownColor: Colors
                                   .white, // Set the background color of the dropdown
                               isDense: true, // Reduce height
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors
-                                      .black), // Align the arrow to the right
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black
+                              ), // Align the arrow to the right
                               isExpanded:
                                   true, // Extend the button to the right
                               underline: Container(),
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
                           ),
                         ],

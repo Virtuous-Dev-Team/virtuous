@@ -232,21 +232,29 @@ class AppNavigation {
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
                     ]),
+                GoRoute(
+                  path: "/editProfilePage",
+                  name: "editProfilePage",
+                  builder: (BuildContext context, GoRouterState state) => 
+                    EditProfilePage(),
+                  routes: [],
+                ),
+                  
               ],
             ),
 
-            StatefulShellBranch(
+            /*StatefulShellBranch(
               navigatorKey: _shellNavigatorEditProfile,
               routes: <RouteBase>[
                 GoRoute(
                   path: "/editProfilePage",
-                  name: "EditProfilePage",
+                  name: "editProfilePage",
                   builder: (BuildContext context, GoRouterState state) => 
                     EditProfilePage(),
                   routes: [],
                 ),
               ],
-            ),
+            ),*/
 
             // Branch Analyze
             StatefulShellBranch(
@@ -297,6 +305,8 @@ class AppNavigation {
                 ),
               ],
             ),
+
+            
           ],
         ),
       ],

@@ -122,7 +122,7 @@ class PopOutMenuWidget extends StatelessWidget {
         } else if (value == 'settings') {
           GoRouter.of(context).go('/SettingsPage');
         } else if (value == 'editProfile') {
-          GoRouter.of(context).go('/EditProfilePage');
+          GoRouter.of(context).go('/editProfilePage');
         }
         // TODO: Handle other menu items if needed
       },
