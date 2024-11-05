@@ -277,7 +277,6 @@ class Users {
         Map<String, dynamic> communityData = 
           communitySnapshot.docs.first.data() as Map<String, dynamic>;
 
-        print("THIS IS HAPPENING!!!!1");
         // for every virtue in the array of virtues, add to new map
         for (var virtue in communityData['quadrantInformation']) {
           newVirtueStats[currentCommunity]?[virtue['quadrantName']] = 0;
@@ -494,14 +493,16 @@ class Users {
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
     print(communityLookup);
-    final communityDocRef =
-    FirebaseFirestore.instance.collection('CommunitiesDemo').doc(communityLookup).collection('Virtues');
+    final communityDocRef = 
+      FirebaseFirestore.instance.collection('Communities');
 
-    // Get each virtue document from the community document
-    final virtueSnapshots = await communityDocRef.get();
-    print('Retrieved Virtue Snapshots:');
-    for (var virtueDoc in virtueSnapshots.docs) {
-      print('Virtue ID: ${virtueDoc.id}, Data: ${virtueDoc.data()}');
+    // Get colors and virtue names from Communities collection
+    final communitySnapshot = await communityDocRef.where("communityName", isEqualTo: communityName).get();
+    final communityData = communitySnapshot.docs.first.data();
+    print('Retrieved community Snapshot:');
+
+    for (final virtue in communityData["quadrantInformation"]) {
+      print('Virtue Name: ${virtue['quadrantName']}, Color: ${virtue['quadrantColor']}');
     }
 
 
@@ -517,23 +518,28 @@ class Users {
       geo.point(latitude: position.latitude, longitude: position.longitude);
 
       // Search for matching entries for each virtue
-      for (final virtueDoc in virtueSnapshots.docs) {
+      for (final virtue in communityData['quadrantInformation']) {
         print('before looking at virtues');
-        final sharedEntriesCollectionRef = virtueDoc.reference.collection('sharedEntries');
+        final sharedEntriesCollectionRef = FirebaseFirestore.instance
+          .collection('CommunitiesDemo')
+          .doc(communityLookup)
+          .collection('Virtues')
+          .doc(virtue['quadrantName'])
+          .collection('sharedEntries');
 
-        print('Accessing shared entries for Virtue: ${virtueDoc.id}');
+        print('Accessing shared entries for Virtue: ${virtue['quadrantName']}');
 
         // Retrieve all documents within 'sharedEntries' and log them
         final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
-        print('Documents in sharedEntries for Virtue ${virtueDoc.id}:');
+        print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
         for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
           print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
         }
 
         // Get color data for the virtue
-        var virtueColor = virtueDoc.data()['color'];
+        var virtueColor = virtue['quadrantColor'];
         // Add the color to the map
-        virtueEntriesMap[virtueDoc.id] = {
+        virtueEntriesMap[virtue['quadrantName']] = {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
@@ -550,10 +556,11 @@ class Users {
         )
             .first; // Fetch only a one time batch of results
 
-        print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
-        virtueEntriesMap[virtueDoc.id]?['entries'] = virtueEntries;
+        print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
+        virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
       }
+      print("This is the virtuesEntriesMap!: $virtueEntriesMap");
       yield virtueEntriesMap;
     }
   }
