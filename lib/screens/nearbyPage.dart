@@ -216,7 +216,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   Widget renderNearbyBarChart(bool shareLocation) {
     print('radius in render $radius');
-    return StreamBuilder<Map<String, List<DocumentSnapshot<Object?>>>>(
+    return StreamBuilder<Map<String, Map<String, dynamic>>>(
       stream: usesAPI.getNearbyEntries(shareLocation, radius, communityName),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -224,7 +224,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          Map<String, List<DocumentSnapshot<Object?>>> virtueEntriesMap = snapshot.data!;
+          Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
           // Use the documents list here
@@ -304,10 +304,7 @@ class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
           name: 'Analysis',
           color: Color.fromRGBO(8, 142, 255, 1), // Default color for all bars
           // Custom color for each bar
-          pointColorMapper: (_ChartData data, _) {
-            // Return custom colors based on your logic
-            return legalVirtueColors[data.x];
-          },
+          pointColorMapper: (_ChartData data, _) => data.color,
           dataLabelSettings: DataLabelSettings(
             isVisible: true,
             textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
@@ -406,7 +403,7 @@ DateTime getStartDate(String timeFrame, DateTime today) {
 
 
 
-List<_ChartData> buildChartData(Map<String, List<DocumentSnapshot<Object?>>> virtueEntriesMap, String timeFrame) {
+List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
 
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
@@ -417,9 +414,14 @@ List<_ChartData> buildChartData(Map<String, List<DocumentSnapshot<Object?>>> vir
   // for each virtue from the map
   for (var entry in virtueEntriesMap.entries) {
     String virtueUsed = entry.key;
-    List<DocumentSnapshot<Object?>> virtueEntries = entry.value;
-
-    _ChartData virtueData = _ChartData(virtueUsed, []);
+    Map<String, dynamic> virtueDataMap = entry.value;
+    String colorString = virtueDataMap['color'];
+    if (colorString.startsWith("0x")) {
+      colorString = colorString.substring(2);
+    }
+    Color virtueColor = Color(int.parse(colorString, radix: 16));
+    List<DocumentSnapshot<Object?>> virtueEntries = virtueDataMap['entries'];
+    _ChartData virtueData = _ChartData(virtueUsed, [], virtueColor);
 
     // Decide whether to add each entry
     for (var doc in virtueEntries) {
@@ -440,8 +442,9 @@ List<_ChartData> buildChartData(Map<String, List<DocumentSnapshot<Object?>>> vir
 }
 
 class _ChartData {
-  _ChartData(this.x, this.y);
+  _ChartData(this.x, this.y, this.color);
 
   String x;
   List y;
+  Color color;
 }
