@@ -288,45 +288,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             height: screenHeight / 70,
                           ),
                           Text(
-                            'What role do you serve in the $currentCommunity community?', // add community name
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: newCareer,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. lawyer',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
                             'How long have you been a part of the $currentCommunity community?', // add community name
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
@@ -355,6 +316,45 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 contentPadding: EdgeInsets.zero,
                                 isDense: true,
                                 hintText: 'Eg. 2 years',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Text(
+                            'What role do you serve in the $currentCommunity community?', // add community name
+                            style: GoogleFonts.adamina(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newCareer,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                // hintText: 'Eg. lawyer',
                                 hintStyle: GoogleFonts.tinos(
                                     textStyle: TextStyle(color: Colors.black)),
                                 border:
