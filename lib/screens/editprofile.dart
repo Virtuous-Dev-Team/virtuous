@@ -32,8 +32,8 @@ class EditProfilePage extends ConsumerStatefulWidget {
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newProfileName = TextEditingController();
   TextEditingController newEmail = TextEditingController();
-  TextEditingController newCareer = TextEditingController();
-  TextEditingController newCareerLength = TextEditingController();
+  TextEditingController newCareer = TextEditingController(); //newRole
+  TextEditingController newCareerLength = TextEditingController(); //newLength
   late String currentCommunity;
   bool newListExist = false;
   @override
@@ -60,7 +60,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   ) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    // Dropdown values for each page
+    // Dropdown values for each page - should be renamed to communities
     List<String> careerDropdownValues = [
       'Legal',
       'Alcoholics Anonymous',
@@ -97,8 +97,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 showToasty(response['msg'], true, context);
                 newProfileName.clear();
                 newEmail.clear();
-                newCareer.clear();
-                newCareerLength.clear();
+                newCareer.clear(); // change this to newMemberRole
+                newCareerLength.clear(); // change this to newMemberLength
                 // Update UserInfo Provider
                 await setUserInfoProvider(ref);
                 await ref
@@ -158,6 +158,45 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            'Name',
+                            style: GoogleFonts.adamina(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newProfileName,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                hintText: 'Eg. john doe',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Text(
                             'Email',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
@@ -197,142 +236,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             height: screenHeight / 70,
                           ),
                           Text(
-                            'Profile Name',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: newProfileName,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. john doe',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'What is your Career?',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: newCareer,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. lawyer',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'How long have you been in this career?',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: newCareerLength,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. 2 years',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'Choose a community that best fits your reason for joining Virtuous.',
+                            'Select your community below.',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.normal),
                             ),
                           ),
-                          MaterialButton(
-                            onPressed: () {},
-                            padding: EdgeInsets.zero,
-                            child: Text(
-                              'Learn more about communities.',
-                              style: GoogleFonts.adamina(
-                                textStyle: TextStyle(
-                                    color: Colours.swatch(clrBackground),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.normal,
-                                    decoration: TextDecoration.underline),
-                              ),
-                            ),
+                          SizedBox(
+                            height: screenHeight / 70,
                           ),
                           Container(
                             constraints: BoxConstraints(
@@ -373,7 +284,101 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               isExpanded:
                                   true, // Extend the button to the right
                               underline: Container(),
-                              borderRadius: BorderRadius.circular(12.0),
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Text(
+                            'How long have you been a part of the $currentCommunity community?', // add community name
+                            style: GoogleFonts.adamina(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newCareerLength,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                hintText: 'Eg. 2 years',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Text(
+                            'What role do you serve in the $currentCommunity community?', // add community name
+                            style: GoogleFonts.adamina(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newCareer,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                // hintText: 'Eg. lawyer',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
+                            ),
+                          ),
+                          MaterialButton(
+                            onPressed: () {
+                              GoRouter.of(context).go('/resource');
+                            },
+                            padding: EdgeInsets.zero,
+                            child: Text(
+                              'Learn more about communities.',
+                              style: GoogleFonts.adamina(
+                                textStyle: TextStyle(
+                                    color: Colours.swatch(clrBackground),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.normal,
+                                    decoration: TextDecoration.underline),
+                              ),
                             ),
                           ),
                         ],
