@@ -232,17 +232,11 @@ class AppNavigation {
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
                     ]),
-              ],
-            ),
-
-            StatefulShellBranch(
-              navigatorKey: _shellNavigatorEditProfile,
-              routes: <RouteBase>[
                 GoRoute(
                   path: "/editProfilePage",
                   name: "EditProfilePage",
-                  builder: (BuildContext context, GoRouterState state) => 
-                    EditProfilePage(),
+                  builder: (BuildContext context, GoRouterState state) =>
+                      EditProfilePage(),
                   routes: [],
                 ),
               ],

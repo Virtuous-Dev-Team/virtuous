@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/appColors.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
-import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
