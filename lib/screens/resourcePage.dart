@@ -96,6 +96,7 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                         fontWeight: FontWeight.w600,
                         color: Colours.black),
                     indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: Colours.swatch(clrBlack),
                     unselectedLabelColor: Colours.swatch(clrBlack),
                     indicatorPadding: const EdgeInsets.only(left: 0, right: 0),
                     indicator: BoxDecoration(
@@ -107,7 +108,8 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                     indicatorColor: Colours.swatch(clrBlack),
                     tabs: const [
                       Tab(
-                        text: "Virtuous",
+                        text: "Being Virtuous",
+                        
                       ),
                       Tab(
                         text: "My Community",
