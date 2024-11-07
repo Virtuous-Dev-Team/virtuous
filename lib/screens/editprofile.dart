@@ -10,6 +10,7 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/updateProfileController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/main.dart';
@@ -396,7 +397,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               newListExist = true;
                             }
                             ref
-                                .read(settingsControllerProvider.notifier)
+                                .read(updateProfileControllerProvider.notifier)
                                 .updateProfile(
                                     newEmail: newEmail.text,
                                     newProfileName: newProfileName.text,
