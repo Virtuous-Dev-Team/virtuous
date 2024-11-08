@@ -176,7 +176,7 @@ class SignUpPage extends ConsumerWidget {
                           child: TextFormField(
                             controller: fullName,
                             decoration: InputDecoration(
-                              labelText: 'Username', // full name is now username
+                              labelText: 'Full Name', // full name is now username
                               labelStyle: TextStyle(
                                   fontStyle: FontStyle.italic,
                                   color: Colors.black),
