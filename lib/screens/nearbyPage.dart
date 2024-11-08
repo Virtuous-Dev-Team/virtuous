@@ -51,6 +51,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   List<_ChartData> chartData = [];
   @override
   Widget build(BuildContext context) {
+
+    final userInfo = ref.watch(userInfoProviderr);
+    shareLocation = userInfo.shareLocation;
+    communityName = userInfo.currentCommunity;
+
     late TooltipBehavior _tooltip;
 
     _tooltip = TooltipBehavior(enable: false);
