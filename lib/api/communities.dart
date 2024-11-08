@@ -15,7 +15,7 @@ class Communities {
       }
 
       // Query all documents in the community collection and search for specific community
-      QuerySnapshot querySnapshot = await communityCollectionRef
+      final QuerySnapshot querySnapshot = await communityCollectionRef
           .where("communityName", isEqualTo: communityName)
           .get();
 

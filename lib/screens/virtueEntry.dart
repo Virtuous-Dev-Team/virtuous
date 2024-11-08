@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors
+ // ignore_for_file: prefer_const_constructors
 
 import 'dart:ffi';
 
@@ -142,8 +142,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             });
           },
         );
-    
-    
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: mainBackgroundColor,
@@ -213,21 +212,18 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
   }
 
   Widget buildVirtueEntry1(
-    BuildContext context,
-    double screenWidth,
-    double screenHeight,
-    {required String quadrantName,
+      BuildContext context, double screenWidth, double screenHeight,
+      {required String quadrantName,
       required String definition,
-      required String color}
-  ) {
+      required String color}) {
     virtueColor = VirtueColor(communityName, quadrantName);
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          //mainAxisAlignment: MainAxisAlignment.start,
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: 30,
@@ -242,20 +238,32 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             ),
             SizedBox(height: 5,),*/
             Text(
-              'What were you doing when you modeled this virtue?',
+              'What did you do to show $quadrantName?',
               //TextAlign isn't working for some reason
-              textAlign: TextAlign.center,
-              style: GoogleFonts.tinos(
+              //textAlign: TextAlign.center,
+              style: GoogleFonts.adamina(
                 textStyle: TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                   color: Colors.black,
                 ),
               ),
+              textAlign: TextAlign.center,
             ),
 
             SizedBox(
               height: 5,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(
+                '$definition',
+                style: GoogleFonts.inter(
+                  textStyle: TextStyle(
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             ),
             Divider(
               thickness: 2,
@@ -263,15 +271,19 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               //legalVirtueColors[widget.quadrantName!],
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
-              child: Text(
-                'Date of Occurrence ${tfDate.text}, ${tfTime.text}',
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black,
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Current Selected Date of Occurrence ${tfDate.text}, ${tfTime.text}',
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                    ),
                   ),
+                  textAlign: TextAlign.left,
                 ),
               ),
             ),
@@ -343,12 +355,15 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             SizedBox(
               height: 10,
             ),
-            Text(
-              'What event was happening?',
-              style: GoogleFonts.tinos(
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'What event was happening when you showed $quadrantName?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -356,168 +371,184 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             SizedBox(
               height: 10,
             ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(eventList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(eventList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      key: Key('event_${eventList[index].eventName}'),
-                      onPressed: () {
-                        setState(() {
-                          if (eventList[index].isSelected == true) {
-                            eventList[index].isSelected = false;
-                          } else {
-                            eventList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            eventList[index].isSelected ? clrPurple : clrWhite),
-                      ),
-                      child: Text(
-                        eventList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(eventList[index].isSelected
-                                ? clrWhite
-                                : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('event_${eventList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (eventList[index].isSelected == true) {
+                              eventList[index].isSelected = false;
+                            } else {
+                              eventList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              eventList[index].isSelected ? clrPurple : clrWhite),
+                        ),
+                        child: Text(
+                          eventList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(eventList[index].isSelected
+                                  ? clrWhite
+                                  : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
             SizedBox(height: 10),
-            Text(
-              'Who were you with?',
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+              'Who were you with? ',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Colors.black,
                 ),
-              ),
+                  ),
+                ),
             ),
 
             SizedBox(
               height: 10,
             ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(whoWereWithYouList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(whoWereWithYouList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      key: Key('who_${whoWereWithYouList[index].eventName}'),
-                      onPressed: () {
-                        setState(() {
-                          if (whoWereWithYouList[index].isSelected == true) {
-                            whoWereWithYouList[index].isSelected = false;
-                          } else {
-                            whoWereWithYouList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            whoWereWithYouList[index].isSelected
-                                ? clrPurple
-                                : clrWhite),
-                      ),
-                      child: Text(
-                        whoWereWithYouList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(
-                                whoWereWithYouList[index].isSelected
-                                    ? clrWhite
-                                    : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('who_${whoWereWithYouList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (whoWereWithYouList[index].isSelected == true) {
+                              whoWereWithYouList[index].isSelected = false;
+                            } else {
+                              whoWereWithYouList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              whoWereWithYouList[index].isSelected
+                                  ? clrPurple
+                                  : clrWhite),
+                        ),
+                        child: Text(
+                          whoWereWithYouList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(
+                                  whoWereWithYouList[index].isSelected
+                                      ? clrWhite
+                                      : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
             SizedBox(
               height: 10,
             ),
 
-            Text(
-              'Where were you?',
-              style: GoogleFonts.tinos(
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Where were you?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
 
-            SizedBox(
-              height: 10,
-            ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(whereWereYouList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            SizedBox(height: 5,),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(whereWereYouList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      key: Key('where_${whereWereYouList[index].eventName}'),
-                      onPressed: () {
-                        setState(() {
-                          if (whereWereYouList[index].isSelected == true) {
-                            whereWereYouList[index].isSelected = false;
-                          } else {
-                            whereWereYouList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            whereWereYouList[index].isSelected
-                                ? clrPurple
-                                : clrWhite),
-                      ),
-                      child: Text(
-                        whereWereYouList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(
-                                whereWereYouList[index].isSelected
-                                    ? clrWhite
-                                    : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('where_${whereWereYouList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (whereWereYouList[index].isSelected == true) {
+                              whereWereYouList[index].isSelected = false;
+                            } else {
+                              whereWereYouList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              whereWereYouList[index].isSelected
+                                  ? clrPurple
+                                  : clrWhite),
+                        ),
+                        child: Text(
+                          whereWereYouList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(
+                                  whereWereYouList[index].isSelected
+                                      ? clrWhite
+                                      : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
 
             // SizedBox(
@@ -578,7 +609,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       required String definition,
       required String color}) {
     print(definition);
-    
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -588,9 +619,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               children: [
                 Text(
                   quadrantName,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.adamina(
                     textStyle: TextStyle(
                       fontSize: 14,
+                      fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
@@ -602,10 +634,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   child: Text(
                     definition,
                     style: GoogleFonts.inter(
-                    textStyle: TextStyle(
-                      fontSize: 14,
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                      ),
                     ),
-                  ),
                   ),
                 )
               ],
@@ -799,4 +831,3 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
     }
   }
 }
-

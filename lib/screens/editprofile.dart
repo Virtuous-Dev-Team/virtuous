@@ -1,4 +1,7 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:colours/colours.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +13,7 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/updateProfileController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/main.dart';
@@ -38,13 +42,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    print('edit profile : ${userInfo.currentCommunity}');
-    currentCommunity = userInfo.currentCommunity;
 
-    // if (currentCommunity == 'legal')
-    //   currentCommunity = currentCommunity.capitalizeFirst!;
-    newCareer.text = userInfo.careerInfo.currentPosition;
-    newCareerLength.text = userInfo.careerInfo.careerLength;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      print('edit profile : ${userInfo.currentCommunity}');
+      currentCommunity = userInfo.currentCommunity;
+
+      // if (currentCommunity == 'legal')
+      //   currentCommunity = currentCommunity.capitalizeFirst!;
+      newCareer.text = userInfo.careerInfo.currentPosition;
+      newCareerLength.text = userInfo.careerInfo.careerLength;
+      newEmail.text = user.email ?? ''; // User's email
+      newProfileName.text = user.displayName ?? ''; // User's display name
+    }
   }
 
   @override
@@ -73,7 +83,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     //   }
     // }
     // final u = _readUserInfo();
-    ref.watch(settingsControllerProvider).when(
+    ref.watch(updateProfileControllerProvider).when(
           loading: () => CircularProgressIndicator(),
           error: (error, stackTrace) {
             Future.delayed(Duration.zero, () {
@@ -89,26 +99,31 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           },
           data: (response) async {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              if (response['Function'] == "updateProfile") {
-                showToasty(response['msg'], true, context);
-                newProfileName.clear();
-                newEmail.clear();
-                newCareer.clear(); // change this to newMemberRole
-                newCareerLength.clear(); // change this to newMemberLength
-                // Update UserInfo Provider
-                await setUserInfoProvider(ref);
-                await ref
-                    .read(resourcesControllerProvider.notifier)
-                    .getResources(currentCommunity);
-                await ref
-                    .read(virtueEntryControllerProvider.notifier)
-                    .getMostRecentEntries(currentCommunity);
-                await ref
-                    .read(statsControllerProvider.notifier)
-                    .getAllStats(currentCommunity);
-                GoRouter.of(context).pop();
-
-                // newProfileName.
+              if (response != null) {
+                if (response['Function'] == "updateProfile") {
+                  showToasty(response['msg'], true, context);
+                  // TODO: should we clear them?
+                  //newProfileName.clear();
+                  //newEmail.clear();
+                  //newCareer.clear(); // change this to newMemberRole
+                  //newCareerLength.clear(); // change this to newMemberLength
+                   //Update UserInfo Provider
+                  await setUserInfoProvider(ref);
+                  await ref
+                      .read(resourcesControllerProvider.notifier)
+                      .getResources(currentCommunity);
+                  await ref
+                      .read(virtueEntryControllerProvider.notifier)
+                      .getMostRecentEntries(currentCommunity);
+                  await ref
+                      .read(statsControllerProvider.notifier)
+                      .getAllStats(currentCommunity);
+                  GoRouter.of(context).pop();
+                  // newProfileName.
+                }
+              }
+              else {
+                print("error null response");
               }
             });
           },
@@ -273,9 +288,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               dropdownColor: Colors
                                   .white, // Set the background color of the dropdown
                               isDense: true, // Reduce height
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors
-                                      .black), // Align the arrow to the right
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black
+                              ), // Align the arrow to the right
                               isExpanded:
                                   true, // Extend the button to the right
                               underline: Container(),
@@ -384,6 +400,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       Center(
                         child: MaterialButton(
                           onPressed: () {
+                            // exit if empty but should almost never be used since values should be auto filled
                             if (newEmail.text.isEmpty &&
                                 newProfileName.text.isEmpty &&
                                 newCareer.text.isEmpty &&
@@ -400,7 +417,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               newListExist = true;
                             }
                             ref
-                                .read(settingsControllerProvider.notifier)
+                                .read(updateProfileControllerProvider.notifier)
                                 .updateProfile(
                                     newEmail: newEmail.text,
                                     newProfileName: newProfileName.text,
@@ -414,7 +431,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                               .dialogBuilder(context),
                                         },
                                     newListExist: newListExist);
-                            ref.invalidate(settingsControllerProvider);
+                            ref.invalidate(updateProfileControllerProvider);
                           },
                           child: Container(
                             decoration: BoxDecoration(
