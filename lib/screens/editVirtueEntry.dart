@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
 import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/virtueDefinitions.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
@@ -55,7 +56,8 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     sleepingHours = virtueEntryInfo.sleepHours;
     quadrantName = virtueEntryInfo.quadrantUsed;
     color = virtueEntryInfo.quadrantColor;
-    definition = '';
+    Map<String, String>? communityDefinitionList = communityDefinitions[communityName];
+    definition = communityDefinitionList?[quadrantName] ?? '';
     docId = virtueEntryInfo.docId;
     List<String> split = virtueEntryInfo.dateAndTimeOfOccurence.split(',');
     print('split $split');
@@ -534,7 +536,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
-    
+    print('definition $definition');
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),

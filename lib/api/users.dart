@@ -487,11 +487,38 @@ class Users {
     }
   }
 
+  DateTime getTimeRange(String timeFrame) {
+    DateTime now = DateTime.now();
+    DateTime timeRange = now;
+    switch(timeFrame) {
+      case "Last week":
+        timeRange = now.subtract(Duration(days: 7));
+        break;
+      case "Last 3 mo":
+        timeRange = now.subtract(Duration(days: 90));
+        break;
+      case "Last 6 mo":
+        timeRange = now.subtract(Duration(days: 180));
+        break;
+      case "Last yr":
+        timeRange = now.subtract(Duration(days: 365));
+        break;
+    }
+    return timeRange;
+  }
+
+
+
   // Get entries for nearby feature
   Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
-      bool shareLocation, double radius, String communityName) async* {
+      bool shareLocation, double radius, String communityName, String timeFrame) async* {
+
+    // get time frame formatted for search
+    DateTime timeRange = getTimeRange(timeFrame);
+
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
+
     print(communityLookup);
     final communityDocRef = 
       FirebaseFirestore.instance.collection('Communities');
@@ -509,15 +536,14 @@ class Users {
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
-      print('in shareLocation');
 
       // Get current position and setup Geolocator
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
       geo.point(latitude: position.latitude, longitude: position.longitude);
 
       // Search for matching entries for each virtue
+
       for (final virtue in communityData['quadrantInformation']) {
         print('before looking at virtues');
         final sharedEntriesCollectionRef = FirebaseFirestore.instance
@@ -543,6 +569,7 @@ class Users {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
+
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
 
@@ -559,6 +586,9 @@ class Users {
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
+        } catch (e) {
+          print('An unexpected error occurred: $e');
+        }
       }
       print("This is the virtuesEntriesMap!: $virtueEntriesMap");
       yield virtueEntriesMap;
