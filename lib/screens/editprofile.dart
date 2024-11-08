@@ -85,7 +85,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     //   }
     // }
     // final u = _readUserInfo();
-    ref.watch(settingsControllerProvider).when(
+    ref.watch(updateProfileControllerProvider).when(
           loading: () => CircularProgressIndicator(),
           error: (error, stackTrace) {
             Future.delayed(Duration.zero, () {
@@ -433,7 +433,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                               .dialogBuilder(context),
                                         },
                                     newListExist: newListExist);
-                            ref.invalidate(settingsControllerProvider);
+                            ref.invalidate(updateProfileControllerProvider);
                           },
                           child: Container(
                             decoration: BoxDecoration(

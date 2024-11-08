@@ -586,9 +586,7 @@ class Users {
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
-        } catch (e) {
-          print('An unexpected error occurred: $e');
-        }
+
       }
       print("This is the virtuesEntriesMap!: $virtueEntriesMap");
       yield virtueEntriesMap;
