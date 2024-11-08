@@ -15,6 +15,31 @@ class CommunityCreation {
   final CollectionReference<Map<String, dynamic>> sharedRef = 
     FirebaseFirestore.instance.collection("CommunitiesDemo");
 
+  Future getCommunityNames() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': "User not found"};
+      }
+
+      List<String> commmunityList = [];
+
+      // get all community docs
+      final QuerySnapshot<Map<String, dynamic>> communityDocs = 
+        await communityRef.get();
+
+      for (final community in communityDocs.docs) {
+        final communityData = community.data();
+
+        commmunityList.add(communityData['communityName']);
+      }
+
+      return {'Success': true, "response": commmunityList};
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
+    }
+  }
+
 
   // Adds basic community info to both collections in db
   Future createNewCommunity(
@@ -73,3 +98,8 @@ class CommunityCreation {
     }
   }
 }
+
+// Provider to use Users class in other files
+final communityCreationProvider = Provider<CommunityCreation>((ref) {
+  return CommunityCreation();
+});
