@@ -20,33 +20,19 @@ class CommunityShared {
         "userLocation": updatedLocation.data,
       };
 
+      String communityLookup = communityName.replaceAll(' ', '');
+      final communityRef = FirebaseFirestore.instance
+        .collection('CommunitiesDemo')
+        .doc(communityLookup);
 
-      // Find id by community name
-      QuerySnapshot communitySnapshot = await FirebaseFirestore.instance
-        .collection("CommunitiesDemo")
-        .where("communityName", isEqualTo: communityName)
-        .get();
+      final collectionRef =
+        communityRef
+          .collection("Virtues")
+          .doc(virtueUsed)
+          .collection("sharedEntries");
+      await collectionRef.add(sharedEntry);
 
-      // make sure community exists
-      if (communitySnapshot.docs.isNotEmpty) {
-        String communityId = communitySnapshot.docs.first.id;
-
-        // use id to add to shared entries
-        final collectionRef =
-          FirebaseFirestore.instance.collection("CommunitiesDemo")
-            .doc(communityId)
-            .collection("Virtues")
-            .doc(virtueUsed)
-            .collection("sharedEntries");
-        await collectionRef.add(sharedEntry);
-
-        return {"Success": true, "response": "Submitted in shared database"};
-      } 
-      else {
-        // community wasnt found?
-        print('Couldnt find community to add virtue entry to');
-        return {'Success': false, 'Error': 'Couldnt find community'};
-      }
+      return {"Success": true, "response": "Submitted in shared database"};
 
     } on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
