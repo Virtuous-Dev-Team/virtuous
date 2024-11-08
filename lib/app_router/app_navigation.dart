@@ -31,7 +31,7 @@ import '../screens/settingsScreen/termofuse.dart';
 
 String initial(ref) {
   try {
-    print('time to nvgate');
+    print('time to navigate');
     final user = ref.watch(authStateChangesProvider).value;
     // final fisrtTimey = ref.watch(isFirstTimeSignInProvider);
     // final dynamic userInfo = ref.watch(currentUserInfo);
@@ -234,11 +234,12 @@ class AppNavigation {
                     ]),
                 GoRoute(
                   path: "/editProfilePage",
-                  name: "EditProfilePage",
-                  builder: (BuildContext context, GoRouterState state) =>
-                      EditProfilePage(),
+                  name: "editProfilePage",
+                  builder: (BuildContext context, GoRouterState state) => 
+                    EditProfilePage(),
                   routes: [],
                 ),
+                
               ],
             ),
 
@@ -291,6 +292,8 @@ class AppNavigation {
                 ),
               ],
             ),
+
+            
           ],
         ),
       ],

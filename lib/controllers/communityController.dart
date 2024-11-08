@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communities.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 class CommunitiesController
     extends FamilyAsyncNotifier<dynamic, ({String communityName})> {

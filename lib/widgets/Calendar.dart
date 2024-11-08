@@ -94,7 +94,17 @@ class CustomCalender {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colours.swatch(clrWhite),
+          title: Text(
+            "Entries",
+            textAlign: TextAlign.center,
+            ),
+          titleTextStyle: TextStyle(
+            //fontWeight: FontWeight.bold,
+            color: Colours.swatch(clrBlack),
+          ),
+          backgroundColor: Colours.swatch(clrBackground),
+          shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.circular(10)),
           content: Container(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             height: MediaQuery.of(context).size.height / 4,
