@@ -483,48 +483,58 @@ class Users {
     }
   }
 
+  DateTime getTimeRange(String timeFrame) {
+    DateTime now = DateTime.now();
+    DateTime timeRange = now;
+    switch(timeFrame) {
+      case "Last week":
+        timeRange = now.subtract(Duration(days: 7));
+        break;
+      case "Last 3 mo":
+        timeRange = now.subtract(Duration(days: 90));
+        break;
+      case "Last 6 mo":
+        timeRange = now.subtract(Duration(days: 180));
+        break;
+      case "Last yr":
+        timeRange = now.subtract(Duration(days: 365));
+        break;
+    }
+    return timeRange;
+  }
+
+
+
   // Get entries for nearby feature
   Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
-      bool shareLocation, double radius, String communityName) async* {
+      bool shareLocation, double radius, String communityName, String timeFrame) async* {
+
+    // get time frame formatted for search
+    DateTime timeRange = getTimeRange(timeFrame);
+
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
-    print(communityLookup);
+
     final communityDocRef =
     FirebaseFirestore.instance.collection('CommunitiesDemo').doc(communityLookup).collection('Virtues');
 
     // Get each virtue document from the community document
     final virtueSnapshots = await communityDocRef.get();
-    print('Retrieved Virtue Snapshots:');
-    for (var virtueDoc in virtueSnapshots.docs) {
-      print('Virtue ID: ${virtueDoc.id}, Data: ${virtueDoc.data()}');
-    }
-
 
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
-      print('in shareLocation');
 
       // Get current position and setup Geolocator
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
       geo.point(latitude: position.latitude, longitude: position.longitude);
 
       // Search for matching entries for each virtue
       for (final virtueDoc in virtueSnapshots.docs) {
-        print('before looking at virtues');
         final sharedEntriesCollectionRef = virtueDoc.reference.collection('sharedEntries');
 
-        print('Accessing shared entries for Virtue: ${virtueDoc.id}');
-
-        // Retrieve all documents within 'sharedEntries' and log them
-        final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
-        print('Documents in sharedEntries for Virtue ${virtueDoc.id}:');
-        for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
-          print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
-        }
-
+        try {
         // Get color data for the virtue
         var virtueColor = virtueDoc.data()['color'];
         // Add the color to the map
@@ -532,6 +542,7 @@ class Users {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
+
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
 
@@ -545,9 +556,12 @@ class Users {
         )
             .first; // Fetch only a one time batch of results
 
-        print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
+
         virtueEntriesMap[virtueDoc.id]?['entries'] = virtueEntries;
 
+        } catch (e) {
+          print('An unexpected error occurred: $e');
+        }
       }
       yield virtueEntriesMap;
     }
