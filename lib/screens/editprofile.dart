@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/updateProfileController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/main.dart';
@@ -275,9 +278,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               dropdownColor: Colors
                                   .white, // Set the background color of the dropdown
                               isDense: true, // Reduce height
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors
-                                      .black), // Align the arrow to the right
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black
+                              ), // Align the arrow to the right
                               isExpanded:
                                   true, // Extend the button to the right
                               underline: Container(),
@@ -402,7 +406,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               newListExist = true;
                             }
                             ref
-                                .read(settingsControllerProvider.notifier)
+                                .read(updateProfileControllerProvider.notifier)
                                 .updateProfile(
                                     newEmail: newEmail.text,
                                     newProfileName: newProfileName.text,

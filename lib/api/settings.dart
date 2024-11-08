@@ -12,38 +12,6 @@ class Settings {
   final usersCollectionRef = FirebaseFirestore.instance.collection('Users');
   static String verifyId = "";
 
-  // Quadrantlist for every community we have, used when a user changes to a new community
-  final quadrantLists = {
-    "Legal": {
-      "Legal": {
-        "Honesty": 0,
-        "Courage": 0,
-        "Compassion": 0,
-        "Generosity": 0,
-        "Fidelity": 0,
-        "Integrity": 0,
-        "Fairness": 0,
-        "Self-control": 0,
-        "Prudence": 0
-      }
-    },
-    "Alcoholics Anonymous": {
-      "Alcoholics Anonymous": {
-        "Honesty": 0,
-        "Hope": 0,
-        "Surrender": 0,
-        "Courage": 0,
-        "Integrity": 0,
-        "Willingness": 0,
-        "Humility": 0,
-        "Love": 0,
-        "Responsibility": 0,
-        "Discipline": 0,
-        "Awareness": 0,
-        "Service": 0,
-      }
-    }
-  };
   Future<dynamic> updatePassword(
       {required String newPassword, required Function authError}) async {
     try {
@@ -87,73 +55,6 @@ class Settings {
       }
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
-      return {'Success': false, 'Error': error.message};
-    } catch (error) {
-      return {'Success': false, 'Error': error};
-    }
-  }
-
-  Future<dynamic> updateProfile(
-      String newEmail,
-      String newProfileName,
-      String newCareer,
-      String newCommunity,
-      String newCareerLength,
-      Function authError,
-      bool newListExist) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        return {'Success': false, 'Error': "User not found"};
-      }
-
-      if (newEmail.isNotEmpty) {
-        await user.verifyBeforeUpdateEmail(newEmail);
-      }
-      if (newProfileName.isNotEmpty) {
-        await user
-            .updateDisplayName(newProfileName)
-            .catchError((e) => print('error in updateProfile $e'));
-      } else {
-        print('profile name is empty');
-      }
-      // Build the update map
-      final Map<String, dynamic> updateMap = {};
-      if (newCommunity.isNotEmpty) {
-        updateMap['currentCommunity'] = newCommunity;
-        print('settings api profile $newListExist');
-        if (newListExist == false) {
-          final Map<String, dynamic> userObject = {};
-          userObject["quadrantUsedData"] =
-              quadrantLists[newCommunity] ?? 'Error';
-          await usersCollectionRef
-              .doc(user.uid)
-              .set(userObject, SetOptions(merge: true));
-        }
-      }
-      if (newCareer.isNotEmpty) {
-        updateMap['careerInfo.currentPosition'] = newCareer;
-      }
-      if (newCareerLength.isNotEmpty) {
-        updateMap['careerInfo.careerLength'] = newCareerLength;
-      }
-      if (newProfileName.isNotEmpty) {
-        await user
-            .updateDisplayName(newProfileName)
-            .catchError((e) => print('error in updateProfile $e'));
-      } else {
-        print('profile name is empty');
-      }
-      if (updateMap.isNotEmpty) {
-        await usersCollectionRef.doc(user.uid).update(updateMap);
-      }
-
-      return {"Success": true, 'response': "Done"};
-    } on FirebaseAuthException catch (error) {
-      if (error.code == "requires-recent-login") {
-        authError();
-        return {'Success': false, 'Error': error.code};
-      }
       return {'Success': false, 'Error': error.message};
     } catch (error) {
       return {'Success': false, 'Error': error};

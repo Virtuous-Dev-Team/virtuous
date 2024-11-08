@@ -65,43 +65,7 @@ class SettingsController extends _$SettingsController {
     }
   }
 
-  Future<void> updateProfile(
-      {required String newEmail,
-      required String newProfileName,
-      required String newCareer,
-      required String newCommunity,
-      required String newCareerLength,
-      required Function authError,
-      required bool newListExist}) async {
-    try {
-      final settingsRepo = ref.read(settingsRepositoryProvider);
-      final result = await AsyncValue.guard(() => settingsRepo.updateProfile(
-          newEmail,
-          newProfileName,
-          newCareer,
-          newCommunity,
-          newCareerLength,
-          authError,
-          newListExist));
-
-      if (result.value['Success']) {
-        state = AsyncData({
-          'Function': "updateProfile",
-          "msg": 'Profile preferences updated successfully'
-        });
-      } else {
-        final error = {
-          'Function': 'updateProfile',
-          'msg': result.value['Error']
-        };
-
-        state = AsyncError(error, StackTrace.current);
-      }
-    } catch (error) {
-      state = AsyncError(error, StackTrace.current);
-    }
-  }
-
+  
   Future<void> updateNotificationPreferences(
       bool newAllowNotificationa, String newNotificationTime) async {
     try {

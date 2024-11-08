@@ -162,7 +162,7 @@ class _GridPageState extends ConsumerState<GridPage> {
   @override
   Widget build(BuildContext context) {
     final controller = ref.watch(communitiesControllerProvider(
-        (communityName: communityName.isEmpty ? 'Legal' : communityName)));
+        (communityName: communityName)));
 
     return Scaffold(
       backgroundColor: Color(0xFFEFE5CC),

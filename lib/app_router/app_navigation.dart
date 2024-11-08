@@ -234,7 +234,7 @@ class AppNavigation {
                     ]),
                 GoRoute(
                   path: "/editProfilePage",
-                  name: "EditProfilePage",
+                  name: "editProfilePage",
                   builder: (BuildContext context, GoRouterState state) => 
                     EditProfilePage(),
                   routes: [],
@@ -292,6 +292,8 @@ class AppNavigation {
                 ),
               ],
             ),
+
+            
           ],
         ),
       ],
