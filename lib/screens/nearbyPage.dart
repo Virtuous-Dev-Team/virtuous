@@ -217,7 +217,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Widget renderNearbyBarChart(bool shareLocation) {
     print('radius in render $radius');
     return StreamBuilder<Map<String, Map<String, dynamic>>>(
-      stream: usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame),
+      stream: usesAPI.getNearbyEntries(shareLocation, radius, communityName),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return CircularProgressIndicator();
