@@ -487,9 +487,35 @@ class Users {
     }
   }
 
+  DateTime getTimeRange(String timeFrame) {
+    DateTime now = DateTime.now();
+    DateTime timeRange = now;
+    switch(timeFrame) {
+      case "Last week":
+        timeRange = now.subtract(Duration(days: 7));
+        break;
+      case "Last 3 mo":
+        timeRange = now.subtract(Duration(days: 90));
+        break;
+      case "Last 6 mo":
+        timeRange = now.subtract(Duration(days: 180));
+        break;
+      case "Last yr":
+        timeRange = now.subtract(Duration(days: 365));
+        break;
+    }
+    return timeRange;
+  }
+
+
+
   // Get entries for nearby feature
   Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
-      bool shareLocation, double radius, String communityName) async* {
+      bool shareLocation, double radius, String communityName, String timeFrame) async* {
+
+    // get time frame formatted for search
+    DateTime timeRange = getTimeRange(timeFrame);
+
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
 
@@ -510,7 +536,6 @@ class Users {
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
-      print('in shareLocation');
 
       // Get current position and setup Geolocator
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -537,11 +562,10 @@ class Users {
           print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
         }
 
-        // Retrieve color data for the virtue (assuming a color field exists)
-        var virtueColor = virtueDoc.data()['color'];
-
-        // Add the color field to the map with an empty list for entries
-        virtueEntriesMap[virtueDoc.id] = {
+        // Get color data for the virtue
+        var virtueColor = virtue['quadrantColor'];
+        // Add the color to the map
+        virtueEntriesMap[virtue['quadrantName']] = {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
@@ -559,8 +583,9 @@ class Users {
         )
             .first; // Fetch only a one time batch of results
 
-        print('Fetched relevant entries for Virtue: ${virtueDoc.id}');
-        virtueEntriesMap[virtueDoc.id]?['entries'] = virtueEntries;
+        print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
+        virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
+
 
       }
       print("This is the virtuesEntriesMap!: $virtueEntriesMap");
