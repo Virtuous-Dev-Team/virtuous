@@ -169,7 +169,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Name',
+                            'Username',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
                                   fontWeight: FontWeight.normal, fontSize: 14),
