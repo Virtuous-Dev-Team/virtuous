@@ -43,7 +43,7 @@ class CommunityCreation {
 
   // Adds basic community info to both collections in db
   Future createNewCommunity(
-    String communityName, String communityDesc, List<Map<String, String>>? virtues) async {
+    String communityName, String communityDesc) async {
     try {
       String communityLookup = communityName.replaceAll(' ', '');
       final communityData = {
@@ -65,11 +65,27 @@ class CommunityCreation {
     }
   }
 
-  // edit info about existing community
-  Future editCommunityInfo(String? communityName, String? communityDesc) async {
+  // edit description about existing community
+  Future editCommunityDesc(String currentCommunity, String communityDesc) async {
     try {
+      String communityLookup = currentCommunity.replaceAll(' ', '');
+      
+      // grabbing uid from Communities collection
+      final QuerySnapshot<Map<String, dynamic>> targetData = await communityRef
+            .where('communityName', isEqualTo: currentCommunity)
+            .get();
+      
+      final String communityId = targetData.docs.first.id;
 
+      // updates document in community ref
+      await communityRef.doc(communityId)
+        .set({'descriptionOfCommunity': communityDesc}, SetOptions(merge: true));
+      
+      // updates document in shared ref
+      await sharedRef.doc(communityLookup)
+        .set({'description': communityDesc}, SetOptions(merge: true));
 
+      return {'Success': true, 'response': 'Community description updated'};
     } 
     on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -77,10 +93,42 @@ class CommunityCreation {
   }
 
   // Create new virtue
-  Future createVirtue(String virtueName, String definition, String virtueColor) async {
+  Future createVirtue(
+    String currentCommunity, String virtueName, String definition, String virtueColor) async {
     try {
+      // get uid of target community 
+      final QuerySnapshot<Map<String, dynamic>> targetData = await communityRef
+            .where('communityName', isEqualTo: currentCommunity)
+            .get();
+      
+      final String communityId = targetData.docs.first.id;
 
+      // grabs current array storing map of each virtue 
+      List<Map<String, String>> virtueArrayObject = 
+        targetData.docs.first.data()['quadrantInformation'];
 
+      virtueArrayObject.add({
+        'quadrantColor': virtueColor,
+        'quadrantDefinition': definition,
+        'quadrantName': virtueName
+      });
+
+      // add to communities collection
+      await communityRef.doc(communityId)
+        .set({'quadrantInformation': virtueArrayObject}, SetOptions(merge: true));
+
+      final String communityLookup = currentCommunity.replaceAll(' ', '');
+
+      // add to shared data collection
+      await sharedRef.doc(communityLookup)
+        .collection('Virtues')
+        .doc(virtueName)
+        .set({
+          'color': virtueColor,
+          'definition': definition
+        });
+      
+      return {'Success': true, 'response': 'Virtue added to database'};
     } 
     on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};
@@ -88,10 +136,76 @@ class CommunityCreation {
   }
 
   // Editing an existing virtue 
-  Future editVirtueInfo(String? virtueName, String? definition, String? virtueColor) async {
+  Future editVirtueInfo(
+    String currentCommunity, String currentVirtue, String? definition, String? virtueColor) async {
     try {
+      String finalDef = '';
+      String finalColor = '';
+      if (definition != null) {
+        finalDef = definition;
+      }
+      if (virtueColor != null) {
+        finalColor = virtueColor;
+      }
 
+      // get uid of target community 
+      final QuerySnapshot<Map<String, dynamic>> targetData = await communityRef
+            .where('communityName', isEqualTo: currentCommunity)
+            .get();
+      
+      final String communityId = targetData.docs.first.id;
 
+      // grabs current array storing map of each virtue 
+      List<Map<String, String>> virtueArrayObject = 
+        targetData.docs.first.data()['quadrantInformation'];
+
+      // find index of target virtue
+      int targetIndex = 0;
+      for (var virtue in virtueArrayObject) {
+        if (virtue['quadrantName'] == currentVirtue) {
+          // check what values will be changed and break
+          if (definition == '') {
+            finalDef = virtue['quadrantDefinition'] ?? 'Definition error';
+          } 
+
+          if (virtueColor == null) {
+            finalColor = virtue['quadrantColor'] ?? 'Color error';
+          }
+          break;
+        }
+        targetIndex++;
+      }
+
+      // Check if there was an error getting a value thats not being changed
+      // abort if so
+      if (finalDef == 'Definition error' || finalDef == '') {
+        return {'Success': false, 'Error': 'Error getting virtue definition'};
+      }
+      if (finalColor == 'Color error' || finalColor == '') {
+        return {'Success': false, 'Error': 'Error getting virtue color'};
+      }
+
+      virtueArrayObject.replaceRange(targetIndex, targetIndex + 1, [{
+          'quadrantName': currentVirtue,
+          'quadrantDefinition': finalDef,
+          'quadrantColor': finalColor
+      }]);
+
+      // edit in communities collection
+      await communityRef.doc(communityId)
+        .set({'quadrantInformation': virtueArrayObject}, SetOptions(merge: true));
+
+      String communityLookup = currentCommunity.replaceAll(' ', '');
+      // edit in shared data subcollection
+      await sharedRef.doc(communityLookup)
+        .collection('Virtues')
+        .doc(currentVirtue)
+        .set({
+          'color': finalColor,
+          'definition': finalDef
+        });
+      
+      return {'Success': true, 'response': 'Virtue edited in database'};
     } 
     on FirebaseException catch (error) {
       return {'Success': false, 'Error': error.message};

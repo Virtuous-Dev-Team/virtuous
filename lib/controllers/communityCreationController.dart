@@ -34,7 +34,107 @@ class CommunityCreationController extends _$CommunityCreationController {
 
         state = AsyncError(error, StackTrace.current);
       }
-    }catch (error) {
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> createNewCommunity(
+    String communityName, String communityDesc) async {
+    try {
+      final provider = ref.read(communityCreationProvider);
+      final result = await AsyncValue.guard(
+          () => provider.createNewCommunity(communityName, communityDesc));
+      if (result.value['Success']) {
+        state = AsyncData({
+          'Function': "createNewCommunity",
+          "msg": result.value['response']
+        });
+       
+      } else {
+        final error = {
+          'Function': 'createNewCommunity',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> editCommunityDesc(
+    String currentCommunity, String communityDesc) async {
+    try {
+      final provider = ref.read(communityCreationProvider);
+      final result = await AsyncValue.guard(
+          () => provider.editCommunityDesc(currentCommunity, communityDesc));
+      if (result.value['Success']) {
+        state = AsyncData({
+          'Function': "editCommunityDesc",
+          "msg": result.value['response']
+        });
+       
+      } else {
+        final error = {
+          'Function': 'editCommunityDesc',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> createVirtue(
+    String currentCommunity, String virtueName, String definition, String virtueColor) async {
+    try {
+      final provider = ref.read(communityCreationProvider);
+      final result = await AsyncValue.guard(
+          () => provider.createVirtue(currentCommunity, virtueName, definition, virtueColor));
+      if (result.value['Success']) {
+        state = AsyncData({
+          'Function': "createVirtue",
+          "msg": result.value['response']
+        });
+       
+      } else {
+        final error = {
+          'Function': 'createVirtue',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+  Future<void> edtiVirtueInfo(
+    String currentCommunity, String currentVirtue, String? definition, String? virtueColor) async {
+    try {
+      final provider = ref.read(communityCreationProvider);
+      final result = await AsyncValue.guard(
+          () => provider.editVirtueInfo(currentCommunity, currentVirtue, definition, virtueColor));
+      if (result.value['Success']) {
+        state = AsyncData({
+          'Function': "editVirtueInfo",
+          "msg": result.value['response']
+        });
+       
+      } else {
+        final error = {
+          'Function': 'editVirtueInfo',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
       state = AsyncError(error, StackTrace.current);
     }
   }
