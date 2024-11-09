@@ -23,6 +23,8 @@ import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
+import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
+import 'package:virtuetracker/screens/settingsScreen/crudcommunities.dart';
 
 import '../screens/settingsScreen/notifications.dart';
 import '../screens/settingsScreen/privacy.dart';
@@ -86,6 +88,8 @@ class AppNavigation {
       GlobalKey<NavigatorState>(debugLabel: 'shellResources');
   static final _shellNavigatorEditProfile =
       GlobalKey<NavigatorState>(debugLabel: 'shellEditProfile');
+  // static final _shellNavigatorDevSettings =
+  //     GlobalKey<NavigatorState>(debugLabel: 'shellDevSettings');
   // GoRouter configuration
 
   // Call the navigation function after the build is complete
@@ -231,6 +235,18 @@ class AppNavigation {
                         name: 'PrivacyPolicyPage',
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
+                      GoRoute(
+                        path: 'DevSettingsPage',
+                        name: 'DevSettingsPage',
+                        builder: (context, state) => DevSettingsPage(),
+                        // routes: [
+                        //     GoRoute(
+                        //       path: 'UpdatePhoneNumber',
+                        //       name: 'UpdatePhoneNumber',
+                        //       builder: (context, state) => ChangePhonePage(),
+                        //     ),
+                        //   ]
+                        ),
                     ]),
                 GoRoute(
                   path: "/editProfilePage",

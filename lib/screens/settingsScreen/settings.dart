@@ -10,6 +10,8 @@ import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
+import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
+import 'package:virtuetracker/screens/settingsScreen/crudcommunities.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
@@ -190,6 +192,32 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Text(
                             "Privacy Policy",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_right,
+                            size: 25,
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        GoRouter.of(context)
+                            .go('/SettingsPage/DevSettingsPage');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Developer Settings",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.normal,
