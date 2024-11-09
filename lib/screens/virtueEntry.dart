@@ -670,7 +670,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
+                  "What is the best piece of advice you could give someone about modeling $quadrantName throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 16,
