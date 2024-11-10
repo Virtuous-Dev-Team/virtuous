@@ -1,20 +1,30 @@
 import 'package:colours/colours.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/communityCreationController.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/controllers/userControllers.dart';
 import 'package:virtuetracker/controllers/authControllers.dart';
+import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
 import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
 import 'package:virtuetracker/screens/settingsScreen/addcommunity.dart';
+import 'package:virtuetracker/main.dart';
+import 'package:virtuetracker/screens/landingPage.dart';
+import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
+import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
@@ -80,7 +90,7 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "Communities",
+                    "Community Settings",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -154,6 +164,44 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                       ),
                       Text(
                         'Community Name',
+                        style: GoogleFonts.adamina(
+                          textStyle: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 14),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight / 70,
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(3.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Color(0xFFCEC0A1),
+                            width: 2.0, // Set the border width
+                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: TextField(
+                          // controller: ,
+                          // onChanged: (newValue) {
+                          //   setState(() {});
+                          // },
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.zero,
+                            isDense: true,
+                            hintStyle: GoogleFonts.tinos(
+                                textStyle: TextStyle(color: Colors.black)),
+                            border:
+                                InputBorder.none, // Hide the default border
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight / 70,
+                      ),
+                      Text(
+                        'Community Description',
                         style: GoogleFonts.adamina(
                           textStyle: TextStyle(
                               fontWeight: FontWeight.normal, fontSize: 14),
@@ -409,6 +457,36 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
       ));
   }
 }
+
+// void showToasty(msg, bool success, BuildContext context) {
+//   print('calling toast widget in sign in page');
+//   WidgetsBinding.instance?.addPostFrameCallback((_) {
+//     ToastNotificationWidget().successOrError(
+//       context,
+//       msg,
+//       success,
+//     );
+//   });
+// }
+
+// String? validateEmail(String? email) {
+//   RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
+//   final isEmailValid = emailRegex.hasMatch(email ?? '');
+//   if (!isEmailValid) {
+//     return 'Please enter a valid email';
+//   }
+//   return null;
+// }
+
+// String? validatePassword(String? pass) {
+//   RegExp passRegex =
+//       RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+//   final isPassValid = passRegex.hasMatch(pass ?? '');
+//   if (!isPassValid) {
+//     return 'Please enter a stronger password';
+//   }
+//   return null;
+// }
 
                   // InkWell(
                   //     onTap: () {
