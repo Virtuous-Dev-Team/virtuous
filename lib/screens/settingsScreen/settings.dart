@@ -11,7 +11,6 @@ import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
 import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
-import 'package:virtuetracker/screens/settingsScreen/crudcommunities.dart';
 
 import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';

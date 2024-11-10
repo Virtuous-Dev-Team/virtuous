@@ -93,13 +93,6 @@ class AppBarWithArrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // appBar: AppBar(
-      //   title: Text(
-      //     'Hi $displayName',
-
-      //   ),
-      // ),
-      
       backgroundColor: appBarColor, // Replace with your desired color
       elevation: 0,
       leading: IconButton(
