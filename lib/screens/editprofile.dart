@@ -63,9 +63,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     // Dropdown values for each page - should be renamed to communities
@@ -171,7 +169,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Name',
+                            'Username',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
                                   fontWeight: FontWeight.normal, fontSize: 14),

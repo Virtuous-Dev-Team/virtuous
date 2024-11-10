@@ -215,7 +215,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               height: 30,
             ),
             Text(
-              'What were you doing when you modeled this virtue?',
+              'What did you do to show $quadrantName?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -310,7 +310,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               height: 10,
             ),
             Text(
-              'What event was happening?',
+              'What event was happening when you showed $quadrantName?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -596,7 +596,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give someone about modeling this virtue throughout the day?",
+                  "What is the best piece of advice you could give someone about modeling $quadrantName throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
                       fontSize: 16,
