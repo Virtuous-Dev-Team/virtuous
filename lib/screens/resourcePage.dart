@@ -61,6 +61,9 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final resourcesController = ref.watch(resourcesControllerProvider);
+    final userInfo = ref.watch(userInfoProviderr);
+    communityName = userInfo.currentCommunity;
+
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
         appBar: AppBarWidget('regular'),
