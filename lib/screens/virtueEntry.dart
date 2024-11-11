@@ -151,6 +151,12 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
           IconButton(
             icon: Icon(Icons.account_circle, size: 30, color: iconColor),
             onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please complete virtue entry'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
               // TODO: Implement profile icon functionality.
             },
           ),
