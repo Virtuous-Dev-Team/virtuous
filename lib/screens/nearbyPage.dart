@@ -48,9 +48,16 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   double radius = 10;
   String timeFrame = "Last week";
+  // Store data from a call with the same radius
+  Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   List<_ChartData> chartData = [];
   @override
   Widget build(BuildContext context) {
+
+    final userInfo = ref.watch(userInfoProviderr);
+    shareLocation = userInfo.shareLocation;
+    communityName = userInfo.currentCommunity;
+
     late TooltipBehavior _tooltip;
 
     _tooltip = TooltipBehavior(enable: false);
@@ -174,10 +181,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       24, // Set the size of the dropdown icon
                                   onChanged: (String? newValue) async {
                                     String num = newValue!.replaceAll('km', '');
-                                    double newRadius = double.parse(num!);
+                                    double newRadius = double.parse(num);
                                     print('radius in onchange: $newRadius');
                                     setState(() {
                                       radius = newRadius;
+                                      cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
                                     });
                                     // ref
                                     //     .read(usersRepositoryProvider)
@@ -217,15 +225,20 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Widget renderNearbyBarChart(bool shareLocation) {
     print('radius in render $radius');
     return StreamBuilder<Map<String, Map<String, dynamic>>>(
-      stream: usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame),
+      stream: cachedVirtueEntriesMap == null
+          ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting && cachedVirtueEntriesMap == null) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
-          List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
+          if (cachedVirtueEntriesMap == null) {
+            cachedVirtueEntriesMap = snapshot.data!;
+          }
+          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
+          //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
+          //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
           // Use the documents list here
           return RenderNearbyBarChart(
