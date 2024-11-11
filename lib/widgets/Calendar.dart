@@ -12,13 +12,12 @@ import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/users.dart';
 
 import '../Models/LegalCalendarModel.dart';
-import '../App_Configuration/apptheme.dart';
 
 class CustomCalender {
   Widget customCalender(BuildContext context, List<LegalCalendarModel> markers,

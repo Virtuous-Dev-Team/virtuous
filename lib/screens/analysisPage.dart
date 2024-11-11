@@ -8,13 +8,12 @@ import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/pieChartController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/screens/gridPage.dart';
 
-import '../App_Configuration/apptheme.dart';
 import '../Models/LegalCalendarModel.dart';
 import '../Models/ChartDataModel.dart';
 import '../widgets/Calendar.dart';

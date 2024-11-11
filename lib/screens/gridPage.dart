@@ -10,7 +10,7 @@ import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
