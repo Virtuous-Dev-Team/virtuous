@@ -5,15 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
 import 'package:virtuetracker/controllers/surveyPageController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 
-import '../../App_Configuration/apptheme.dart';
-import '../../App_Configuration/globalfunctions.dart';
 import '../../widgets/appBarWidget.dart';
 
 class PrivacyPage extends ConsumerStatefulWidget {

@@ -10,8 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
-import 'package:virtuetracker/App_Configuration/virtueDefinitions.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
@@ -19,8 +18,6 @@ import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
-import '../App_Configuration/apptheme.dart';
-import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
 
 String? globalCommunityName;

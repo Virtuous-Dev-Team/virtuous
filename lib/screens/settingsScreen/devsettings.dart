@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
@@ -26,7 +26,6 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
 import 'changepassword.dart';
 
@@ -58,11 +57,6 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-
-    List<String> careerDropdownValues = [
-        'Legal',
-        'Alcoholics Anonymous',
-    ];
 
     return Scaffold(
     backgroundColor: Color(0xFFEFE5CC),
