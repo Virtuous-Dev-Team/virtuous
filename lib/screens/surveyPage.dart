@@ -5,14 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
-import 'package:virtuetracker/App_Configuration/apptheme.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/surveyPageController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 import 'package:intl/intl.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
+
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -65,11 +65,6 @@ class SurveyPageState extends State<SurveyPage> {
 
   String formattedPhoneNumber = '';
 
-  // Dropdown values for each page
-  List<String> careerDropdownValues = [
-    'Legal',
-    'Alcoholics Anonymous',
-  ];
   List<String> yesNoDropdownValues = ['Yes', 'No'];
 
   // List to store answers
@@ -235,9 +230,9 @@ class SurveyPageState extends State<SurveyPage> {
             height: 25,
           ),
           Text(
-            'What is your career?',
+            'What is your current career?',
             style: GoogleFonts.tinos(
-              textStyle: TextStyle(),
+              textStyle: TextStyle(fontSize: 16,),
             ),
           ),
           SizedBox(
@@ -265,7 +260,7 @@ class SurveyPageState extends State<SurveyPage> {
                 isDense: true,
                 hintText: 'Eg. lawyer',
                 hintStyle: GoogleFonts.tinos(
-                    textStyle: TextStyle(color: Colors.black)),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.black)),
                 border: InputBorder.none, // Hide the default border
               ),
             ),
@@ -276,7 +271,7 @@ class SurveyPageState extends State<SurveyPage> {
           Text(
             'How long have you been in this career?',
             style: GoogleFonts.tinos(
-              textStyle: TextStyle(),
+              textStyle: TextStyle(fontSize: 16,),
             ),
           ),
           SizedBox(
@@ -304,7 +299,7 @@ class SurveyPageState extends State<SurveyPage> {
                 isDense: true,
                 hintText: 'Eg. 2 years',
                 hintStyle: GoogleFonts.tinos(
-                    textStyle: TextStyle(color: Colors.black)),
+                    textStyle: TextStyle(fontSize: 16, color: Colors.black)),
                 border: InputBorder.none, // Hide the default border
               ),
             ),
@@ -319,23 +314,26 @@ class SurveyPageState extends State<SurveyPage> {
               Text(
                 'Choose a community that best fits your reason for joining Virtuous.',
                 style: GoogleFonts.tinos(
-                  textStyle: TextStyle(),
+                  textStyle: TextStyle(fontSize: 16,),
                 ),
               ),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Learn more about communities.',
-                  style: GoogleFonts.tinos(
-                    textStyle: TextStyle(
-                      decoration: TextDecoration.underline, // Add underline
-                      decorationColor: Color(0xFFCEC0A1),
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xFFCEC0A1),
-                    ),
-                  ),
-                ),
-              ),
+              // GestureDetector(
+              //   onTap: () {
+              //     GoRouter.of(context).go('/resource');
+              //   },
+              //   child: Text(
+              //     'Learn more about communities.',
+              //     style: GoogleFonts.tinos(
+              //       textStyle: TextStyle(
+              //         decoration: TextDecoration.underline, // Add underline
+              //         decorationColor: Colors.blue,
+              //         fontStyle: FontStyle.italic,
+              //         color: Colors.blue,
+              //         fontSize: 16,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           SizedBox(
@@ -366,7 +364,7 @@ class SurveyPageState extends State<SurveyPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               value,
-                              style: GoogleFonts.tinos(textStyle: TextStyle()),
+                              style: GoogleFonts.tinos(fontSize: 16, textStyle: TextStyle()),
                             ),
                           ),
                         ),
@@ -393,7 +391,7 @@ class SurveyPageState extends State<SurveyPage> {
           SizedBox(height: 30),
           Text(
             'Please describe your reasons for joining Virtuous.',
-            style: GoogleFonts.tinos(textStyle: TextStyle()),
+            style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
           ),
           SizedBox(
             height: 3,
@@ -413,14 +411,16 @@ class SurveyPageState extends State<SurveyPage> {
               textInputAction: TextInputAction.done,
               keyboardType: TextInputType.text,
               maxLines: 3,
+              style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
                 hintText: 'Enter text...',
-                hintStyle: GoogleFonts.tinos(textStyle: TextStyle()),
+                hintStyle: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16, color: Colors.black)),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 4.0, vertical: 1.0),
                 border: InputBorder.none,
+                
               ),
               controller: reasons,
               onChanged: (newValue) {
@@ -459,14 +459,15 @@ class SurveyPageState extends State<SurveyPage> {
           ),
           Text(
             'Would you like to participate in entry sharing?',
-            style: GoogleFonts.tinos(textStyle: TextStyle()),
+            style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
           ),
           Text(
             'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
             style: GoogleFonts.tinos(
               textStyle: TextStyle(
+                fontSize: 16,
                 fontStyle: FontStyle.italic,
-                color: Color(0xFFCEC0A1),
+                color: Colors.red,
               ),
             ),
           ),
@@ -497,7 +498,7 @@ class SurveyPageState extends State<SurveyPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(value,
                                 style:
-                                    GoogleFonts.tinos(textStyle: TextStyle())),
+                                    GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,))),
                           ),
                         ),
                       );
@@ -525,12 +526,13 @@ class SurveyPageState extends State<SurveyPage> {
           ),
           Text(
             'Would you like to share your location?',
-            style: GoogleFonts.tinos(textStyle: TextStyle()),
+            style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
           ),
           Text(
             'We will not share your location with other users. However you can’t use some features without location tuned on.',
             style: GoogleFonts.tinos(
               textStyle: TextStyle(
+                fontSize: 15,
                 fontStyle: FontStyle.italic,
                 color: Color.fromARGB(255, 90, 84, 70),
               ),
@@ -563,7 +565,7 @@ class SurveyPageState extends State<SurveyPage> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               value,
-                              style: GoogleFonts.tinos(textStyle: TextStyle()),
+                              style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
                             ),
                           ),
                         ),
@@ -629,7 +631,7 @@ class SurveyPageState extends State<SurveyPage> {
           Text(
             'Turn on notifications?',
             style: GoogleFonts.tinos(
-              textStyle: TextStyle(),
+              textStyle: TextStyle(fontSize: 16,),
             ),
           ),
           SizedBox(
@@ -660,7 +662,7 @@ class SurveyPageState extends State<SurveyPage> {
                             child: Text(
                               value,
                               style: GoogleFonts.tinos(
-                                textStyle: TextStyle(),
+                                textStyle: TextStyle(fontSize: 16,),
                               ),
                             ),
                           ),
@@ -740,9 +742,14 @@ class SurveyPageState extends State<SurveyPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Enter your phone number.'),
+                Text(
+                  'Enter your phone number.',
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(fontSize: 16,),
+                  ),
+                ),
                 Container(
-                    padding: EdgeInsets.all(5.0),
+                    padding: EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Color(0xFFCEC0A1),
@@ -760,6 +767,9 @@ class SurveyPageState extends State<SurveyPage> {
                             contentPadding: EdgeInsets.zero,
                             isDense: true,
                             border: InputBorder.none, // Hide the default border
+                            hintStyle: GoogleFonts.tinos(
+                                textStyle: TextStyle(fontSize: 16,),
+                              ),
                             hintText: '(999)-999-9999'),
                         validator: (value) {
                           if (value!.length != 12)
@@ -872,7 +882,12 @@ class SurveyPageState extends State<SurveyPage> {
                       }
                     },
                     child: Center(
-                      child: Text('Verify'),
+                      child: Text(
+                        'Verify',
+                        style: GoogleFonts.inter(
+                                textStyle: TextStyle(fontSize: 16,),
+                              ),
+                        ),
                     ),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
@@ -882,8 +897,8 @@ class SurveyPageState extends State<SurveyPage> {
                 Text(
                   'Select a time to receive notifications.',
                   style: GoogleFonts.tinos(
-                    textStyle: TextStyle(),
-                  ),
+                                textStyle: TextStyle(fontSize: 16,),
+                              ),
                 ),
                 Center(
                   child: Container(
@@ -892,8 +907,8 @@ class SurveyPageState extends State<SurveyPage> {
                       onPressed: () => _selectTime(context),
                       child: Text(
                         'Select Time',
-                        style: TextStyle(
-                          color: Color(0xFFFFFDF9),
+                        style: GoogleFonts.inter(
+                          textStyle: TextStyle(fontSize: 16,),
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
@@ -914,12 +929,12 @@ class SurveyPageState extends State<SurveyPage> {
                     //     ? 'Time Selected: ${selectedTime!.hourOfPeriod}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}'
                     //     : 'Time not selected',
                     style: GoogleFonts.tinos(
-                      textStyle: TextStyle(),
+                      textStyle: TextStyle(fontSize: 16,),
                     ),
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
               ],
             ),
@@ -966,7 +981,7 @@ class SurveyPageState extends State<SurveyPage> {
                           }
                         },
                   child:
-                      isLoading ? CircularProgressIndicator() : Text('Submit'),
+                      isLoading ? CircularProgressIndicator() : Text('Submit', style: GoogleFonts.inter(textStyle: TextStyle(fontSize: 16, color: Colors.white),),),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFbab7d4),
                       foregroundColor: Colors.black)),

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +17,7 @@ import 'package:virtuetracker/widgets/Calendar.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -222,6 +223,7 @@ class BuildRecentEntriesList extends ConsumerWidget {
                         int.tryParse(item['quadrantColor'].toString()) ??
                             0xFFA6A1CC,
                     docId: item['docId'],
+                    dateEntried: item['dateEntried'].toString(), // DateTime format?
                     ref: ref,
                   );
                 }),
@@ -236,10 +238,12 @@ class RecentEntryWidget extends StatelessWidget {
       required this.quadrantName,
       required this.quadrantColor,
       required this.docId,
+      required this.dateEntried,
       this.ref});
   final String quadrantName;
   final int quadrantColor;
   final String docId;
+  final String dateEntried; // final Timestamp dateEtried;
   final dynamic ref;
 
   @override
@@ -287,6 +291,15 @@ class RecentEntryWidget extends StatelessWidget {
                 flex: 1,
                 child: Text(
                   quadrantName,
+                  maxLines: 1,
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                  ),
+                )),
+            Expanded(
+                flex: 1,
+                child: Text(
+                  dateEntried,
                   maxLines: 1,
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(color: Colors.black, fontSize: 16),

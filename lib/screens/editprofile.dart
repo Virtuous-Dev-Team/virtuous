@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
@@ -21,7 +21,6 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -67,10 +66,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     // Dropdown values for each page - should be renamed to communities
-    List<String> careerDropdownValues = [
-      'Legal',
-      'Alcoholics Anonymous',
-    ];
+    // List<String> careerDropdownValues = [
+    //   'Legal',
+    //   'Alcoholics Anonymous',
+    // ];
     // var count = ref.watch<UserInfoProvider>().currentCommunity;
 
     // final userInfoProvider =
