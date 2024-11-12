@@ -44,11 +44,17 @@ class AuthController extends _$AuthController {
       state = const AsyncLoading();
       final result = await AsyncValue.guard(
           () => authRepository.signInUser(email, password));
-      print(result);
+      print('THIS IS THE RESULT UR LOOKING FOR ! $result');
 
       if (result.value['Success']) {
         final isNewUser = await ref.read(usersRepositoryProvider).getUserInfo();
-        if (isNewUser['Success']) {
+
+        if (result.value['response'].user.uid == 'QDhAkgB0HuSDq2wkyM8OVgrQQKh1'){
+          // go to dev setting if developer
+          print('go to dev settings page');
+          state = AsyncData('/DevSettingsPage');
+        }
+        else if (isNewUser['Success']) {
           print('go to home page');
           state = AsyncData('/home');
         } else {

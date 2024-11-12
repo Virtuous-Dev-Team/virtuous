@@ -198,6 +198,18 @@ class AppNavigation {
                   ],
                 ),
                 GoRoute(
+                  path: '/DevSettingsPage',
+                  name: 'DevSettingsPage',
+                  builder: (context, state) => DevSettingsPage(),
+                  routes: [
+                      // GoRoute(
+                      //   path: 'AddCommunityPage',
+                      //   name: 'AddCommunityPage',
+                      //   builder: (context, state) => AddCommunityPage(),
+                      // ),
+                  ]
+                ),
+                GoRoute(
                     path: '/SettingsPage',
                     name: 'SettingsPage',
                     builder: (context, state) => SettingsPage(),
@@ -233,18 +245,18 @@ class AppNavigation {
                         name: 'PrivacyPolicyPage',
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
-                      GoRoute(
-                        path: 'DevSettingsPage',
-                        name: 'DevSettingsPage',
-                        builder: (context, state) => DevSettingsPage(),
-                        routes: [
-                            // GoRoute(
-                            //   path: 'AddCommunityPage',
-                            //   name: 'AddCommunityPage',
-                            //   builder: (context, state) => AddCommunityPage(),
-                            // ),
-                          ]
-                        ),
+                      // GoRoute(
+                      //   path: 'DevSettingsPage',
+                      //   name: 'DevSettingsPage',
+                      //   builder: (context, state) => DevSettingsPage(),
+                      //   routes: [
+                      //       // GoRoute(
+                      //       //   path: 'AddCommunityPage',
+                      //       //   name: 'AddCommunityPage',
+                      //       //   builder: (context, state) => AddCommunityPage(),
+                      //       // ),
+                      //     ]
+                      //   ),
                     ]),
                 GoRoute(
                   path: "/editProfilePage",
