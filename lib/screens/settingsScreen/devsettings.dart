@@ -98,6 +98,45 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Center(
+                        child: MaterialButton(
+                          onPressed: () {
+                            
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colours.swatch(
+                                  clrBackground), // Dark purple color
+                              borderRadius: BorderRadius.circular(
+                                  5), // Adjusted border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            width: 210,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                "New Community",
+                                style: GoogleFonts.tinos(
+                                  textStyle: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight / 70,
+                      ),
                       Text(
                         'Community Select',
                         style: GoogleFonts.adamina(
@@ -226,6 +265,45 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                                 textStyle: TextStyle(color: Colors.black)),
                             border:
                                 InputBorder.none, // Hide the default border
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: screenHeight / 70,
+                      ),
+                      Center(
+                        child: MaterialButton(
+                          onPressed: () {
+                            
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colours.swatch(
+                                  clrBackground), // Dark purple color
+                              borderRadius: BorderRadius.circular(
+                                  5), // Adjusted border radius
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 2,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            width: 210,
+                            height: 50,
+                            child: Center(
+                              child: Text(
+                                "New Virtue",
+                                style: GoogleFonts.tinos(
+                                  textStyle: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
