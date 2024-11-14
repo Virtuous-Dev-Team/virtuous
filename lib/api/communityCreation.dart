@@ -21,7 +21,7 @@ class CommunityCreation {
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
-
+      
       List<String> commmunityList = [];
 
       // get all community docs

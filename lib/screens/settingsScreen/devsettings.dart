@@ -26,6 +26,8 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
+import 'package:virtuetracker/widgets/createCommunityPopup.dart';
+import 'package:virtuetracker/widgets/createVirtuePopup.dart';
 import '../../widgets/appBarWidget.dart';
 import 'changepassword.dart';
 
@@ -37,26 +39,22 @@ class DevSettingsPage extends ConsumerStatefulWidget {
 }
 
 class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
-  // TextEditingController newProfileName = TextEditingController();
-  // TextEditingController newEmail = TextEditingController();
-  // TextEditingController newCareer = TextEditingController(); //newRole
-  // TextEditingController newCareerLength = TextEditingController(); //newLength
-  late String currentCommunity = 'Legal';
-  // bool newListExist = false;
+  late String currentCommunity = 'Legal'; //default to legal
+
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(communityCreationControllerProvider.notifier).getCommunityNames();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
+
+    final communityList = ref.watch(communityCreationControllerProvider);
 
     return Scaffold(
     backgroundColor: Color(0xFFEFE5CC),
@@ -101,7 +99,7 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                       Center(
                         child: MaterialButton(
                           onPressed: () {
-                            
+                            showCreateCommunityDialog(context, ref);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -164,72 +162,48 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        child: DropdownButton<String>(
-                          value: currentCommunity,
-                          onChanged: (newValue) {
-                            setState(() {
-                              currentCommunity = newValue!;
-                            });
-                          },
-                          items: careerDropdownValues
-                              .map<DropdownMenuItem<String>>(
-                                  (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          dropdownColor: Colors
-                              .white, // Set the background color of the dropdown
-                          isDense: true, // Reduce height
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black
-                          ), // Align the arrow to the right
-                          isExpanded:
-                              true, // Extend the button to the right
-                          underline: Container(),
-                          borderRadius: BorderRadius.circular(25.0),
-                        ),
+                        child: communityList.when(
+                            data: (data) {
+                              final List<String> communitiesDropValues = data['communityList'];
+
+                              print ('These are drop values: $communitiesDropValues');
+
+                              print('1: $currentCommunity');
+
+                              return DropdownButton<String>(
+                                value: currentCommunity,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    currentCommunity = newValue!;
+                                    print('state changed : $currentCommunity');
+                                  });
+                                },
+                                items: communitiesDropValues.map<DropdownMenuItem<String>>((String value) {
+                                  print('Mapping dropdown item: $value');
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                dropdownColor: Colors.white,
+                                isDense: true,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black,
+                                ),
+                                isExpanded: true,
+                                underline: Container(),
+                                borderRadius: BorderRadius.circular(25.0),
+                              );
+                            },
+                            loading: () => Center(child: CircularProgressIndicator()),
+                            error: (err, stack) => Text("Error loading communities"),
+                          ),
                       ),
                       SizedBox(
                         height: screenHeight / 70,
                       ),
-                      Text(
-                        'Community Name',
-                        style: GoogleFonts.adamina(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFCEC0A1),
-                            width: 2.0, // Set the border width
-                          ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: TextField(
-                          // controller: ,
-                          // onChanged: (newValue) {
-                          //   setState(() {});
-                          // },
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
-                            hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(color: Colors.black)),
-                            border:
-                                InputBorder.none, // Hide the default border
-                          ),
-                        ),
-                      ),
+                      
                       SizedBox(
                         height: screenHeight / 70,
                       ),
@@ -274,7 +248,7 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                       Center(
                         child: MaterialButton(
                           onPressed: () {
-                            
+                            showCreateVirtueDialog(context, ref, currentCommunity);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -337,72 +311,48 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        child: DropdownButton<String>(
-                          value: currentCommunity,
-                          onChanged: (newValue) {
-                            setState(() {
-                              currentCommunity = newValue!;
-                            });
-                          },
-                          items: careerDropdownValues
-                              .map<DropdownMenuItem<String>>(
-                                  (String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          dropdownColor: Colors
-                              .white, // Set the background color of the dropdown
-                          isDense: true, // Reduce height
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            color: Colors.black
-                          ), // Align the arrow to the right
-                          isExpanded:
-                              true, // Extend the button to the right
-                          underline: Container(),
-                          borderRadius: BorderRadius.circular(25.0),
-                        ),
+                        child: communityList.when(
+                            data: (data) {
+                              final List<String> communitiesDropValues = data['communityList'];
+
+                              print ('These are drop values: $communitiesDropValues');
+
+                              print('1: $currentCommunity');
+
+                              return DropdownButton<String>(
+                                value: currentCommunity,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    currentCommunity = newValue!;
+                                    print('state changed : $currentCommunity');
+                                  });
+                                },
+                                items: communitiesDropValues.map<DropdownMenuItem<String>>((String value) {
+                                  print('Mapping dropdown item: $value');
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                dropdownColor: Colors.white,
+                                isDense: true,
+                                icon: Icon(
+                                  Icons.arrow_drop_down,
+                                  color: Colors.black,
+                                ),
+                                isExpanded: true,
+                                underline: Container(),
+                                borderRadius: BorderRadius.circular(25.0),
+                              );
+                            },
+                            loading: () => Center(child: CircularProgressIndicator()),
+                            error: (err, stack) => Text("Error loading communities"),
+                          ),
                       ),
                       SizedBox(
                         height: screenHeight / 70,
                       ),
-                      Text(
-                        'Virtue Name',
-                        style: GoogleFonts.adamina(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFCEC0A1),
-                            width: 2.0, // Set the border width
-                          ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: TextField(
-                          //controller: ,
-                          // onChanged: (newValue) {
-                          //   setState(() {});
-                          // },
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
-                            hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(color: Colors.black)),
-                            border:
-                                InputBorder.none, // Hide the default border
-                          ),
-                        ),
-                      ),
+                      
                       SizedBox(
                         height: screenHeight / 70,
                       ),
