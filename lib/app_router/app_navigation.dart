@@ -23,8 +23,8 @@ import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
-import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
-import 'package:virtuetracker/screens/settingsScreen/addcommunity.dart';
+import 'package:virtuetracker/screens/dev/devsettings.dart';
+import 'package:virtuetracker/screens/dev/editCommunityVirtues.dart';
 
 import '../screens/settingsScreen/notifications.dart';
 import '../screens/settingsScreen/privacy.dart';
@@ -202,11 +202,17 @@ class AppNavigation {
                   name: 'DevSettingsPage',
                   builder: (context, state) => DevSettingsPage(),
                   routes: [
-                      // GoRoute(
-                      //   path: 'AddCommunityPage',
-                      //   name: 'AddCommunityPage',
-                      //   builder: (context, state) => AddCommunityPage(),
-                      // ),
+                      GoRoute(
+                        path: 'EditCommunityVirtuesPage/:community',
+                        name: 'EditCommunityVirtuesPage',
+                        builder: (context, state) {
+                          final community = state.pathParameters['community'];
+
+                          return EditCommunityVirtuesPage(
+                            community: community
+                         );
+                        }
+                      ),
                   ]
                 ),
                 GoRoute(
@@ -245,18 +251,6 @@ class AppNavigation {
                         name: 'PrivacyPolicyPage',
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
-                      // GoRoute(
-                      //   path: 'DevSettingsPage',
-                      //   name: 'DevSettingsPage',
-                      //   builder: (context, state) => DevSettingsPage(),
-                      //   routes: [
-                      //       // GoRoute(
-                      //       //   path: 'AddCommunityPage',
-                      //       //   name: 'AddCommunityPage',
-                      //       //   builder: (context, state) => AddCommunityPage(),
-                      //       // ),
-                      //     ]
-                      //   ),
                     ]),
                 GoRoute(
                   path: "/editProfilePage",

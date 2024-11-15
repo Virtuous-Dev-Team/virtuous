@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
+import 'package:virtuetracker/api/communityCreation.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
 import 'package:virtuetracker/controllers/communityCreationController.dart';
@@ -19,8 +20,8 @@ import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
-import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
-import 'package:virtuetracker/screens/settingsScreen/addcommunity.dart';
+import 'package:virtuetracker/screens/dev/devsettings.dart';
+import 'package:virtuetracker/screens/dev/editCommunityVirtues.dart';
 import 'package:virtuetracker/main.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
@@ -29,7 +30,7 @@ import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 import 'package:virtuetracker/widgets/createCommunityPopup.dart';
 import 'package:virtuetracker/widgets/createVirtuePopup.dart';
 import '../../widgets/appBarWidget.dart';
-import 'changepassword.dart';
+import '../settingsScreen/changepassword.dart';
 
 class DevSettingsPage extends ConsumerStatefulWidget {
   //const DevSettingsPage({super.key});
@@ -40,6 +41,9 @@ class DevSettingsPage extends ConsumerStatefulWidget {
 
 class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
   late String currentCommunity = 'Legal'; //default to legal
+  late String currentVirtue = 'Honesty'; //default to honesty in legal community
+
+  final TextEditingController descriptionController = TextEditingController();
 
   @override
   void initState() {
@@ -54,8 +58,8 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    final communityList = ref.watch(communityCreationControllerProvider);
-
+    final communityProvider = ref.watch(communityCreationControllerProvider);
+    
     return Scaffold(
     backgroundColor: Color(0xFFEFE5CC),
     appBar: AppBarWidget('regular'),
@@ -120,7 +124,7 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                             height: 50,
                             child: Center(
                               child: Text(
-                                "New Community",
+                                "Create New Community",
                                 style: GoogleFonts.tinos(
                                   textStyle: TextStyle(
                                     fontSize: 20,
@@ -162,8 +166,9 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(5.0),
                         ),
-                        child: communityList.when(
+                        child: communityProvider.when(
                             data: (data) {
+                              
                               final List<String> communitiesDropValues = data['communityList'];
 
                               print ('These are drop values: $communitiesDropValues');
@@ -228,15 +233,16 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                         child: TextField(
-                          // controller: ,
+                          controller: descriptionController,
                           // onChanged: (newValue) {
                           //   setState(() {});
                           // },
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.zero,
                             isDense: true,
+                            hintText: 'Enter new community description',
                             hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(color: Colors.black)),
+                                textStyle: TextStyle(color: Color.fromARGB(255, 128, 126, 126))),
                             border:
                                 InputBorder.none, // Hide the default border
                           ),
@@ -245,10 +251,13 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                       SizedBox(
                         height: screenHeight / 70,
                       ),
-                      Center(
+                      SizedBox(
+                          height: 25,
+                        ),
+                        Center(
                         child: MaterialButton(
                           onPressed: () {
-                            showCreateVirtueDialog(context, ref, currentCommunity);
+                            GoRouter.of(context).go('/DevSettingsPage/EditCommunityVirtuesPage/$currentCommunity');
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -269,7 +278,8 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                             height: 50,
                             child: Center(
                               child: Text(
-                                "New Virtue",
+                                "Edit Virtues for $currentCommunity",
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.tinos(
                                   textStyle: TextStyle(
                                     fontSize: 20,
@@ -282,160 +292,24 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                         ),
                       ),
                       SizedBox(
-                        height: screenHeight / 70,
+                        height: 25,
                       ),
-                      Text(
-                        'Virtue Select',
-                        style: GoogleFonts.adamina(
-                          textStyle: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      // This would be a virtue dropdown 
-                      // that autofills the page based on the virtue selected
-                      // and it could have an option for new that doesn't autofill
-                      Container(
-                        constraints: BoxConstraints(
-                            minHeight: 0,
-                            maxHeight: screenHeight *
-                                0.2), // Adjust the maxHeight according to your layout
-                        padding: EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFCEC0A1),
-                            width: 2.0, // Set the border width
-                          ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: communityList.when(
-                            data: (data) {
-                              final List<String> communitiesDropValues = data['communityList'];
-
-                              print ('These are drop values: $communitiesDropValues');
-
-                              print('1: $currentCommunity');
-
-                              return DropdownButton<String>(
-                                value: currentCommunity,
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    currentCommunity = newValue!;
-                                    print('state changed : $currentCommunity');
-                                  });
-                                },
-                                items: communitiesDropValues.map<DropdownMenuItem<String>>((String value) {
-                                  print('Mapping dropdown item: $value');
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                                dropdownColor: Colors.white,
-                                isDense: true,
-                                icon: Icon(
-                                  Icons.arrow_drop_down,
-                                  color: Colors.black,
-                                ),
-                                isExpanded: true,
-                                underline: Container(),
-                                borderRadius: BorderRadius.circular(25.0),
-                              );
-                            },
-                            loading: () => Center(child: CircularProgressIndicator()),
-                            error: (err, stack) => Text("Error loading communities"),
-                          ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Text(
-                        'Definition',
-                        style: GoogleFonts.adamina(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFCEC0A1),
-                            width: 2.0, // Set the border width
-                          ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: TextField(
-                          //controller: ,
-                          // onChanged: (newValue) {
-                          //   setState(() {});
-                          // },
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
-                            hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(color: Colors.black)),
-                            border:
-                                InputBorder.none, // Hide the default border
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Text(
-                        'Color Code',
-                        style: GoogleFonts.adamina(
-                          textStyle: TextStyle(
-                              fontWeight: FontWeight.normal, fontSize: 14),
-                        ),
-                      ),
-                      SizedBox(
-                        height: screenHeight / 70,
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(3.0),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Color(0xFFCEC0A1),
-                            width: 2.0, // Set the border width
-                          ),
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        child: TextField(
-                          //controller: ,
-                          // onChanged: (newValue) {
-                          //   setState(() {});
-                          // },
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
-                            hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(color: Colors.black)),
-                            border:
-                                InputBorder.none, // Hide the default border
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                          height: 25,
-                        ),
                       Center(
                         child: MaterialButton(
-                          onPressed: () {
-                            
+                          onPressed: () async {
+                            try {
+                              final communityCreationController = 
+                                ref.read(communityCreationProvider);
+
+                              await communityCreationController
+                                .editCommunityDesc(
+                                  currentCommunity,
+                                  descriptionController.text,
+                              );
+                            } catch (e) {
+                              print('Error in create virtue popup $e');
+                            }
+                        
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -456,7 +330,8 @@ class _DevSettingsPageState extends ConsumerState<DevSettingsPage> {
                             height: 50,
                             child: Center(
                               child: Text(
-                                "Update Community",
+                                "Update Community Description",
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.tinos(
                                   textStyle: TextStyle(
                                     fontSize: 20,

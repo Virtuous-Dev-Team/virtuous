@@ -61,11 +61,11 @@ void showCreateVirtueDialog(BuildContext context, WidgetRef ref, String currentC
                     descriptionController.text,
                     colorCodeController.text);
               } catch (e) {
-                print('Error in create community popup $e');
+                print('Error in create virtue popup $e');
               }
             
             },
-            child: Text("Create Community"),
+            child: Text("Create Virtue"),
           ),
         ],
       );

@@ -40,6 +40,37 @@ class CommunityCreation {
     }
   }
 
+  // gets a list of virtue names in a given community
+  Future getVirtueNames(String communityName) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        return {'Success': false, 'Error': "User not found"};
+      }
+      
+      String communityLookup = communityName.replaceAll(' ', '');
+      List<String> virtueList = [];
+
+      // Get doc for target community
+      final QuerySnapshot<Map<String, dynamic>> communityDoc = 
+        await communityRef
+        .where('communityName', isEqualTo: communityLookup)
+        .get();
+      
+      
+      final virtueArray = 
+        communityDoc.docs.first.data()['quadrantInformation'];
+
+      for (var virtue in virtueArray) {
+        // add virtuename to virtueList
+        virtueList.add(virtue['quadrantName']!);
+      }
+
+      return {'Success': true, 'response': virtueList};
+    } on FirebaseException catch (error) {
+      return {'Success': false, 'Error': error.message};
+    } 
+  } 
 
   // Adds basic community info to both collections in db
   Future createNewCommunity(
@@ -96,17 +127,21 @@ class CommunityCreation {
   Future createVirtue(
     String currentCommunity, String virtueName, String definition, String virtueColor) async {
     try {
+      
       // get uid of target community 
-      final QuerySnapshot<Map<String, dynamic>> targetData = await communityRef
+      final QuerySnapshot<Map<String, dynamic>> communityDoc = await communityRef
             .where('communityName', isEqualTo: currentCommunity)
             .get();
       
-      final String communityId = targetData.docs.first.id;
+      final targetData = communityDoc.docs.first.data();
+      final String communityId = communityDoc.docs.first.id;
+      var virtueArrayObject = [];
 
       // grabs current array storing map of each virtue 
-      List<Map<String, String>> virtueArrayObject = 
-        targetData.docs.first.data()['quadrantInformation'];
-
+      if (targetData['quadrantInformation'] != null) {
+        virtueArrayObject = targetData['quadrantInformation'];
+      }
+      print('sup');
       virtueArrayObject.add({
         'quadrantColor': virtueColor,
         'quadrantDefinition': definition,
@@ -156,7 +191,7 @@ class CommunityCreation {
       final String communityId = targetData.docs.first.id;
 
       // grabs current array storing map of each virtue 
-      List<Map<String, String>> virtueArrayObject = 
+      var virtueArrayObject = 
         targetData.docs.first.data()['quadrantInformation'];
 
       // find index of target virtue
@@ -168,13 +203,14 @@ class CommunityCreation {
             finalDef = virtue['quadrantDefinition'] ?? 'Definition error';
           } 
 
-          if (virtueColor == null) {
+          if (virtueColor == '') {
             finalColor = virtue['quadrantColor'] ?? 'Color error';
           }
           break;
         }
         targetIndex++;
       }
+
 
       // Check if there was an error getting a value thats not being changed
       // abort if so
@@ -205,6 +241,7 @@ class CommunityCreation {
           'definition': finalDef
         });
       
+      
       return {'Success': true, 'response': 'Virtue edited in database'};
     } 
     on FirebaseException catch (error) {
@@ -213,7 +250,9 @@ class CommunityCreation {
   }
 }
 
-// Provider to use Users class in other files
+// Provider to use CommunityCreation class in other files
 final communityCreationProvider = Provider<CommunityCreation>((ref) {
   return CommunityCreation();
 });
+
+
