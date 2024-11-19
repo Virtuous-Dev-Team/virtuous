@@ -7,7 +7,7 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/screens/editVirtueEntry.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
 import 'package:virtuetracker/screens/settingsScreen/changephone.dart';
-import 'package:virtuetracker/screens/settingsScreen/editprofile.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/screens/forgotPasswordPage.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/app_router/scaffoldWithNavBar.dart';
@@ -23,6 +23,8 @@ import 'package:virtuetracker/screens/signUpPage.dart';
 import 'package:virtuetracker/screens/surveyPage.dart';
 import 'package:virtuetracker/screens/tutorialPage.dart';
 import 'package:virtuetracker/screens/virtueEntry.dart';
+import 'package:virtuetracker/screens/dev/devsettings.dart';
+import 'package:virtuetracker/screens/dev/editCommunityVirtues.dart';
 
 import '../screens/settingsScreen/notifications.dart';
 import '../screens/settingsScreen/privacy.dart';
@@ -31,7 +33,7 @@ import '../screens/settingsScreen/termofuse.dart';
 
 String initial(ref) {
   try {
-    print('time to nvgate');
+    print('time to navigate');
     final user = ref.watch(authStateChangesProvider).value;
     // final fisrtTimey = ref.watch(isFirstTimeSignInProvider);
     // final dynamic userInfo = ref.watch(currentUserInfo);
@@ -84,6 +86,8 @@ class AppNavigation {
       GlobalKey<NavigatorState>(debugLabel: 'shellNearby');
   static final _shellNavigatorResources =
       GlobalKey<NavigatorState>(debugLabel: 'shellResources');
+  static final _shellNavigatorEditProfile =
+      GlobalKey<NavigatorState>(debugLabel: 'shellEditProfile');
   // GoRouter configuration
 
   // Call the navigation function after the build is complete
@@ -194,15 +198,28 @@ class AppNavigation {
                   ],
                 ),
                 GoRoute(
+                  path: '/DevSettingsPage',
+                  name: 'DevSettingsPage',
+                  builder: (context, state) => DevSettingsPage(),
+                  routes: [
+                      GoRoute(
+                        path: 'EditCommunityVirtuesPage/:community',
+                        name: 'EditCommunityVirtuesPage',
+                        builder: (context, state) {
+                          final community = state.pathParameters['community'];
+
+                          return EditCommunityVirtuesPage(
+                            community: community
+                         );
+                        }
+                      ),
+                  ]
+                ),
+                GoRoute(
                     path: '/SettingsPage',
                     name: 'SettingsPage',
                     builder: (context, state) => SettingsPage(),
                     routes: [
-                      GoRoute(
-                        path: 'EditProfilePage',
-                        name: 'EditProfilePage',
-                        builder: (context, state) => EditProfilePage(),
-                      ),
                       GoRoute(
                           path: 'NotificationsPage',
                           name: 'NotificationsPage',
@@ -235,6 +252,14 @@ class AppNavigation {
                         builder: (context, state) => PrivacyPolicyPage(),
                       ),
                     ]),
+                GoRoute(
+                  path: "/editProfilePage",
+                  name: "editProfilePage",
+                  builder: (BuildContext context, GoRouterState state) => 
+                    EditProfilePage(),
+                  routes: [],
+                ),
+                
               ],
             ),
 
@@ -274,7 +299,7 @@ class AppNavigation {
               ],
             ),
 
-            /// Brach Resources
+            /// Branch Resources
             StatefulShellBranch(
               navigatorKey: _shellNavigatorResources,
               routes: <RouteBase>[
@@ -287,9 +312,12 @@ class AppNavigation {
                 ),
               ],
             ),
+
+            
           ],
         ),
       ],
     );
   });
 }
+

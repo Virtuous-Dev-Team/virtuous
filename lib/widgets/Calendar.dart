@@ -12,13 +12,12 @@ import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/users.dart';
 
 import '../Models/LegalCalendarModel.dart';
-import '../App_Configuration/apptheme.dart';
 
 class CustomCalender {
   Widget customCalender(BuildContext context, List<LegalCalendarModel> markers,
@@ -88,219 +87,23 @@ class CustomCalender {
     events: {},
   );
 
-  addListToCalender(List<LegalCalendarModel> markers, context) {
-    for (int i = 0; i < markers.length; i++) {
-      if (markers[i].HonestyList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].HonestyList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].HonestyList![listLength],
-            Event(
-              date: markers[i].HonestyList![listLength],
-              title: 'Honesty',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrHonesty),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-
-      if (markers[i].CourageList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].CourageList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].CourageList![listLength],
-            Event(
-              date: markers[i].CourageList![listLength],
-              title: 'Courage',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrCompassion),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-
-      if (markers[i].CompassionList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].CompassionList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].CompassionList![listLength],
-            Event(
-              date: markers[i].CompassionList![listLength],
-              title: 'Compassion',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrCompassion),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-
-      if (markers[i].GenerosityList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].GenerosityList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].GenerosityList![listLength],
-            Event(
-              date: markers[i].GenerosityList![listLength],
-              title: 'Generosity',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrGenerosity),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-      if (markers[i].FidelityList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].FidelityList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].FidelityList![listLength],
-            Event(
-              date: markers[i].FidelityList![listLength],
-              title: 'Fidelity',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrFidelity),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-      if (markers[i].IntegrityList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].IntegrityList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].IntegrityList![listLength],
-            Event(
-              date: markers[i].IntegrityList![listLength],
-              title: 'Integrity',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrIntegrity),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-      if (markers[i].FairnessList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].FairnessList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].FairnessList![listLength],
-            Event(
-              date: markers[i].FairnessList![listLength],
-              title: 'Fairness',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrFairness),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-      if (markers[i].SelfControlList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].SelfControlList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].SelfControlList![listLength],
-            Event(
-              date: markers[i].SelfControlList![listLength],
-              title: 'Self-control',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrSelfControl),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-      if (markers[i].PrudenceList!.isNotEmpty) {
-        for (int listLength = 0;
-            listLength < markers[i].PrudenceList!.length;
-            listLength++) {
-          _markedDateMap.add(
-            markers[i].PrudenceList![listLength],
-            Event(
-              date: markers[i].PrudenceList![listLength],
-              title: 'Prudence',
-              dot: Container(
-                margin: EdgeInsets.symmetric(horizontal: 1.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colours.swatch(clrPrudence),
-                ),
-                width: 6,
-                height: 6,
-              ),
-            ),
-          );
-        }
-      }
-    }
-  }
-
   Future<String?> _selectSubjectDialog(
       BuildContext context, List<Event> eventsList, ref, communityName) async {
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colours.swatch(clrWhite),
+          title: Text(
+            "Entries",
+            textAlign: TextAlign.center,
+            ),
+          titleTextStyle: TextStyle(
+            //fontWeight: FontWeight.bold,
+            color: Colours.swatch(clrBlack),
+          ),
+          backgroundColor: Colours.swatch(clrBackground),
+          shape: RoundedRectangleBorder(
+           borderRadius: BorderRadius.circular(10)),
           content: Container(
             padding: EdgeInsets.only(top: 10, bottom: 10),
             height: MediaQuery.of(context).size.height / 4,

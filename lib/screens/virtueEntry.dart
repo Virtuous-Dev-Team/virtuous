@@ -1,3 +1,5 @@
+ // ignore_for_file: prefer_const_constructors
+
 import 'dart:ffi';
 
 import 'package:colours/colours.dart';
@@ -8,16 +10,18 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
+import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
-import '../App_Configuration/apptheme.dart';
-import '../App_Configuration/globalfunctions.dart';
 import '../widgets/appBarWidget.dart';
+
+String? globalCommunityName;
+Color? virtueColor;
 
 class VirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
@@ -42,6 +46,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
     shareEntry = userInfo.shareEntries;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
     tfDescription.text = '';
     tfAdvice.text = '';
     DateTime now = DateTime.now();
@@ -134,6 +139,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             });
           },
         );
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: mainBackgroundColor,
@@ -145,6 +151,12 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
           IconButton(
             icon: Icon(Icons.account_circle, size: 30, color: iconColor),
             onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please complete virtue entry'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
               // TODO: Implement profile icon functionality.
             },
           ),
@@ -165,7 +177,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                 child: PageView(
                   controller: _pageController,
                   children: [
-                    buildVirtueEntry1(context, screenWidth, screenHeight),
+                    buildVirtueEntry1(context, screenWidth, screenHeight,
+                        quadrantName: widget.quadrantName!,
+                        definition: widget.definition!,
+                        color: widget.color!),
                     buildVirtueEntry2(context, screenWidth, screenHeight,
                         quadrantName: widget.quadrantName!,
                         definition: widget.definition!,
@@ -200,48 +215,78 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
   }
 
   Widget buildVirtueEntry1(
-    BuildContext context,
-    double screenWidth,
-    double screenHeight,
-  ) {
+      BuildContext context, double screenWidth, double screenHeight,
+      {required String quadrantName,
+      required String definition,
+      required String color}) {
+    virtueColor = VirtueColor(communityName, quadrantName);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          //mainAxisAlignment: MainAxisAlignment.start,
+          //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               height: 30,
             ),
+            /*Center(child: Text(quadrantName)),
+            SizedBox(
+              height: 5,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: Text(definition),
+            ),
+            SizedBox(height: 5,),*/
             Text(
-              '     What were you doing when you modeled this virtue?',
-              style: GoogleFonts.tinos(
+              'What did you do to show $quadrantName?',
+              //TextAlign isn't working for some reason
+              //textAlign: TextAlign.center,
+              style: GoogleFonts.adamina(
                 textStyle: TextStyle(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
                   color: Colors.black,
                 ),
               ),
+              textAlign: TextAlign.center,
             ),
 
             SizedBox(
               height: 5,
             ),
-            Divider(
-              thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
-            ),
-
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Text(
-                'Date of Occurrence ${tfDate.text}, ${tfTime.text}',
-                style: GoogleFonts.tinos(
+                '$definition',
+                style: GoogleFonts.inter(
                   textStyle: TextStyle(
                     fontSize: 14,
-                    color: Colors.black,
                   ),
+                ),
+              ),
+            ),
+            Divider(
+              thickness: 2,
+              color: virtueColor,
+              //legalVirtueColors[widget.quadrantName!],
+            ),
+
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Current Selected Date of Occurrence ${tfDate.text}, ${tfTime.text}',
+                  style: GoogleFonts.tinos(
+                    textStyle: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                    ),
+                  ),
+                  textAlign: TextAlign.left,
                 ),
               ),
             ),
@@ -313,12 +358,15 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             SizedBox(
               height: 10,
             ),
-            Text(
-              'What event was happening?',
-              style: GoogleFonts.tinos(
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'What event was happening when you showed $quadrantName?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
@@ -326,165 +374,184 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
             SizedBox(
               height: 10,
             ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(eventList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(eventList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (eventList[index].isSelected == true) {
-                            eventList[index].isSelected = false;
-                          } else {
-                            eventList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            eventList[index].isSelected ? clrPurple : clrWhite),
-                      ),
-                      child: Text(
-                        eventList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(eventList[index].isSelected
-                                ? clrWhite
-                                : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('event_${eventList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (eventList[index].isSelected == true) {
+                              eventList[index].isSelected = false;
+                            } else {
+                              eventList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              eventList[index].isSelected ? clrPurple : clrWhite),
+                        ),
+                        child: Text(
+                          eventList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(eventList[index].isSelected
+                                  ? clrWhite
+                                  : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
             SizedBox(height: 10),
-            Text(
-              'Who were you with?',
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+              'Who were you with? ',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Colors.black,
                 ),
-              ),
+                  ),
+                ),
             ),
 
             SizedBox(
               height: 10,
             ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(whoWereWithYouList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(whoWereWithYouList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (whoWereWithYouList[index].isSelected == true) {
-                            whoWereWithYouList[index].isSelected = false;
-                          } else {
-                            whoWereWithYouList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            whoWereWithYouList[index].isSelected
-                                ? clrPurple
-                                : clrWhite),
-                      ),
-                      child: Text(
-                        whoWereWithYouList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(
-                                whoWereWithYouList[index].isSelected
-                                    ? clrWhite
-                                    : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('who_${whoWereWithYouList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (whoWereWithYouList[index].isSelected == true) {
+                              whoWereWithYouList[index].isSelected = false;
+                            } else {
+                              whoWereWithYouList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              whoWereWithYouList[index].isSelected
+                                  ? clrPurple
+                                  : clrWhite),
+                        ),
+                        child: Text(
+                          whoWereWithYouList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(
+                                  whoWereWithYouList[index].isSelected
+                                      ? clrWhite
+                                      : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
             SizedBox(
               height: 10,
             ),
 
-            Text(
-              'Where were you?',
-              style: GoogleFonts.tinos(
-                textStyle: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Where were you?',
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ),
 
-            SizedBox(
-              height: 10,
-            ),
-            Wrap(
-              direction: Axis.horizontal,
-              children: List.generate(whereWereYouList.length, (index) {
-                return Container(
-                  margin: EdgeInsets.only(left: 5, right: 5),
-                  child: Container(
+            SizedBox(height: 5,),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Wrap(
+                direction: Axis.horizontal,
+                children: List.generate(whereWereYouList.length, (index) {
+                  return Container(
                     decoration: BoxDecoration(
                         // color: Colours.swatch(
                         //     eventList[index].isSelected ? clrPurple : clrWhite),
                         // borderRadius: BorderRadius.circular(10)
                         ),
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          if (whereWereYouList[index].isSelected == true) {
-                            whereWereYouList[index].isSelected = false;
-                          } else {
-                            whereWereYouList[index].isSelected = true;
-                          }
-                        });
-                      },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colours.swatch(
-                            whereWereYouList[index].isSelected
-                                ? clrPurple
-                                : clrWhite),
-                      ),
-                      child: Text(
-                        whereWereYouList[index].eventName.toString(),
-                        style: GoogleFonts.inter(
-                          textStyle: TextStyle(
-                            fontSize: 12,
-                            color: Colours.swatch(
-                                whereWereYouList[index].isSelected
-                                    ? clrWhite
-                                    : clrBlack),
+                    margin: EdgeInsets.all(4),
+                    child: SizedBox(
+                      height: 30,
+                      child: OutlinedButton(
+                        key: Key('where_${whereWereYouList[index].eventName}'),
+                        onPressed: () {
+                          setState(() {
+                            if (whereWereYouList[index].isSelected == true) {
+                              whereWereYouList[index].isSelected = false;
+                            } else {
+                              whereWereYouList[index].isSelected = true;
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colours.swatch(
+                              whereWereYouList[index].isSelected
+                                  ? clrPurple
+                                  : clrWhite),
+                        ),
+                        child: Text(
+                          whereWereYouList[index].eventName.toString(),
+                          style: GoogleFonts.inter(
+                            textStyle: TextStyle(
+                              fontSize: 12,
+                              color: Colours.swatch(
+                                  whereWereYouList[index].isSelected
+                                      ? clrWhite
+                                      : clrBlack),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
             ),
 
             // SizedBox(
@@ -544,6 +611,8 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
+    print(definition);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -551,28 +620,43 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
           children: [
             Column(
               children: [
-                Text(quadrantName),
+                Text(
+                  quadrantName,
+                  style: GoogleFonts.adamina(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 5,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(definition),
+                  child: Text(
+                    definition,
+                    style: GoogleFonts.inter(
+                      textStyle: TextStyle(
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
                 )
               ],
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[widget.quadrantName!],
+              color: virtueColor,
             ),
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Take a moment to write about what happened.               What made it meaningful to you?",
+                  "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -581,7 +665,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               ),
             ),
             SizedBox(height: 3.0),
-            textFieldNoteInput(context, tfDescription, false),
+            textFieldNoteInput(context, tfDescription, false, 'meaningfulAns'),
             SizedBox(
               height: 8.0,
             ),
@@ -589,10 +673,10 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give    someone about modeling this virtue throughout            the day?",
+                  "What is the best piece of advice you could give someone about modeling $quadrantName throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -601,7 +685,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, tfAdvice, false),
+            textFieldNoteInput(context, tfAdvice, false, 'adviceAns'),
             SizedBox(height: 28.0),
             MaterialButton(
               onPressed: () async {
@@ -626,6 +710,7 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
                   isLoading = false;
                 });
               },
+              key: Key('saveEntry'),
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
@@ -748,33 +833,4 @@ class _VirtueEntryState extends ConsumerState<VirtueEntry> {
       });
     }
   }
-}
-
-Widget textFieldNoteInput(
-    BuildContext context, TextEditingController controller, bool readOnly) {
-  return SizedBox(
-      width: MediaQuery.of(context).size.width / 1.0,
-      height: 120,
-      child: TextFormField(
-        cursorColor: Colors.black,
-        cursorRadius: const Radius.circular(0),
-        controller: controller,
-        maxLines: 4,
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.text,
-        readOnly: readOnly,
-        style: TextStyle(color: iconColor, fontSize: 16),
-        decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            filled: true,
-            fillColor: Colors.white),
-      ));
 }

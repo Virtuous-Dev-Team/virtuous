@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
-import 'package:virtuetracker/App_Configuration/apptheme.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
@@ -61,6 +60,9 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     final resourcesController = ref.watch(resourcesControllerProvider);
+    final userInfo = ref.watch(userInfoProviderr);
+    communityName = userInfo.currentCommunity;
+
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
         appBar: AppBarWidget('regular'),
@@ -96,6 +98,7 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                         fontWeight: FontWeight.w600,
                         color: Colours.black),
                     indicatorSize: TabBarIndicatorSize.tab,
+                    labelColor: Colours.swatch(clrBlack),
                     unselectedLabelColor: Colours.swatch(clrBlack),
                     indicatorPadding: const EdgeInsets.only(left: 0, right: 0),
                     indicator: BoxDecoration(
@@ -107,7 +110,8 @@ class _ResourcePageState extends ConsumerState<ResourcePage>
                     indicatorColor: Colours.swatch(clrBlack),
                     tabs: const [
                       Tab(
-                        text: "Virtuous",
+                        text: "Being Virtuous",
+                        
                       ),
                       Tab(
                         text: "My Community",

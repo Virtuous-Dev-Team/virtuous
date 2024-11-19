@@ -1,15 +1,19 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:colours/colours.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/controllers/resourcesController.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/controllers/updateProfileController.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/main.dart';
@@ -17,7 +21,6 @@ import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-import '../../App_Configuration/apptheme.dart';
 import '../../widgets/appBarWidget.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -30,21 +33,27 @@ class EditProfilePage extends ConsumerStatefulWidget {
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newProfileName = TextEditingController();
   TextEditingController newEmail = TextEditingController();
-  TextEditingController newCareer = TextEditingController();
-  TextEditingController newCareerLength = TextEditingController();
+  TextEditingController newCareer = TextEditingController(); //newRole
+  TextEditingController newCareerLength = TextEditingController(); //newLength
   late String currentCommunity;
   bool newListExist = false;
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    print('edit profile : ${userInfo.currentCommunity}');
-    currentCommunity = userInfo.currentCommunity;
 
-    // if (currentCommunity == 'legal')
-    //   currentCommunity = currentCommunity.capitalizeFirst!;
-    newCareer.text = userInfo.careerInfo.currentPosition;
-    newCareerLength.text = userInfo.careerInfo.careerLength;
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      print('edit profile : ${userInfo.currentCommunity}');
+      currentCommunity = userInfo.currentCommunity;
+
+      // if (currentCommunity == 'legal')
+      //   currentCommunity = currentCommunity.capitalizeFirst!;
+      newCareer.text = userInfo.careerInfo.currentPosition;
+      newCareerLength.text = userInfo.careerInfo.careerLength;
+      newEmail.text = user.email ?? ''; // User's email
+      newProfileName.text = user.displayName ?? ''; // User's display name
+    }
   }
 
   @override
@@ -53,16 +62,14 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    // Dropdown values for each page
-    List<String> careerDropdownValues = [
-      'Legal',
-      'Alcoholics Anonymous',
-    ];
+    // Dropdown values for each page - should be renamed to communities
+    // List<String> careerDropdownValues = [
+    //   'Legal',
+    //   'Alcoholics Anonymous',
+    // ];
     // var count = ref.watch<UserInfoProvider>().currentCommunity;
 
     // final userInfoProvider =
@@ -75,7 +82,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     //   }
     // }
     // final u = _readUserInfo();
-    ref.watch(settingsControllerProvider).when(
+    ref.watch(updateProfileControllerProvider).when(
           loading: () => CircularProgressIndicator(),
           error: (error, stackTrace) {
             Future.delayed(Duration.zero, () {
@@ -91,26 +98,31 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           },
           data: (response) async {
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              if (response['Function'] == "updateProfile") {
-                showToasty(response['msg'], true, context);
-                newProfileName.clear();
-                newEmail.clear();
-                newCareer.clear();
-                newCareerLength.clear();
-                // Update UserInfo Provider
-                await setUserInfoProvider(ref);
-                await ref
-                    .read(resourcesControllerProvider.notifier)
-                    .getResources(currentCommunity);
-                await ref
-                    .read(virtueEntryControllerProvider.notifier)
-                    .getMostRecentEntries(currentCommunity);
-                await ref
-                    .read(statsControllerProvider.notifier)
-                    .getAllStats(currentCommunity);
-                GoRouter.of(context).pop();
-
-                // newProfileName.
+              if (response != null) {
+                if (response['Function'] == "updateProfile") {
+                  showToasty(response['msg'], true, context);
+                  // TODO: should we clear them?
+                  //newProfileName.clear();
+                  //newEmail.clear();
+                  //newCareer.clear(); // change this to newMemberRole
+                  //newCareerLength.clear(); // change this to newMemberLength
+                   //Update UserInfo Provider
+                  await setUserInfoProvider(ref);
+                  await ref
+                      .read(resourcesControllerProvider.notifier)
+                      .getResources(currentCommunity);
+                  await ref
+                      .read(virtueEntryControllerProvider.notifier)
+                      .getMostRecentEntries(currentCommunity);
+                  await ref
+                      .read(statsControllerProvider.notifier)
+                      .getAllStats(currentCommunity);
+                  GoRouter.of(context).pop();
+                  // newProfileName.
+                }
+              }
+              else {
+                print("error null response");
               }
             });
           },
@@ -156,6 +168,45 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            'Username',
+                            style: GoogleFonts.adamina(
+                              textStyle: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newProfileName,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                hintText: 'Eg. john doe',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Text(
                             'Email',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
@@ -195,16 +246,20 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             height: screenHeight / 70,
                           ),
                           Text(
-                            'Profile Name',
+                            'Select your community below.',
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
+                                  fontSize: 14, fontWeight: FontWeight.normal),
                             ),
                           ),
                           SizedBox(
                             height: screenHeight / 70,
                           ),
                           Container(
+                            constraints: BoxConstraints(
+                                minHeight: 0,
+                                maxHeight: screenHeight *
+                                    0.2), // Adjust the maxHeight according to your layout
                             padding: EdgeInsets.all(3.0),
                             decoration: BoxDecoration(
                               border: Border.all(
@@ -214,66 +269,39 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(5.0),
                             ),
-                            child: TextField(
-                              controller: newProfileName,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. john doe',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
+                            child: DropdownButton<String>(
+                              value: currentCommunity,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  currentCommunity = newValue!;
+                                });
+                              },
+                              items: careerDropdownValues
+                                  .map<DropdownMenuItem<String>>(
+                                      (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              dropdownColor: Colors
+                                  .white, // Set the background color of the dropdown
+                              isDense: true, // Reduce height
+                              icon: Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.black
+                              ), // Align the arrow to the right
+                              isExpanded:
+                                  true, // Extend the button to the right
+                              underline: Container(),
+                              borderRadius: BorderRadius.circular(25.0),
                             ),
                           ),
                           SizedBox(
                             height: screenHeight / 70,
                           ),
                           Text(
-                            'What is your Career?',
-                            style: GoogleFonts.adamina(
-                              textStyle: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 14),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: TextField(
-                              controller: newCareer,
-                              // onChanged: (newValue) {
-                              //   setState(() {});
-                              // },
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                isDense: true,
-                                hintText: 'Eg. lawyer',
-                                hintStyle: GoogleFonts.tinos(
-                                    textStyle: TextStyle(color: Colors.black)),
-                                border:
-                                    InputBorder.none, // Hide the default border
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            height: screenHeight / 70,
-                          ),
-                          Text(
-                            'How long have you been in this career?',
+                            'How long have you been a part of the $currentCommunity community?', // add community name
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
                                   fontWeight: FontWeight.normal, fontSize: 14),
@@ -312,14 +340,45 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                             height: screenHeight / 70,
                           ),
                           Text(
-                            'Choose a community that best fits your reason for joining Virtuous.',
+                            'What role do you serve in the $currentCommunity community?', // add community name
                             style: GoogleFonts.adamina(
                               textStyle: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.normal),
+                                  fontWeight: FontWeight.normal, fontSize: 14),
+                            ),
+                          ),
+                          SizedBox(
+                            height: screenHeight / 70,
+                          ),
+                          Container(
+                            padding: EdgeInsets.all(3.0),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFCEC0A1),
+                                width: 2.0, // Set the border width
+                              ),
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            child: TextField(
+                              controller: newCareer,
+                              // onChanged: (newValue) {
+                              //   setState(() {});
+                              // },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                isDense: true,
+                                // hintText: 'Eg. lawyer',
+                                hintStyle: GoogleFonts.tinos(
+                                    textStyle: TextStyle(color: Colors.black)),
+                                border:
+                                    InputBorder.none, // Hide the default border
+                              ),
                             ),
                           ),
                           MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              GoRouter.of(context).go('/resource');
+                            },
                             padding: EdgeInsets.zero,
                             child: Text(
                               'Learn more about communities.',
@@ -332,46 +391,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               ),
                             ),
                           ),
-                          Container(
-                            constraints: BoxConstraints(
-                                minHeight: 0,
-                                maxHeight: screenHeight *
-                                    0.2), // Adjust the maxHeight according to your layout
-                            padding: EdgeInsets.all(3.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Color(0xFFCEC0A1),
-                                width: 2.0, // Set the border width
-                              ),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            child: DropdownButton<String>(
-                              value: currentCommunity,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  currentCommunity = newValue!;
-                                });
-                              },
-                              items: careerDropdownValues
-                                  .map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              dropdownColor: Colors
-                                  .white, // Set the background color of the dropdown
-                              isDense: true, // Reduce height
-                              icon: Icon(Icons.arrow_drop_down,
-                                  color: Colors
-                                      .black), // Align the arrow to the right
-                              isExpanded:
-                                  true, // Extend the button to the right
-                              underline: Container(),
-                            ),
-                          ),
                         ],
                       ),
                       SizedBox(
@@ -380,6 +399,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       Center(
                         child: MaterialButton(
                           onPressed: () {
+                            // exit if empty but should almost never be used since values should be auto filled
                             if (newEmail.text.isEmpty &&
                                 newProfileName.text.isEmpty &&
                                 newCareer.text.isEmpty &&
@@ -396,7 +416,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                               newListExist = true;
                             }
                             ref
-                                .read(settingsControllerProvider.notifier)
+                                .read(updateProfileControllerProvider.notifier)
                                 .updateProfile(
                                     newEmail: newEmail.text,
                                     newProfileName: newProfileName.text,
@@ -410,7 +430,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                               .dialogBuilder(context),
                                         },
                                     newListExist: newListExist);
-                            ref.invalidate(settingsControllerProvider);
+                            ref.invalidate(updateProfileControllerProvider);
                           },
                           child: Container(
                             decoration: BoxDecoration(

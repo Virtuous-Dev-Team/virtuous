@@ -9,8 +9,8 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/controllers/communityController.dart';
-import 'package:virtuetracker/controllers/communityController.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -20,126 +20,8 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
-final List<int> quadrantColors = [
-  0xFFF3A3CA,
-  0XFFCBF1D1,
-  0XFFB0E5F6,
-  0XFFF6EEA2,
-  0XFFC58686,
-  0XFFFADAB4,
-  0XFFDEBFF5,
-  0XFF7AB0D8,
-  0XFF7FA881,
-];
+String? globalCommunityName;
 
-final List<String> quadrantNames = [
-  'Honesty',
-  'Courage',
-  'Compassion',
-  'Generosity',
-  'Fidelity',
-  'Integrity',
-  'Fairness',
-  'Self-control',
-  'Prudence',
-];
-
-// Example 1 on how to use Stateful widgets to load data from api call
-
-// class GridPagey extends StatefulWidget {
-//   final String appBarChoice;
-
-//   const GridPagey({super.key, required this.appBarChoice});
-
-//   @override
-//   State<GridPagey> createState() => _GridPageyState(appBarChoice: appBarChoice);
-// }
-
-// class _GridPageyState extends State<GridPagey> {
-//   List<dynamic>? quadrantList = [];
-//   final String appBarChoice;
-
-//   _GridPageyState({required this.appBarChoice});
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     callGetQuadrantList();
-//   }
-
-//   Future<dynamic> callGetQuadrantList() async {
-//     final Communities communities = Communities();
-
-//     try {
-//       dynamic result = await communities.getQuadrantList("legal");
-//       if (result['Success']) {
-//         // user is authenticated in firebase authenctication
-//         // send to homepage
-//         setState(() {
-//           quadrantList = result['response'];
-//         });
-//       } else {
-//         print(result['Error']);
-//       }
-//     } catch (e) {
-//       print(e);
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     print(quadrantList);
-//     return SafeArea(
-//       child: Scaffold(
-//         backgroundColor: Color(0xFFEFE5CC),
-//         appBar: AppBarWidget(appBarChoice),
-//         body: Stack(
-//           children: <Widget>[
-//             Positioned(
-//               top: 10,
-//               left: 10,
-//               right: 10,
-//               height: 740,
-//               child: Container(
-//                 color: Color(0xFFFFFDF9),
-//               ),
-//             ),
-//             Column(
-//               children: [
-//                 SizedBox(
-//                   height: 50,
-//                 ),
-//                 Text(
-//                   'Which virtue did you use today?',
-//                   style: GoogleFonts.tinos(
-//                     textStyle: TextStyle(
-//                       fontSize: 16,
-//                       color: Colors.black,
-//                     ),
-//                   ),
-//                 ),
-//                 SizedBox(
-//                   height: 5,
-//                 ),
-//                 Divider(
-//                   thickness: 0.5,
-//                   color: Colors.black,
-//                   indent: 30,
-//                   endIndent: 30,
-//                 ),
-//                 Expanded(
-//                     child: Container(
-//                   // child: BuildGrid(listy: quadrantList),
-//                   padding: EdgeInsets.only(left: 15, right: 15, top: 20),
-//                 ))
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 class GridPage extends ConsumerStatefulWidget {
   const GridPage({super.key, required this.appBarChoice});
   final String appBarChoice;
@@ -153,83 +35,18 @@ class _GridPageState extends ConsumerState<GridPage> {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
   }
 
   String communityName = '';
   @override
   Widget build(BuildContext context) {
     final controller = ref.watch(communitiesControllerProvider(
-        (communityName: communityName.isEmpty ? 'Legal' : communityName)));
+        (communityName: communityName)));
 
     return Scaffold(
       backgroundColor: Color(0xFFEFE5CC),
       appBar: AppBarWidget(widget.appBarChoice),
-      body: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 10,
-            left: 10,
-            right: 10,
-            height: 740,
-            child: Container(
-              color: Color(0xFFFFFDF9),
-            ),
-          ),
-          Column(
-            children: [
-              SizedBox(
-                height: 50,
-              ),
-              Text(
-                'Which virtue did you use today?',
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Divider(
-                thickness: 0.5,
-                color: Colors.black,
-                indent: 30,
-                endIndent: 30,
-              ),
-              Expanded(
-                  child: Container(
-                child: controller.when(
-                  loading: () => CircularProgressIndicator(),
-                  error: (error, stackTrace) => Text('Error: $error'),
-                  data: (quadrantList) => BuildGrid(
-                    listy: quadrantList,
-                  ),
-                ),
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-              ))
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class GridPagey extends ConsumerWidget {
-  final String appBarChoice;
-
-  const GridPagey({super.key, required this.appBarChoice});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final controller =
-        ref.watch(communitiesControllerProvider((communityName: "legal")));
-
-    return Scaffold(
-      backgroundColor: Color(0xFFEFE5CC),
-      appBar: AppBarWidget(appBarChoice),
       body: Stack(
         children: <Widget>[
           Positioned(
@@ -305,6 +122,7 @@ class BuildGrid extends StatelessWidget {
               final Map<String, dynamic> item =
                   listy![index] as Map<String, dynamic>;
               return Rectangle(
+                key: Key('rectangle_${item['quadrantName']}'),
                 quadrantName: item['quadrantName'],
                 quadrantColor:
                     int.tryParse(item['quadrantColor'].toString()) ?? 0,
@@ -329,6 +147,9 @@ class Rectangle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color? entryColor;
+    entryColor = VirtueColor(globalCommunityName, quadrantName);
+    
     return AspectRatio(
       aspectRatio: 1.0, // Maintain a 1:1 aspect ratio (adjust as needed)
       child: Container(
@@ -357,7 +178,7 @@ class Rectangle extends StatelessWidget {
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Color(quadrantColor),
+            backgroundColor: entryColor,
             elevation: 4,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0)),

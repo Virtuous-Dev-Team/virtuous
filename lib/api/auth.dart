@@ -12,6 +12,7 @@ class Auth {
   Stream<User?> authStateChanges() => auth.authStateChanges();
   final bool _accountCreated = false;
   bool get accountCreated => _accountCreated;
+
   Future<dynamic> createAccount(email, password, fullName) async {
     try {
       if (email == null) {
@@ -23,6 +24,17 @@ class Auth {
 
       final userCredentials = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
+      User? user = userCredentials.user;
+      if(user != null)
+      {
+        await user.updateDisplayName(fullName);
+        user = auth.currentUser;
+        print("registered user");
+        print(user);
+
+      }
+
       return {'Success': true, 'response': userCredentials.user};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ffi';
 
 import 'package:colours/colours.dart';
@@ -8,16 +10,18 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:intl/intl.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/controllers/statsController.dart';
 import 'package:virtuetracker/controllers/virtueEntryController.dart';
 import 'package:virtuetracker/screens/landingPage.dart';
 import 'package:virtuetracker/screens/settingsScreen/changepassword.dart';
-import '../App_Configuration/apptheme.dart';
-import '../App_Configuration/globalfunctions.dart';
+import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
 import '../widgets/appBarWidget.dart';
+
+String? globalCommunityName;
+Color? virtueColor;
 
 class EditVirtueEntry extends ConsumerStatefulWidget {
   final String? quadrantName;
@@ -40,6 +44,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     shareEntry = userInfo.shareEntries;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+    globalCommunityName = communityName;
     tfDescription.text = virtueEntryInfo.whatHappenedAnswer;
     tfAdvice.text = virtueEntryInfo.adviceAnswer;
     eventList = virtueEntryInfo.eventList;
@@ -48,7 +53,8 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     sleepingHours = virtueEntryInfo.sleepHours;
     quadrantName = virtueEntryInfo.quadrantUsed;
     color = virtueEntryInfo.quadrantColor;
-    definition = '';
+    Map<String, String>? communityDefinitionList = communityDefinitions[communityName];
+    definition = communityDefinitionList?[quadrantName] ?? '';
     docId = virtueEntryInfo.docId;
     List<String> split = virtueEntryInfo.dateAndTimeOfOccurence.split(',');
     print('split $split');
@@ -133,6 +139,12 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
           IconButton(
             icon: Icon(Icons.account_circle, size: 30, color: iconColor),
             onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Please complete virtue entry'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
               // TODO: Implement profile icon functionality.
             },
           ),
@@ -192,6 +204,9 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
     double screenWidth,
     double screenHeight,
   ) {
+    virtueColor = VirtueColor(globalCommunityName, quadrantName);
+    
+    
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -203,7 +218,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               height: 30,
             ),
             Text(
-              '     What were you doing when you modeled this virtue?',
+              'What did you do to show $quadrantName?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -218,7 +233,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[quadrantName],
+              color: virtueColor,
             ),
             Text(
               'Date of occurance ${tfDate.text}, ${tfTime.text}',
@@ -298,7 +313,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               height: 10,
             ),
             Text(
-              'What event was happening?',
+              'What event was happening when you showed $quadrantName?',
               style: GoogleFonts.tinos(
                 textStyle: TextStyle(
                   fontSize: 14,
@@ -524,6 +539,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
       {required String quadrantName,
       required String definition,
       required String color}) {
+    print('definition $definition');
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -531,28 +547,42 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
           children: [
             Column(
               children: [
-                Text(quadrantName),
+                Text(
+                  quadrantName,
+                  style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 5,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Text(definition),
+                  child: Text(
+                    definition,
+                    style: GoogleFonts.inter(
+                    textStyle: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                  ),
                 )
               ],
             ),
             Divider(
               thickness: 2,
-              color: legalVirtueColors[quadrantName],
+              color: virtueColor,
             ),
             Container(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "Take a moment to write about what happened.               What made it meaningful to you?",
+                  "Take a moment to write about what happened. What made it meaningful to you?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -561,7 +591,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               ),
             ),
             SizedBox(height: 3.0),
-            textFieldNoteInput(context, tfDescription, false),
+            textFieldNoteInput(context, tfDescription, false, 'meaningfulEditAns'),
             SizedBox(
               height: 8.0,
             ),
@@ -569,10 +599,10 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  "What is the best piece of advice you could give    someone about modeling this virtue throughout            the day?",
+                  "What is the best piece of advice you could give someone about modeling $quadrantName throughout the day?",
                   style: GoogleFonts.tinos(
                     textStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.normal,
                       color: Colours.swatch("#000000"),
                     ),
@@ -581,7 +611,7 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
               ),
             ),
             SizedBox(height: 8.0),
-            textFieldNoteInput(context, tfAdvice, false),
+            textFieldNoteInput(context, tfAdvice, false, 'adviceEditAns'),
             SizedBox(height: 28.0),
             MaterialButton(
               onPressed: () async {
@@ -730,33 +760,4 @@ class _EditVirtueEntryState extends ConsumerState<EditVirtueEntry> {
       });
     }
   }
-}
-
-Widget textFieldNoteInput(
-    BuildContext context, TextEditingController controller, bool readOnly) {
-  return SizedBox(
-      width: MediaQuery.of(context).size.width / 1.0,
-      height: 120,
-      child: TextFormField(
-        cursorColor: Colors.black,
-        cursorRadius: const Radius.circular(0),
-        controller: controller,
-        maxLines: 4,
-        textInputAction: TextInputAction.done,
-        keyboardType: TextInputType.text,
-        readOnly: readOnly,
-        style: TextStyle(color: iconColor, fontSize: 16),
-        decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black),
-            ),
-            filled: true,
-            fillColor: Colors.white),
-      ));
 }

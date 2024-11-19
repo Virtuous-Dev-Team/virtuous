@@ -4,13 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:virtuetracker/App_Configuration/appColors.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/controllers/settingsController.dart';
+import 'package:virtuetracker/screens/editprofile.dart';
 import 'package:virtuetracker/widgets/reauthenticateShowDialogWidget.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
 
-import '../../App_Configuration/apptheme.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import '../../widgets/appBarWidget.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -126,20 +127,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child: TextField(
+                          child: TextFormField(
                             controller: newPassword,
+                            obscureText: true,
                             onChanged: (newValue) {
                               setState(() {});
                             },
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.zero,
                               isDense: true,
-                              hintText: 'Eg. abc@gmail.com',
+                              hintText: 'Enter new password',
                               hintStyle: GoogleFonts.tinos(
-                                  textStyle: TextStyle(color: Colors.black)),
+                                  textStyle: TextStyle(color: Color.fromARGB(255, 167, 166, 166))),
                               border:
                                   InputBorder.none, // Hide the default border
                             ),
+                            validator: validatePassword,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
                         ),
                         SizedBox(
@@ -165,20 +169,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(5.0),
                           ),
-                          child: TextField(
+                          child: TextFormField(
                             controller: confirmPassword,
+                            obscureText: true,
                             onChanged: (newValue) {
                               setState(() {});
                             },
                             decoration: InputDecoration(
                               contentPadding: EdgeInsets.zero,
                               isDense: true,
-                              hintText: 'Eg. john doe',
+                              hintText: 'Confirm new password',
                               hintStyle: GoogleFonts.tinos(
-                                  textStyle: TextStyle(color: Colors.black)),
+                                  textStyle: TextStyle(color: Color.fromARGB(255, 167, 166, 166))),
                               border:
                                   InputBorder.none, // Hide the default border
                             ),
+                            validator: validatePassword,
+                            autovalidateMode: AutovalidateMode.onUserInteraction,
                           ),
                         ),
                       ],

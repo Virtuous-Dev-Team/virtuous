@@ -6,6 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:virtuetracker/screens/homePage.dart';
+import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
+
 //import 'package:virtuetracker/widgets/appBarWidget.dart';
 
 // Color palette
@@ -25,8 +28,10 @@ List<ButtonsData>? GridviewData = [
   ButtonsData(color: "#FADAB4", text: "Integrity"),
   ButtonsData(color: "#DEBFF5", text: "Fairness"),
   ButtonsData(color: "#7AB0D8", text: "Self-control"),
-  ButtonsData(color: "#7FA881", text: "Prodence")
+  ButtonsData(color: "#7FA881", text: "Prudence")
 ];
+
+
 
 void main() => runApp(MaterialApp(home: TutorialPage()));
 
@@ -40,8 +45,12 @@ class TutorialPage extends StatefulWidget {
 class _TutorialPageState extends State<TutorialPage> {
   final PageController _pageController = PageController();
 
+  int virtueName = 0;
+  String selectedCommunity = "Legal";
+
   @override
   Widget build(BuildContext context) {
+    
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -224,10 +233,13 @@ class _TutorialPageState extends State<TutorialPage> {
     );
   }
 
+  //The grid
   Widget buildTutorialScreen2(
       {required String title,
       required String content,
       required Color backgroundColor}) {
+    
+    
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -273,6 +285,9 @@ class _TutorialPageState extends State<TutorialPage> {
                 children: [
                   InkWell(
                     onTap: () {
+                      setState(() {
+                        virtueName = index; // Update state
+                      });
                       _pageController.nextPage(
                           duration: Duration(milliseconds: 500),
                           curve: Curves.easeInOut);
@@ -297,7 +312,7 @@ class _TutorialPageState extends State<TutorialPage> {
                           GridviewData![index].text.toString(),
                           style: GoogleFonts.tinos(
                             textStyle: TextStyle(
-                              fontSize: 13,
+                              fontSize: 14,
                               fontWeight: FontWeight.normal,
                               color: iconColor,
                             ),
@@ -315,10 +330,15 @@ class _TutorialPageState extends State<TutorialPage> {
     );
   }
 
+  //Talk about how you modeled honesty
   Widget buildTutorialScreen3(
       {required String title,
       required String content,
       required Color backgroundColor}) {
+    print(virtueName);
+    String selectedVirtue = GridviewData![virtueName].text.toString();
+    Color virtueC = legalVirtueColors[selectedVirtue] ?? Color(0xFFF3A3CA);
+    String virtueDefinition = communityDefinitions[selectedCommunity]?[selectedVirtue] ?? "Definition not found";
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
@@ -354,7 +374,7 @@ class _TutorialPageState extends State<TutorialPage> {
           ),
           SizedBox(height: 20.0),
           Text(
-            "Honesty",
+            GridviewData![virtueName].text.toString(),
             style: GoogleFonts.tinos(
               textStyle: TextStyle(
                 fontSize: 18,
@@ -380,7 +400,7 @@ class _TutorialPageState extends State<TutorialPage> {
             width: MediaQuery.of(context).size.width / 1.3,
             child: Center(
               child: Text(
-                "Honesty is being truthful and sincere in both words and actions, without deceit or deception.",
+                virtueDefinition,
                 // textAlign: TextAlign.center,
                 style: GoogleFonts.tinos(
                   textStyle: TextStyle(
@@ -396,7 +416,7 @@ class _TutorialPageState extends State<TutorialPage> {
           Divider(
             endIndent: 10,
             indent: 10,
-            color: Colours.swatch("#F3A3CA"),
+            color: virtueC,
             height: MediaQuery.of(context).size.height / 35,
             thickness: 2,
           ),
@@ -413,39 +433,12 @@ class _TutorialPageState extends State<TutorialPage> {
             ),
           ),
           SizedBox(height: 8.0),
-          textFieldNoteInput(context, tfDescription, false)
+          textFieldNoteInput(context, tfDescription, false, 'usedAns'),
 
 // Other widgets or content can go here
         ],
       ),
     );
-  }
-
-  Widget textFieldNoteInput(
-      BuildContext context, TextEditingController controller, bool readOnly) {
-    return SizedBox(
-        width: MediaQuery.of(context).size.width / 1.2,
-        height: 120,
-        child: TextFormField(
-          cursorColor: Colors.black,
-          cursorRadius: const Radius.circular(0),
-          controller: controller,
-          maxLines: 4,
-          readOnly: readOnly,
-          style: TextStyle(color: iconColor, fontSize: 16),
-          decoration: InputDecoration(
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.black),
-              ),
-              filled: true,
-              fillColor: Colors.white),
-        ));
   }
 
   Widget buildTutorialScreen4() {

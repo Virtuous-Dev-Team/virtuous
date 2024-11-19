@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,12 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+
+    // Get display name from Auth or User as a placeholder if they don't have one
+    final user = FirebaseAuth.instance.currentUser;
+    final displayName = user?.displayName ?? 'User';
+    print(displayName);
+
     ref.watch(authControllerProvider).when(
         loading: () => CircularProgressIndicator(),
         error: (error, stackTrace) {
@@ -43,9 +50,9 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
           });
         });
     return appBarChoice.compareTo('regular') == 0
-        ? RegularAppBar(ref: ref)
+        ? RegularAppBar(ref: ref, displayName: displayName)
         : AppBarWithArrow(
-            ref: ref,
+            ref: ref, displayName: displayName
           );
   }
 
@@ -54,8 +61,9 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
 }
 
 class RegularAppBar extends StatelessWidget {
-  const RegularAppBar({super.key, required this.ref});
+  const RegularAppBar({super.key, required this.ref, required this.displayName});
   final dynamic ref;
+  final String displayName;
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -78,8 +86,10 @@ class RegularAppBar extends StatelessWidget {
 }
 
 class AppBarWithArrow extends StatelessWidget {
-  const AppBarWithArrow({super.key, required this.ref});
+  const AppBarWithArrow({super.key, required this.ref, required this.displayName});
   final dynamic ref;
+  final String displayName;
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -121,11 +131,17 @@ class PopOutMenuWidget extends StatelessWidget {
           ref.invalidate(authControllerProvider);
         } else if (value == 'settings') {
           GoRouter.of(context).go('/SettingsPage');
+        } else if (value == 'editProfile') {
+          GoRouter.of(context).go('/editProfilePage');
         }
         // TODO: Handle other menu items if needed
       },
 
       itemBuilder: (BuildContext context) => [
+         const PopupMenuItem<String>(
+          value: 'editProfile',
+          child: Center(child: Text('Profile')),
+        ),
         const PopupMenuItem<String>(
           value: 'settings',
           child: Center(child: Text('Settings')),
