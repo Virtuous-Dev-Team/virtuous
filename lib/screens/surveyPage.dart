@@ -123,11 +123,19 @@ class SurveyPageState extends State<SurveyPage> {
                 phoneVerified = true;
                 return;
               }
+
+              if (response == null) {
+                print("null response...");
+                return;
+              }
+
               print("What is the response survey: $response");
               // If user has now been created in Users collection then go to Tutorial Page
               await setUserInfoProvider(ref);
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                GoRouter.of(context).go(response);
+                print("community $currentCommunity");
+                print("$response response");
+                GoRouter.of(context).goNamed('tutorial', pathParameters: {'communityName': currentCommunity});
               });
             },
           );
