@@ -40,6 +40,7 @@ dependencies:
   mockito: ^5.4.4
   flutter_map: ^6.1.0
   flutter_map_heatmap: ^0.0.7
+  latlong2: ^0.9.1
   
 
 dev_dependencies:
