@@ -132,9 +132,12 @@ class AppNavigation {
             builder: (context, state) => SurveyPage(),
             routes: [
               GoRoute(
-                path: 'tutorial',
+                path: 'tutorial/:communityName',
                 name: 'tutorial',
-                builder: (context, state) => TutorialPage(),
+                builder: (context, state) {
+                  final communityName = state.pathParameters['communityName'] ?? "Legal";
+                  return TutorialPage(communityName: communityName);
+                },
               ),
             ]),
 

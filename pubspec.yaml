@@ -38,7 +38,9 @@ dependencies:
   intl: ^0.18.1
   geoflutterfire2: ^2.3.15
   mockito: ^5.4.4
-  latlong2: ^0.9.1
+  flutter_map: ^6.1.0
+  flutter_map_heatmap: ^0.0.7
+  
 
 dev_dependencies:
   flutter_test:
@@ -61,3 +63,4 @@ flutter:
     - assets/images/facebookLogo.png
     - assets/images/appleLogo.png
     - assets/images/intro_virtue.png
+    - assets/images/blank_map.png
