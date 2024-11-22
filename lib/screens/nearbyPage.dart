@@ -232,7 +232,18 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           return Text('Error: ${snapshot.error}');
         } else {
           if (cachedVirtueEntriesMap == null) {
-            cachedVirtueEntriesMap = snapshot.data!;
+            Map<String, Map<String, dynamic>>? chartEntries =
+            (snapshot.data?['chartEntries'] as Map<String, dynamic>?)?.map(
+                  (key, value) => MapEntry(
+                key,
+                value as Map<String, dynamic>,
+              ),
+            );
+            if (chartEntries != null) {
+              cachedVirtueEntriesMap = chartEntries;
+            } else {
+              return Text('No data available'); // Handle null data gracefully
+            }
           }
           List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;

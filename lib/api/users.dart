@@ -487,6 +487,7 @@ class Users {
     }
   }
 
+  // Not in use, remove at end of sprint if we don't start using it here
   DateTime getTimeRange(String timeFrame) {
     DateTime now = DateTime.now();
     DateTime timeRange = now;
@@ -514,12 +515,13 @@ class Users {
       bool shareLocation, double radius, String communityName, String timeFrame) async* {
 
     // get time frame formatted for search
-    DateTime timeRange = getTimeRange(timeFrame);
+    //DateTime timeRange = getTimeRange(timeFrame);
+
+    radius = 500;
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
 
-    print(communityLookup);
     final communityDocRef = 
       FirebaseFirestore.instance.collection('Communities');
 
@@ -536,8 +538,9 @@ class Users {
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
+      final Map<String, List<Map<String, double>>> virtueLocationsMap = {};
 
-      // Get current position and setup Geolocator
+      // Get current position and setup Geolocator with it
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
       geo.point(latitude: position.latitude, longitude: position.longitude);
@@ -556,11 +559,11 @@ class Users {
         print('Accessing shared entries for Virtue: ${virtue['quadrantName']}');
 
         // Retrieve all documents within 'sharedEntries' and log them
-        final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
-        print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
-        for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
-          print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
-        }
+        //final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
+        //print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
+        //for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
+       //   print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
+       // }
 
         // Get color data for the virtue
         var virtueColor = virtue['quadrantColor'];
@@ -569,6 +572,10 @@ class Users {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
+
+        // start with an empty list for the heat map list
+        virtueLocationsMap[virtue['quadrantName']] = [];
+
 
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
@@ -586,10 +593,50 @@ class Users {
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
+        for (var entry in virtueEntries) {
+          // get entry data that should exist
+          var entryData = entry.data();
+          if (entryData == null) {
+            print("Entry data is null, bad news. Skipping it.");
+            continue;
+          }
+
+          // check the format
+          if (entryData is Map<String, dynamic>) {
+            // make sure everything we are accessing exists
+            if (entryData.containsKey('userLocation') &&
+                entryData['userLocation'] is Map<String, dynamic>) {
+              final userLocation = entryData['userLocation'] as Map<
+                  String,
+                  dynamic>;
+              if (userLocation.containsKey('geopoint') &&
+                  userLocation['geopoint'] is GeoPoint) {
+                GeoPoint geoPoint = userLocation['geopoint'] as GeoPoint;
+                virtueLocationsMap[virtue['quadrantName']]?.add({
+                  'latitude': geoPoint.latitude,
+                  'longitude': geoPoint.longitude,
+                });
+              } else {
+                print("bad location for virtue entry: ${entry.id}");
+              }
+            } else {
+              print("wrong format for entry: ${entry.id}");
+            }
+          }
+        }
 
       }
-      print("This is the virtuesEntriesMap!: $virtueEntriesMap");
-      yield virtueEntriesMap;
+      virtueLocationsMap.forEach((virtueName, locations) {
+        print("Virtue: $virtueName");
+        for (var location in locations) {
+          print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}");
+        }
+      });
+      //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
+      yield {
+      'chartEntries':virtueEntriesMap,
+        'mapEntries':virtueLocationsMap
+    };
     }
   }
 
