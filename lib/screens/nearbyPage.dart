@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:latlong2/latlong.dart';
 //import '../widgets/appBarWidget.dart';
 
 // Color palette
@@ -19,6 +21,33 @@ const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 
 Users usesAPI = Users();
+
+// map of zoom level with its corresponding tile width (in longitudes)
+Map<int, double> zoomWidths = {
+  3 : 45,
+  4 : 22.5,
+  5 : 11.25,
+  6 : 5.625,
+  7 : 2.813,
+  8 : 1.406,
+  9 : 0.703,
+  10 : 0.352,
+  11 : 0.176,
+  12 : 0.088
+};
+
+// gets the radius (in miles) depending on center point and zoom level
+num getRadius(LatLng center, int zoomLevel) {
+  double tileWidth = zoomWidths[zoomLevel]!;
+  double longitudinalRadius = ((tileWidth * sqrt(2)) / 2);
+
+  double newLong = center.longitude + longitudinalRadius;
+
+  Distance distance = Distance();
+  double radius = distance.as(LengthUnit.Mile, center, LatLng(newLong, center.latitude));
+
+  return radius;
+}
 
 class NearbyPage extends ConsumerStatefulWidget {
   const NearbyPage({Key? key}) : super(key: key);
