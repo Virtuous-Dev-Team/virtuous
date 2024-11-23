@@ -454,14 +454,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
-  flutter_map_heatmap:
-    dependency: "direct main"
-    description:
-      name: flutter_map_heatmap
-      sha256: "0544a980da9d29ec41bd27f507e46655306d0499dfb98379497f9360a139da39"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.7"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -705,7 +697,7 @@ packages:
     source: hosted
     version: "4.8.1"
   latlong2:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: latlong2
       sha256: "98227922caf49e6056f91b6c56945ea1c7b166f28ffcd5fb8e72fc0b453cc8fe"
@@ -732,10 +724,10 @@ packages:
     dependency: transitive
     description:
       name: logger
-      sha256: "697d067c60c20999686a0add96cf6aba723b3aa1f83ecf806a8097231529ec32"
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.5.0"
   logging:
     dependency: transitive
     description:
