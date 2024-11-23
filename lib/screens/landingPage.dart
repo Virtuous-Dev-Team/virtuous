@@ -51,6 +51,15 @@ class _LandingPageTestState extends ConsumerState<LandingPageTest> {
       // Use GoRouter to navigate to the home page
       await Future.delayed(Duration.zero); // Ensure the build is complete
       final isNewUser = await getUserInfo();
+
+      if (user.uid == 'QDhAkgB0HuSDq2wkyM8OVgrQQKh1') {
+        // go to dev page if db manager account
+        print ('GO TO DEV SETTINGS UR A DEV');
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          GoRouter.of(context).go('/DevSettingsPage');
+        });
+      }
+      
       if (isNewUser['Success']) {
         await setUserInfoProvider(ref);
         // Future.microtask(() => setUserInfoProvider(ref));

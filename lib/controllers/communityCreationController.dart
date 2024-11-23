@@ -18,6 +18,7 @@ class CommunityCreationController extends _$CommunityCreationController {
       final provider = ref.read(communityCreationProvider);
       final result = await AsyncValue.guard(
           () => provider.getCommunityNames());
+          
       if (result.value['Success']) {
         print(
             'community list : ${result.value['response']}');
@@ -39,6 +40,36 @@ class CommunityCreationController extends _$CommunityCreationController {
     }
   }
 
+  Future<void> getVirtueNames(String communityName) async {
+    try {
+      final provider = ref.read(communityCreationProvider);
+      final result = await AsyncValue.guard(
+          () => provider.getVirtueNames(communityName));
+      print(result);
+      if (result.value['Success']) {
+        print(
+            'virtue list : ${result.value['response']}');
+        
+        state = AsyncData({
+          'Function': "getVirtueNames",
+          "virtueList": result.value['response']
+        });
+       
+      } else {
+        print ('you got error in controller : $result');
+        final error = {
+          'Function': 'getVirtueNames',
+          'msg': result.value['Error']
+        };
+
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      print('unexpected virtue get error $error');
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+  
   Future<void> createNewCommunity(
     String communityName, String communityDesc) async {
     try {
@@ -95,6 +126,7 @@ class CommunityCreationController extends _$CommunityCreationController {
       final provider = ref.read(communityCreationProvider);
       final result = await AsyncValue.guard(
           () => provider.createVirtue(currentCommunity, virtueName, definition, virtueColor));
+
       if (result.value['Success']) {
         state = AsyncData({
           'Function': "createVirtue",
@@ -114,7 +146,7 @@ class CommunityCreationController extends _$CommunityCreationController {
     }
   }
 
-  Future<void> edtiVirtueInfo(
+  Future<void> editVirtueInfo(
     String currentCommunity, String currentVirtue, String? definition, String? virtueColor) async {
     try {
       final provider = ref.read(communityCreationProvider);

@@ -1,13 +1,18 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:flutter_map/flutter_map.dart';
 //import '../widgets/appBarWidget.dart';
 
 // Color palette
@@ -49,6 +54,29 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   List<_ChartData> chartData = [];
+
+  // map center point for viewing
+  static final _defaultCenter = LatLng(51.509364, -0.128928);
+  // Generate 300 markers with randomized locations
+  static final _random = Random(42);
+  static final _markers = List<Marker>.generate(
+    300, 
+    (_) => Marker(
+      //builder: (context) => const Icon(Icons.location_on),
+      point: LatLng(
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
+      ),
+      // Marker Icon
+      child: Builder(builder: (context) => const Icon(Icons.location_on),
+      ),
+    ),
+  );
+
+  //
+  double _sliderVal = 50.0;
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -86,134 +114,243 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                 ),
               ),
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    " ${communityName}",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 9.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Time Range'),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              SizedBox(
-                                height: 30,
-                                width: 180,
-                                child: DropdownButtonFormField<String>(
-                                  value: 'Last week',
-                                  items: <String>[
-                                    'Last week',
-                                    'Last 3 mo',
-                                    'Last 6 mo',
-                                    'Last yr'
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value,
-                                          style: TextStyle(
-                                              fontSize:
-                                                  15)), // Match font size here
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      timeFrame = newValue!;
-                                    });
-                                  },
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.only(left: 10),
-                                    border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(), // Remove circular border
+              //height: MediaQuery.of(context).size.height,
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        " ${communityName} Community",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(height: 25),
+                      // Drop Down Implementation ------------------------------------------------------------
+                      // Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   mainAxisAlignment: MainAxisAlignment.center,
+                      //   children: [
+                      //     Text('Map View'),
+                      //     SizedBox(
+                      //       height: 5,
+                      //     ),
+                      //     SizedBox(
+                      //       height: 30,
+                      //       width: 190,
+                      //       child: DropdownButtonFormField<String>(
+                      //         decoration: InputDecoration(
+                      //           border: OutlineInputBorder(
+                      //               borderSide:
+                      //                   BorderSide()), // Remove the border from the dropdown field
+                      //           contentPadding: EdgeInsets.only(
+                      //               left: 10), // Remove content padding
+                      //         ),
+                      //         value: 'County',
+                      //         iconSize:
+                      //             24, // Set the size of the dropdown icon
+                      //         onChanged: (String? newValue) async {
+
+                      //         },
+                      //         items: <String>[
+                      //           'State',
+                      //           'City',
+                      //           'County',
+                      //         ].map((String value) {
+                      //           return DropdownMenuItem<String>(
+                      //             value: value,
+                      //             child: Text(value),
+                      //           );
+                      //         }).toList(),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ),
+                      // ----------------------------------------------------------------------------------
+                      Container(
+                        height: 300,
+                        width: 300,
+                        // Map Placholder
+                        // alignment: ,
+                        // child: Image.asset(
+                        //   'assets/images/blank_map.png', 
+                        //   fit: BoxFit.fitHeight,
+                        // ),
+                        //
+                        // Start of Flutter Map
+                        child: FlutterMap(
+                          options: MapOptions(
+                            // location to center map on
+                            center: _defaultCenter, // deprecated
+                            // zoom radius
+                            zoom: 8.5, // deprecated
+                          ),
+                          children: [
+                            TileLayer(
+                              // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              // This is where the template from the provider goes
+                              urlTemplate: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                              
+                              /*
+                                See if the url template works on your machine, or you can try some of the ones I experimented with:
+                                Alt Toner1: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+                                Alt Toner2: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
+                                Alt Toner3: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                                Alt Toner4: 'https://tile.stamen.com/toner/{z}/{x}/{y}.png',
+                                Positron: 'https://basemaps.cartocdn.com/light-all/{z}/{x}/{y}.png',
+                                Note: There's also a Dark Matter stamen template.
+                              */
+                              
+                              // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
+                              //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
+                            ),
+
+                            // Uses the random markers from before
+                            MarkerLayer(markers: _markers),
+                          ],
+                        )
+                      ),
+                      SizedBox(width: 30),
+                      // Basic Slider Implementation with Dummy Variables
+                      Slider(
+                        value:_sliderVal,
+                        min: 0.0,
+                        max: 100.0,
+                        // maybe 9 divisions? (number of zoom levels)
+                        label: _sliderVal.toStringAsFixed(1),
+                        onChanged: (double newVal) {
+                          setState(() {
+                            _sliderVal = newVal;
+                          });
+                          },
+                        ),
+                      SizedBox(height: 25),
+                      SizedBox(width: 30),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [ 
+                                  Text('Time Range'),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  SizedBox(
+                                    height: 30,
+                                    width: 180,
+                                    child: DropdownButtonFormField<String>(
+                                      value: 'Last week',
+                                      items: <String>[
+                                        'Last week',
+                                        'Last 3 mo',
+                                        'Last 6 mo',
+                                        'Last yr'
+                                      ].map<DropdownMenuItem<String>>(
+                                          (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value,
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      15)), // Match font size here
+                                        );
+                                      }).toList(),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          timeFrame = newValue!;
+                                        });
+                                      },
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.only(left: 10),
+                                        border: OutlineInputBorder(
+                                          borderSide:
+                                              BorderSide(), // Remove circular border
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 30),
-                        Flexible(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Maximum Distance'),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              SizedBox(
-                                height: 30,
-                                width: 190,
-                                child: DropdownButtonFormField<String>(
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide()), // Remove the border from the dropdown field
-                                    contentPadding: EdgeInsets.only(
-                                        left: 10), // Remove content padding
+                            ),
+                            SizedBox(width: 30),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Maximum Distance'),
+                                  SizedBox(
+                                    height: 5,
                                   ),
-                                  value: '10km',
-                                  iconSize:
-                                      24, // Set the size of the dropdown icon
-                                  onChanged: (String? newValue) async {
-                                    String num = newValue!.replaceAll('km', '');
-                                    double newRadius = double.parse(num);
-                                    print('radius in onchange: $newRadius');
-                                    setState(() {
-                                      radius = newRadius;
-                                      cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
-                                    });
-                                    // ref
-                                    //     .read(usersRepositoryProvider)
-                                    //     .getThoseEntries(
-                                    //         shareLocation, radius);
-                                  },
-                                  items: <String>[
-                                    '10km',
-                                    '50km',
-                                    '250km',
-                                    '1000km',
-                                  ].map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
+                                  SizedBox(
+                                    height: 30,
+                                    width: 190,
+                                    child: DropdownButtonFormField<String>(
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderSide:
+                                                BorderSide()), // Remove the border from the dropdown field
+                                        contentPadding: EdgeInsets.only(
+                                            left: 10), // Remove content padding
+                                      ),
+                                      value: '10km',
+                                      iconSize:
+                                          24, // Set the size of the dropdown icon
+                                      onChanged: (String? newValue) async {
+                                        String num = newValue!.replaceAll('km', '');
+                                        double newRadius = double.parse(num);
+                                        print('radius in onchange: $newRadius');
+                                        setState(() {
+                                          radius = newRadius;
+                                          cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
+                                        });
+                                        // ref
+                                        //     .read(usersRepositoryProvider)
+                                        //     .getThoseEntries(
+                                        //         shareLocation, radius);
+                                      },
+                                      items: <String>[
+                                        '10km',
+                                        '50km',
+                                        '250km',
+                                        '1000km',
+                                      ].map((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      renderNearbyBarChart(shareLocation)
+                    ],
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  renderNearbyBarChart(shareLocation)
-                ],
+                ),
               ),
             ),
           ),
@@ -279,6 +416,7 @@ class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
     super.initState();
   }
 
+  // This is hard coded right now.
   final Map<String, Map<String, Color>> communityColorLists = {
     'Legal': legalVirtueColors,
     'Alcoholics Anonymous': alAnVirtueColors,

@@ -10,7 +10,7 @@ import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
-import 'package:virtuetracker/screens/settingsScreen/devsettings.dart';
+import 'package:virtuetracker/screens/dev/devsettings.dart';
 
 import '../../widgets/appBarWidget.dart';
 import 'changepassword.dart';
