@@ -24,7 +24,7 @@ const Color textColor = Colors.white;
 Users usesAPI = Users();
 
 // map of zoom level with its corresponding tile width (in longitudes)
-Map<int, double> zoomWidths = {
+final Map<int, double> zoomWidths = {
   3 : 45,
   4 : 22.5,
   5 : 11.25,
