@@ -19,38 +19,53 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.black; // Black text color for content
 TextEditingController tfDescription = TextEditingController();
-List<ButtonsData>? GridviewData = [
-  ButtonsData(color: "#F3A3CA", text: "Honesty"),
-  ButtonsData(color: "#C1D9CD", text: "Courage"),
-  ButtonsData(color: "#B0E5F6", text: "Compassion"),
-  ButtonsData(color: "#F6EEA2", text: "Generosity"),
-  ButtonsData(color: "#C58686", text: "Fidelity"),
-  ButtonsData(color: "#FADAB4", text: "Integrity"),
-  ButtonsData(color: "#DEBFF5", text: "Fairness"),
-  ButtonsData(color: "#7AB0D8", text: "Self-control"),
-  ButtonsData(color: "#7FA881", text: "Prudence")
-];
 
-
-
-void main() => runApp(MaterialApp(home: TutorialPage()));
+void main() => runApp(MaterialApp(home: TutorialPage(communityName: 'Legal',)));
 
 class TutorialPage extends StatefulWidget {
-  const TutorialPage({super.key});
+  final String? communityName;
+  const TutorialPage({super.key, required this.communityName});
 
   @override
   _TutorialPageState createState() => _TutorialPageState();
 }
 
+List<ButtonsData> getVirtueButtons (String communityName) {
+  final virtuesMap = communityVirtueColors[communityName] ?? {};
+  return virtuesMap.entries.map((entry) =>
+      ButtonsData(color: colorToHexString(entry.value), text: entry.key)).toList();
+}
+
+String colorToHexString(Color color) {
+  return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+}
+
+
+
 class _TutorialPageState extends State<TutorialPage> {
   final PageController _pageController = PageController();
 
   int virtueName = 0;
-  String selectedCommunity = "Legal";
+  late String selectedCommunity;
+  late final List<ButtonsData> GridviewData;
+
+
+  @override
+  void initState() {
+    super.initState();
+    selectedCommunity = widget.communityName!;
+    print("selected community $selectedCommunity");
+    GridviewData = getVirtueButtons(selectedCommunity);
+  }
 
   @override
   Widget build(BuildContext context) {
-    
+    final communityName = selectedCommunity = widget.communityName!;
+    if (communityName != null && communityName != selectedCommunity) {
+      selectedCommunity = communityName;
+      GridviewData = getVirtueButtons(selectedCommunity);
+    }
+
     return SafeArea(
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -238,8 +253,7 @@ class _TutorialPageState extends State<TutorialPage> {
       {required String title,
       required String content,
       required Color backgroundColor}) {
-    
-    
+
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(

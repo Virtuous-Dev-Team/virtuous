@@ -131,6 +131,38 @@ Color getColor(Set<MaterialState> states) {
 //  return Colours.swatch('E7EAF0');
 }
 
+
+Map<String, Map<String, Color>> communityVirtueColors = {
+  "Legal": {
+    'Honesty': Color(0xFFF3A3CA),
+    'Courage': Color(0xFFCBF1D1),
+    'Compassion': Color(0xFFB0E5F6),
+    'Generosity': Color(0xFFF6EEA2),
+    'Fidelity': Color(0xFFC58686),
+    'Integrity': Color(0xFFFADAB4),
+    'Fairness': Color(0xFFDEBFF5),
+    'Self-control': Color(0xFF7AB0D8),
+    'Prudence': Color(0xFF7FA881),
+  },
+  "Alcoholics Anonymous": {
+    "Honesty": Color(0xFF97AABD),
+    "Hope": Color(0xFF9AD9DB),
+    "Surrender": Color(0xFFB39CD0),
+    "Courage": Color(0xFFDE9AA4),
+    "Integrity": Color(0xFFB7D1A1),
+    "Willingness": Color(0xFFB0B5ED),
+    "Humility": Color(0xFFF7E4AC),
+    "Love": Color(0xFFF5B4C6),
+    "Responsibility": Color(0xFFE8CCB5),
+    "Discipline": Color(0xFFD4BFFF),
+    "Awareness": Color(0xFFC4B7BB),
+    "Service": Color(0xFFB5EAD7),
+  },
+
+};
+
+
+
 String formatTime(TimeOfDay timeOfDay) {
   // Use the format method of TimeOfDay to get a formatted string
   final now = DateTime.now();
