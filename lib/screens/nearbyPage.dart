@@ -13,7 +13,6 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 //import '../widgets/appBarWidget.dart';
 
 // Color palette
@@ -80,6 +79,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   @override
   Widget build(BuildContext context) {
+
     final userInfo = ref.watch(userInfoProviderr);
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
@@ -117,8 +117,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top,
+                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -134,9 +133,10 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
-                      // Flexible(
-                      //   child:
-                      Column(
+                      // Drop Down Implementation ------------------------------------------------------------
+                      // Column(
+                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                      //   mainAxisAlignment: MainAxisAlignment.center,
                       //   children: [
                       //     Text('Map View'),
                       //     SizedBox(
@@ -175,6 +175,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       // ),
                       // SizedBox(
                       //   height: 20,
+                      // ),
                       // ----------------------------------------------------------------------------------
                       Container(
                         height: 300,
@@ -245,7 +246,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
+                                children: [ 
                                   Text('Time Range'),
                                   SizedBox(
                                     height: 5,
@@ -276,8 +277,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                         });
                                       },
                                       decoration: InputDecoration(
-                                        contentPadding:
-                                            EdgeInsets.only(left: 10),
+                                        contentPadding: EdgeInsets.only(left: 10),
                                         border: OutlineInputBorder(
                                           borderSide:
                                               BorderSide(), // Remove circular border
@@ -313,14 +313,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       iconSize:
                                           24, // Set the size of the dropdown icon
                                       onChanged: (String? newValue) async {
-                                        String num =
-                                            newValue!.replaceAll('km', '');
+                                        String num = newValue!.replaceAll('km', '');
                                         double newRadius = double.parse(num);
                                         print('radius in onchange: $newRadius');
                                         setState(() {
                                           radius = newRadius;
-                                          cachedVirtueEntriesMap =
-                                              null; //delete the old map to trigger its replacement
+                                          cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
                                         });
                                         // ref
                                         //     .read(usersRepositoryProvider)
@@ -363,12 +361,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     print('radius in render $radius');
     return StreamBuilder<Map<String, Map<String, dynamic>>>(
       stream: cachedVirtueEntriesMap == null
-          ? usesAPI.getNearbyEntries(
-              shareLocation, radius, communityName, timeFrame)
-          : null,
+          ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            cachedVirtueEntriesMap == null) {
+        if (snapshot.connectionState == ConnectionState.waiting && cachedVirtueEntriesMap == null) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -376,8 +371,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           if (cachedVirtueEntriesMap == null) {
             cachedVirtueEntriesMap = snapshot.data!;
           }
-          List<_ChartData> chartData =
-              buildChartData(cachedVirtueEntriesMap!, timeFrame);
+          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
@@ -397,6 +391,8 @@ class RenderNearbyBarChart extends StatefulWidget {
       {super.key, required this.data, required this.timeFrame});
   final List<_ChartData> data;
   final String timeFrame;
+
+
 
   @override
   State<RenderNearbyBarChart> createState() => Render_NearbyBarChartState();
@@ -474,6 +470,8 @@ class NearbyBarChart extends StatelessWidget {
   const NearbyBarChart({super.key, required this.data});
   final List<_ChartData> data;
 
+
+
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
@@ -548,10 +546,14 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   }
 
   return startDate;
+
 }
 
-List<_ChartData> buildChartData(
-    Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
+
+
+
+List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
+
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
@@ -584,6 +586,8 @@ List<_ChartData> buildChartData(
     chartDataList.add(virtueData);
   }
   return chartDataList;
+
+
 }
 
 class _ChartData {
