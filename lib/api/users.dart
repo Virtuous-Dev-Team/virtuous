@@ -538,7 +538,7 @@ class Users {
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
-      final Map<String, List<Map<String, double>>> virtueLocationsMap = {};
+      final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
 
       // Get current position and setup Geolocator with it
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -612,9 +612,18 @@ class Users {
               if (userLocation.containsKey('geopoint') &&
                   userLocation['geopoint'] is GeoPoint) {
                 GeoPoint geoPoint = userLocation['geopoint'] as GeoPoint;
+
+                // get the entry time
+                DateTime? dateEntered;
+                if (entryData.containsKey('dateEntried') &&
+                    entryData['dateEntried'] is Timestamp) {
+                  dateEntered = (entryData['dateEntried'] as Timestamp).toDate();
+                }
+
                 virtueLocationsMap[virtue['quadrantName']]?.add({
                   'latitude': geoPoint.latitude,
                   'longitude': geoPoint.longitude,
+                  'dateEntried': dateEntered,
                 });
               } else {
                 print("bad location for virtue entry: ${entry.id}");
@@ -629,8 +638,7 @@ class Users {
       virtueLocationsMap.forEach((virtueName, locations) {
         print("Virtue: $virtueName");
         for (var location in locations) {
-          print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}");
-        }
+          print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}, Date: ${location['dateEntried']}");        }
       });
       //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
       yield {

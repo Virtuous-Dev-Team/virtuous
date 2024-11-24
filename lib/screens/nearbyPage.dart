@@ -81,8 +81,16 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Widget build(BuildContext context) {
 
     final userInfo = ref.watch(userInfoProviderr);
+
+    // Detect if community has changed
+    if (communityName != userInfo.currentCommunity) {
+      setState(() {
+        communityName = userInfo.currentCommunity;
+        cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
+      });
+    }
+
     shareLocation = userInfo.shareLocation;
-    communityName = userInfo.currentCommunity;
 
     late TooltipBehavior _tooltip;
 
@@ -199,7 +207,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                             TileLayer(
                               // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               // This is where the template from the provider goes
-                              urlTemplate: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                              // TODO: add API key here
+                              urlTemplate: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=#API Key HERE',
                               
                               /*
                                 See if the url template works on your machine, or you can try some of the ones I experimented with:
@@ -318,7 +327,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                         print('radius in onchange: $newRadius');
                                         setState(() {
                                           radius = newRadius;
-                                          cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
                                         });
                                         // ref
                                         //     .read(usersRepositoryProvider)
@@ -382,7 +390,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               return Text('No data available'); // Handle null data gracefully
             }
           }
-          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
+          // TODO: figure out actual centerLocation logic
+          LatLng centerLocation = LatLng(38, -123);
+          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame, radius, centerLocation);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
@@ -563,13 +573,12 @@ DateTime getStartDate(String timeFrame, DateTime today) {
 
 
 
-List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
+List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame, double radius, LatLng centerLocation) {
 
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
   DateTime today = DateTime.now();
-  DateTime startDate = getStartDate(timeFrame, today);
 
   // for each virtue from the map
   for (var entry in virtueEntriesMap.entries) {
@@ -580,19 +589,35 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
       colorString = colorString.substring(2);
     }
     Color virtueColor = Color(int.parse(colorString, radix: 16));
+
     List<DocumentSnapshot<Object?>> virtueEntries = virtueDataMap['entries'];
     _ChartData virtueData = _ChartData(virtueUsed, [], virtueColor);
 
     // Decide whether to add each entry
     for (var doc in virtueEntries) {
       dynamic data = doc.data();
-      // Check the time of each entry
+      // Get the time of each entry
       Timestamp? entryTime = data['dateEntried'] as Timestamp?;
       DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
-      if (!dateEntered.isAfter(startDate)) {
-        continue;
-      }
-      virtueData.y.add(data);
+
+      // get entry location as LatLng
+      final locationEntered = data['userLocation'] as Map<String,dynamic>;
+      GeoPoint entryGeoPoint = locationEntered['geopoint'] as GeoPoint;
+      final latitude = entryGeoPoint.latitude;
+      final longitude = entryGeoPoint.longitude;
+      LatLng entryLocation = LatLng(latitude, longitude);
+
+      // check all parameters and add if all are met
+      if (isEntryValid(
+        timeFrame: timeFrame,        // Provide named arguments
+        dateEntered: dateEntered,
+        entryLocation: entryLocation,
+        userLocation: centerLocation, // Match the argument name
+        radius: radius,
+      ))
+        {
+          virtueData.y.add(data);
+        }
     }
     chartDataList.add(virtueData);
   }
@@ -600,6 +625,43 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
 
 
 }
+
+bool isEntryValid({
+required String timeFrame,
+required DateTime? dateEntered,
+required LatLng entryLocation,
+required LatLng userLocation,
+required double radius,
+}) {
+
+  final Distance distanceCalculator = Distance();
+  DateTime today = DateTime.now();
+  DateTime startDate = getStartDate(timeFrame, today);
+
+  // Ensure the entry date is within the specified time frame
+  if (dateEntered == null || dateEntered.isBefore(startDate)) {
+    return false;
+  }
+
+  // TODO: replace with calculation that makes more sense
+  // get distance between user location and entry location
+  double distance = distanceCalculator.as(
+    LengthUnit.Meter,
+    userLocation,
+    entryLocation,
+  );
+
+  // compare distance to desired radius
+  if (distance / 1000 > radius) {
+    return false;
+  }
+
+  // Entry is valid
+  return true;
+
+}
+
+
 
 class _ChartData {
   _ChartData(this.x, this.y, this.color);
