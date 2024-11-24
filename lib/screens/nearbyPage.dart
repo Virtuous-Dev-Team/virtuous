@@ -1,10 +1,12 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
@@ -53,6 +55,29 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   List<_ChartData> chartData = [];
+
+  // map center point for viewing
+  static final _defaultCenter = LatLng(51.509364, -0.128928);
+  // Generate 300 markers with randomized locations
+  static final _random = Random(42);
+  static final _markers = List<Marker>.generate(
+    300, 
+    (_) => Marker(
+      //builder: (context) => const Icon(Icons.location_on),
+      point: LatLng(
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
+      ),
+      // Marker Icon
+      child: Builder(builder: (context) => const Icon(Icons.location_on),
+      ),
+    ),
+  );
+
+  //
+  double _sliderVal = 50.0;
+
+
   @override
   Widget build(BuildContext context) {
     final userInfo = ref.watch(userInfoProviderr);
@@ -112,82 +137,102 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       // Flexible(
                       //   child:
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Map View'),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          SizedBox(
-                            height: 30,
-                            width: 190,
-                            child: DropdownButtonFormField<String>(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide()), // Remove the border from the dropdown field
-                                contentPadding: EdgeInsets.only(
-                                    left: 10), // Remove content padding
-                              ),
-                              value: 'County',
-                              iconSize: 24, // Set the size of the dropdown icon
-                              onChanged: (String? newValue) async {},
-                              items: <String>[
-                                'State',
-                                'City',
-                                'County',
-                              ].map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-                        ],
-                      ),
+                      //   children: [
+                      //     Text('Map View'),
+                      //     SizedBox(
+                      //       height: 5,
+                      //     ),
+                      //     SizedBox(
+                      //       height: 30,
+                      //       width: 190,
+                      //       child: DropdownButtonFormField<String>(
+                      //         decoration: InputDecoration(
+                      //           border: OutlineInputBorder(
+                      //               borderSide:
+                      //                   BorderSide()), // Remove the border from the dropdown field
+                      //           contentPadding: EdgeInsets.only(
+                      //               left: 10), // Remove content padding
+                      //         ),
+                      //         value: 'County',
+                      //         iconSize:
+                      //             24, // Set the size of the dropdown icon
+                      //         onChanged: (String? newValue) async {
+
+                      //         },
+                      //         items: <String>[
+                      //           'State',
+                      //           'City',
+                      //           'County',
+                      //         ].map((String value) {
+                      //           return DropdownMenuItem<String>(
+                      //             value: value,
+                      //             child: Text(value),
+                      //           );
+                      //         }).toList(),
+                      //       ),
+                      //     ),
+                      //   ],
                       // ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      // SizedBox(
+                      //   height: 20,
+                      // ----------------------------------------------------------------------------------
                       Container(
                         height: 300,
                         width: 300,
+                        // Map Placholder
                         // alignment: ,
-                      
+                        // child: Image.asset(
+                        //   'assets/images/blank_map.png', 
+                        //   fit: BoxFit.fitHeight,
+                        // ),
+                        //
+                        // Start of Flutter Map
                         child: FlutterMap(
                           options: MapOptions(
-                            initialCenter: LatLng(28.600555,-81.197528), 
-                            initialZoom: 12,
+                            // location to center map on
+                            center: _defaultCenter, // deprecated
+                            // zoom radius
+                            zoom: 8.5, // deprecated
                           ),
                           children: [
                             TileLayer(
-                              // Display map tiles from any source
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png', // OSMF's Tile Server
-                              userAgentPackageName: 'com.example.app',
-                              // And many more recommended properties!
+                              // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              // This is where the template from the provider goes
+                              urlTemplate: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                              
+                              /*
+                                See if the url template works on your machine, or you can try some of the ones I experimented with:
+                                Alt Toner1: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
+                                Alt Toner2: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
+                                Alt Toner3: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                                Alt Toner4: 'https://tile.stamen.com/toner/{z}/{x}/{y}.png',
+                                Positron: 'https://basemaps.cartocdn.com/light-all/{z}/{x}/{y}.png',
+                                Note: There's also a Dark Matter stamen template.
+                              */
+                              
+                              // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
+                              //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
                             ),
-                            RichAttributionWidget(
-                              // Include a stylish prebuilt attribution widget that meets all requirments
-                              attributions: [
-                                TextSourceAttribution(
-                                  'OpenStreetMap contributors',
-                                ),
-                                // Also add images...
-                              ],
-                            ),
+
+                            // Uses the random markers from before
+                            MarkerLayer(markers: _markers),
                           ],
-                        ),
-                      
-                        /*child: Image.asset(
-                          'assets/images/blank_map.png', 
-                          fit: BoxFit.fitHeight,
-                        ),*/
+                        )
                       ),
                       SizedBox(width: 30),
-                      // radio buttons
+                      // Basic Slider Implementation with Dummy Variables
+                      Slider(
+                        value:_sliderVal,
+                        min: 0.0,
+                        max: 100.0,
+                        // maybe 9 divisions? (number of zoom levels)
+                        label: _sliderVal.toStringAsFixed(1),
+                        onChanged: (double newVal) {
+                          setState(() {
+                            _sliderVal = newVal;
+                          });
+                          },
+                        ),
                       SizedBox(height: 25),
                       SizedBox(width: 30),
                       Padding(
