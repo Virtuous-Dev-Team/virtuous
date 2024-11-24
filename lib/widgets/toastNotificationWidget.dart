@@ -12,7 +12,8 @@ class ToastNotificationWidget {
           ? ToastificationType.success
           : ToastificationType.error,
       style: ToastificationStyle.flatColored,
-      title: Text(message),
+      title: message,
+      //title: Text(message),
       autoCloseDuration: const Duration(seconds: 4),
     );
   }

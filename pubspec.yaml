@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  provider: ^5.0.0
+  provider: ^6.0.5
   cupertino_icons: ^1.0.2
   firebase_core: ^2.21.0
   cloud_firestore: ^4.12.2
@@ -21,7 +21,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
   google_sign_in: ^6.1.6
   sliding_clipped_nav_bar: ^3.1.0+4
-  toastification: ^1.2.0
+  toastification: ^1.0.0
   shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0
   flutter_facebook_auth: ^6.0.4
@@ -38,9 +38,9 @@ dependencies:
   intl: ^0.18.1
   geoflutterfire2: ^2.3.15
   mockito: ^5.4.4
-  flutter_map: ^6.1.0
+  flutter_map: ^5.0.0
   latlong2: ^0.9.1
-  
+  flutter_map_supercluster: ^4.3.0
 
 dev_dependencies:
   flutter_test:
