@@ -13,6 +13,8 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
+
 //import '../widgets/appBarWidget.dart';
 
 // Color palette
@@ -60,26 +62,22 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Generate 300 markers with randomized locations
   static final _random = Random(42);
   static final _markers = List<Marker>.generate(
-    300, 
+    300,
     (_) => Marker(
-      //builder: (context) => const Icon(Icons.location_on),
-      point: LatLng(
-        _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
-        _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
-      ),
-      // Marker Icon
-      child: Builder(builder: (context) => const Icon(Icons.location_on),
-      ),
-    ),
+        //builder: (context) => const Icon(Icons.location_on),
+        point: LatLng(
+          _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
+          _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
+        ),
+        // Marker Icon
+        builder: (context) => const Icon(Icons.location_on)),
   );
 
   //
   double _sliderVal = 50.0;
 
-
   @override
   Widget build(BuildContext context) {
-
     final userInfo = ref.watch(userInfoProviderr);
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
@@ -117,7 +115,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                  height: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -178,30 +177,31 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       // ),
                       // ----------------------------------------------------------------------------------
                       Container(
-                        height: 300,
-                        width: 300,
-                        // Map Placholder
-                        // alignment: ,
-                        // child: Image.asset(
-                        //   'assets/images/blank_map.png', 
-                        //   fit: BoxFit.fitHeight,
-                        // ),
-                        //
-                        // Start of Flutter Map
-                        child: FlutterMap(
-                          options: MapOptions(
-                            // location to center map on
-                            center: _defaultCenter, // deprecated
-                            // zoom radius
-                            zoom: 8.5, // deprecated
-                          ),
-                          children: [
-                            TileLayer(
-                              // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              // This is where the template from the provider goes
-                              urlTemplate: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
-                              
-                              /*
+                          height: 300,
+                          width: 300,
+                          // Map Placholder
+                          // alignment: ,
+                          // child: Image.asset(
+                          //   'assets/images/blank_map.png',
+                          //   fit: BoxFit.fitHeight,
+                          // ),
+                          //
+                          // Start of Flutter Map
+                          child: FlutterMap(
+                            options: MapOptions(
+                              // location to center map on
+                              center: _defaultCenter, // deprecated
+                              // zoom radius
+                              zoom: 8.5, // deprecated
+                            ),
+                            children: [
+                              TileLayer(
+                                // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                // This is where the template from the provider goes
+                                urlTemplate:
+                                    'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+
+                                /*
                                 See if the url template works on your machine, or you can try some of the ones I experimented with:
                                 Alt Toner1: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
                                 Alt Toner2: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
@@ -210,20 +210,36 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                 Positron: 'https://basemaps.cartocdn.com/light-all/{z}/{x}/{y}.png',
                                 Note: There's also a Dark Matter stamen template.
                               */
-                              
-                              // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
-                              //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
-                            ),
 
-                            // Uses the random markers from before
-                            MarkerLayer(markers: _markers),
-                          ],
-                        )
-                      ),
+                                // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
+                                //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
+                              ),
+                              SuperclusterLayer.immutable(
+                                // Replaces MarkerLayer
+                                initialMarkers: _markers,
+                                indexBuilder: IndexBuilders.rootIsolate,
+                                builder: (context, position, markerCount,
+                                        extraClusterData) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.blue,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      markerCount.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
                       Slider(
-                        value:_sliderVal,
+                        value: _sliderVal,
                         min: 0.0,
                         max: 100.0,
                         // maybe 9 divisions? (number of zoom levels)
@@ -232,8 +248,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                           setState(() {
                             _sliderVal = newVal;
                           });
-                          },
-                        ),
+                        },
+                      ),
                       SizedBox(height: 25),
                       SizedBox(width: 30),
                       Padding(
@@ -246,7 +262,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [ 
+                                children: [
                                   Text('Time Range'),
                                   SizedBox(
                                     height: 5,
@@ -277,7 +293,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                         });
                                       },
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(left: 10),
+                                        contentPadding:
+                                            EdgeInsets.only(left: 10),
                                         border: OutlineInputBorder(
                                           borderSide:
                                               BorderSide(), // Remove circular border
@@ -313,12 +330,14 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       iconSize:
                                           24, // Set the size of the dropdown icon
                                       onChanged: (String? newValue) async {
-                                        String num = newValue!.replaceAll('km', '');
+                                        String num =
+                                            newValue!.replaceAll('km', '');
                                         double newRadius = double.parse(num);
                                         print('radius in onchange: $newRadius');
                                         setState(() {
                                           radius = newRadius;
-                                          cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
+                                          cachedVirtueEntriesMap =
+                                              null; //delete the old map to trigger its replacement
                                         });
                                         // ref
                                         //     .read(usersRepositoryProvider)
@@ -361,9 +380,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     print('radius in render $radius');
     return StreamBuilder<Map<String, Map<String, dynamic>>>(
       stream: cachedVirtueEntriesMap == null
-          ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
+          ? usesAPI.getNearbyEntries(
+              shareLocation, radius, communityName, timeFrame)
+          : null,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && cachedVirtueEntriesMap == null) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            cachedVirtueEntriesMap == null) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -371,7 +393,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           if (cachedVirtueEntriesMap == null) {
             cachedVirtueEntriesMap = snapshot.data!;
           }
-          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
+          List<_ChartData> chartData =
+              buildChartData(cachedVirtueEntriesMap!, timeFrame);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
@@ -391,8 +414,6 @@ class RenderNearbyBarChart extends StatefulWidget {
       {super.key, required this.data, required this.timeFrame});
   final List<_ChartData> data;
   final String timeFrame;
-
-
 
   @override
   State<RenderNearbyBarChart> createState() => Render_NearbyBarChartState();
@@ -470,8 +491,6 @@ class NearbyBarChart extends StatelessWidget {
   const NearbyBarChart({super.key, required this.data});
   final List<_ChartData> data;
 
-
-
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
@@ -546,14 +565,10 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   }
 
   return startDate;
-
 }
 
-
-
-
-List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
-
+List<_ChartData> buildChartData(
+    Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
@@ -586,8 +601,6 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
     chartDataList.add(virtueData);
   }
   return chartDataList;
-
-
 }
 
 class _ChartData {
