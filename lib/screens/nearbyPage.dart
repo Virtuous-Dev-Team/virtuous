@@ -53,6 +53,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   String timeFrame = "Last week";
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
+  LatLng? savedUserLocation;
   List<_ChartData> chartData = [];
 
   // map center point for viewing
@@ -208,7 +209,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               // This is where the template from the provider goes
                               // TODO: add API key here
-                              urlTemplate: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=#API Key HERE',
+                              urlTemplate: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=b4091f94-3dd2-4f6a-9ceb-46f00b95aeaa',
                               
                               /*
                                 See if the url template works on your machine, or you can try some of the ones I experimented with:
@@ -367,7 +368,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   Widget renderNearbyBarChart(bool shareLocation) {
     print('radius in render $radius');
-    return StreamBuilder<Map<String, Map<String, dynamic>>>(
+    return StreamBuilder<Map<String, dynamic>>(
       stream: cachedVirtueEntriesMap == null
           ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
       builder: (context, snapshot) {
@@ -376,6 +377,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          LatLng? centerLocation = savedUserLocation;
+
           if (cachedVirtueEntriesMap == null) {
             Map<String, Map<String, dynamic>>? chartEntries =
             (snapshot.data?['chartEntries'] as Map<String, dynamic>?)?.map(
@@ -384,6 +387,13 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                 value as Map<String, dynamic>,
               ),
             );
+            LatLng? userLocation = snapshot.data?['userLocation'] != null
+                ? LatLng(snapshot.data?['userLocation'].latitude, snapshot.data?['userLocation'].longitude)
+                : null;
+            if (userLocation != null) {
+              savedUserLocation = userLocation;
+            }
+            centerLocation = savedUserLocation;
             if (chartEntries != null) {
               cachedVirtueEntriesMap = chartEntries;
             } else {
@@ -391,7 +401,10 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
             }
           }
           // TODO: figure out actual centerLocation logic
-          LatLng centerLocation = LatLng(38, -123);
+          print("centerlocation?");
+          print(centerLocation);
+          centerLocation ??= LatLng(38, -123); // go near hq if failed to get location
+          print(centerLocation);
           List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame, radius, centerLocation);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);

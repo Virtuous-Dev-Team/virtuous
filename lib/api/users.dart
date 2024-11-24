@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
@@ -511,7 +512,7 @@ class Users {
 
 
   // Get entries for nearby feature
-  Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
+  Stream<Map<String, dynamic>> getNearbyEntries(
       bool shareLocation, double radius, String communityName, String timeFrame) async* {
 
     // get time frame formatted for search
@@ -544,6 +545,7 @@ class Users {
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
       geo.point(latitude: position.latitude, longitude: position.longitude);
+      LatLng userLocation = LatLng(position.latitude, position.longitude);
 
       // Search for matching entries for each virtue
 
@@ -643,7 +645,8 @@ class Users {
       //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
       yield {
       'chartEntries':virtueEntriesMap,
-        'mapEntries':virtueLocationsMap
+        'mapEntries':virtueLocationsMap,
+        'userLocation': userLocation,
     };
     }
   }
