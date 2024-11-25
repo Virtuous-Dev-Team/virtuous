@@ -58,7 +58,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   List<_ChartData> chartData = [];
 
   // map center point for viewing
-  static final _defaultCenter = LatLng(51.509364, -0.128928);
+  //static final _defaultCenter = LatLng(51.509364, -0.128928);
+  static var _currentCenter = LatLng(51.509364, -0.128928);
   // Generate 300 markers with randomized locations
   static final _random = Random(42);
   static final _markers = List<Marker>.generate(
@@ -66,15 +67,21 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     (_) => Marker(
         //builder: (context) => const Icon(Icons.location_on),
         point: LatLng(
-          _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
-          _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.latitude,
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.longitude,
         ),
         // Marker Icon
         builder: (context) => const Icon(Icons.location_on)),
   );
 
-  //
-  double _sliderVal = 50.0;
+  // Set these with whatever want for backend
+  final MapController _mapController = MapController();
+  // Experimenting with bounds
+  // LatLng _southwestCorner = LatLng(51.0, -0.5);
+  // LatLng _northeastCorner = LatLng(52.0, 0.5);
+  double _currentZoom = 8.5;
+  double _minZoom = 3;
+  double _maxZoom = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +131,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         height: 20,
                       ),
                       Text(
-                        " ${communityName} Community",
+                        " ${communityName}",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -132,87 +139,46 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
-                      // Drop Down Implementation ------------------------------------------------------------
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     Text('Map View'),
-                      //     SizedBox(
-                      //       height: 5,
-                      //     ),
-                      //     SizedBox(
-                      //       height: 30,
-                      //       width: 190,
-                      //       child: DropdownButtonFormField<String>(
-                      //         decoration: InputDecoration(
-                      //           border: OutlineInputBorder(
-                      //               borderSide:
-                      //                   BorderSide()), // Remove the border from the dropdown field
-                      //           contentPadding: EdgeInsets.only(
-                      //               left: 10), // Remove content padding
-                      //         ),
-                      //         value: 'County',
-                      //         iconSize:
-                      //             24, // Set the size of the dropdown icon
-                      //         onChanged: (String? newValue) async {
-
-                      //         },
-                      //         items: <String>[
-                      //           'State',
-                      //           'City',
-                      //           'County',
-                      //         ].map((String value) {
-                      //           return DropdownMenuItem<String>(
-                      //             value: value,
-                      //             child: Text(value),
-                      //           );
-                      //         }).toList(),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
-                      // ----------------------------------------------------------------------------------
                       Container(
                           height: 300,
                           width: 300,
-                          // Map Placholder
-                          // alignment: ,
-                          // child: Image.asset(
-                          //   'assets/images/blank_map.png',
-                          //   fit: BoxFit.fitHeight,
-                          // ),
-                          //
                           // Start of Flutter Map
                           child: FlutterMap(
+                            mapController: _mapController,
+
                             options: MapOptions(
                               // location to center map on
-                              center: _defaultCenter, // deprecated
+                              center: _currentCenter,
                               // zoom radius
-                              zoom: 8.5, // deprecated
+                              zoom: _currentZoom,
+                              minZoom: _minZoom,
+                              maxZoom: _maxZoom,
+                              
+                              // Alicia:
+                              // interactiveFlags could help us limit user interaction
+                                // directly with the map if we need to
+                              // we can set bounds but idk what it would be
+                              // bounds: LatLngBounds(
+                              //   _southwestCorner,
+                              //   _northeastCorner,
+                              // ),
+                              // boundsOptions: FitBoundsOptions(
+                              //   padding:EdgeInsets.all(10.0),
+                              // ),
+
+                              onPositionChanged: (mapPosition, _) {
+                                // Update slider
+                                setState(() {
+                                  _currentZoom = mapPosition.zoom!;
+                                  _currentCenter = mapPosition.center!;
+                                });
+                              },
                             ),
                             children: [
                               TileLayer(
                                 // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                // This is where the template from the provider goes
                                 urlTemplate:
-                                    'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
-
-                                /*
-                                See if the url template works on your machine, or you can try some of the ones I experimented with:
-                                Alt Toner1: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
-                                Alt Toner2: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
-                                Alt Toner3: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
-                                Alt Toner4: 'https://tile.stamen.com/toner/{z}/{x}/{y}.png',
-                                Positron: 'https://basemaps.cartocdn.com/light-all/{z}/{x}/{y}.png',
-                                Note: There's also a Dark Matter stamen template.
-                              */
-
-                                // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
-                                //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               ),
                               SuperclusterLayer.immutable(
                                 // Replaces MarkerLayer
@@ -239,14 +205,17 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
                       Slider(
-                        value: _sliderVal,
-                        min: 0.0,
-                        max: 100.0,
-                        // maybe 9 divisions? (number of zoom levels)
-                        label: _sliderVal.toStringAsFixed(1),
-                        onChanged: (double newVal) {
+                        value: _currentZoom,
+                        min: _minZoom,
+                        max: _maxZoom,
+                        label: _currentZoom.toStringAsFixed(1),
+                        onChanged: (value) {
                           setState(() {
-                            _sliderVal = newVal;
+                            _currentZoom = value;
+                            _mapController.move(
+                                _currentCenter,
+                                _currentZoom,
+                            );
                           });
                         },
                       ),
