@@ -37,8 +37,15 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
+    cachedVirtueEntriesMap = null;
+    cachedMarkers;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+
+
+    // get initial entry information
+    prefetchNearbyEntries();
+
   }
 
   @override
@@ -55,6 +62,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   LatLng? savedUserLocation;
   List<_ChartData> chartData = [];
+  Map<String, List<Map<String, dynamic>>> cachedMarkers = {};
+  List<Marker> markers = [];
 
   // map center point for viewing
   static final _defaultCenter = LatLng(51.509364, -0.128928);
@@ -99,19 +108,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
         appBar: AppBarWidget('regular'),
-        // appBar: AppBar(
-        //   backgroundColor: appBarColor,
-        //   elevation: 0,
-        //   actions: [
-        //     IconButton(
-        //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-        //       onPressed: () {
-        //         // TODO: Implement profile icon functionality.
-        //       },
-        //     ),
-        //     SizedBox(width: 12),
-        //   ],
-        // ),
         body: Container(
           child: Center(
             child: Container(
@@ -142,6 +138,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
+                      SizedBox(
+                        height: 300,
+                        child: buildMapWidget(),
+                      ),
+                    SizedBox(height: 25),
                       // Drop Down Implementation ------------------------------------------------------------
                       // Column(
                       //   crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +187,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       //   height: 20,
                       // ),
                       // ----------------------------------------------------------------------------------
-                      Container(
+                     /* Container(
                         height: 300,
                         width: 300,
                         // Map Placholder
@@ -197,6 +198,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         // ),
                         //
                         // Start of Flutter Map
+                          /*
                         child: FlutterMap(
                           options: MapOptions(
                             // location to center map on
@@ -209,7 +211,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                               // This is where the template from the provider goes
                               // TODO: add API key here
-                              urlTemplate: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=b4091f94-3dd2-4f6a-9ceb-46f00b95aeaa',
+                              urlTemplate: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=',
                               
                               /*
                                 See if the url template works on your machine, or you can try some of the ones I experimented with:
@@ -228,8 +230,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                             // Uses the random markers from before
                             MarkerLayer(markers: _markers),
                           ],
-                        )
-                      ),
+                        )  */
+                      ),*/
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
                       Slider(
@@ -284,6 +286,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           timeFrame = newValue!;
+                                          markers = buildVirtueMarkers(cachedMarkers);
                                         });
                                       },
                                       decoration: InputDecoration(
@@ -328,6 +331,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                         print('radius in onchange: $newRadius');
                                         setState(() {
                                           radius = newRadius;
+                                          markers = buildVirtueMarkers(cachedMarkers);
                                         });
                                         // ref
                                         //     .read(usersRepositoryProvider)
@@ -356,7 +360,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      renderNearbyBarChart(shareLocation)
+                      renderNearbyBarChart()
                     ],
                   ),
                 ),
@@ -366,57 +370,141 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         ));
   }
 
-  Widget renderNearbyBarChart(bool shareLocation) {
-    print('radius in render $radius');
-    return StreamBuilder<Map<String, dynamic>>(
-      stream: cachedVirtueEntriesMap == null
-          ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && cachedVirtueEntriesMap == null) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          LatLng? centerLocation = savedUserLocation;
+  // get the entries from the api
+  Future<void> prefetchNearbyEntries() async {
+    try {
+      final data = await usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame).first;
 
-          if (cachedVirtueEntriesMap == null) {
-            Map<String, Map<String, dynamic>>? chartEntries =
-            (snapshot.data?['chartEntries'] as Map<String, dynamic>?)?.map(
-                  (key, value) => MapEntry(
-                key,
-                value as Map<String, dynamic>,
-              ),
-            );
-            LatLng? userLocation = snapshot.data?['userLocation'] != null
-                ? LatLng(snapshot.data?['userLocation'].latitude, snapshot.data?['userLocation'].longitude)
-                : null;
-            if (userLocation != null) {
-              savedUserLocation = userLocation;
-            }
-            centerLocation = savedUserLocation;
-            if (chartEntries != null) {
-              cachedVirtueEntriesMap = chartEntries;
-            } else {
-              return Text('No data available'); // Handle null data gracefully
-            }
-          }
-          // TODO: figure out actual centerLocation logic
-          print("centerlocation?");
-          print(centerLocation);
-          centerLocation ??= LatLng(38, -123); // go near hq if failed to get location
-          print(centerLocation);
-          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame, radius, centerLocation);
-          //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
-          //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
+      // Cache chart data
+      cachedVirtueEntriesMap = (data['chartEntries'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      );
 
-          // Use the documents list here
-          return RenderNearbyBarChart(
-            data: chartData,
-            timeFrame: timeFrame,
-          );
-        }
-      },
+      // Cache user location
+      LatLng? newUserLocation  = data['userLocation'] != null
+          ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
+          : null;
+
+      setState(() {
+        savedUserLocation = newUserLocation;
+        cachedMarkers = data['mapEntries'];
+        markers = buildVirtueMarkers(cachedMarkers);
+      });
+
+    } catch (e) {
+      print("Error getting data from API: $e");
+    }
+  }
+
+  // make the nearby bar chart
+  Widget renderNearbyBarChart() {
+
+    if (cachedVirtueEntriesMap == null) {
+      return CircularProgressIndicator(); // Show a loader until data is ready
+    }
+
+    // Build chart data
+    List<_ChartData> chartData = buildChartData(
+      cachedVirtueEntriesMap!,
+      timeFrame,
+      radius,
+      savedUserLocation ?? LatLng(38, -123), // Default HQ location
     );
+
+    // Return the bar chart widget
+    return RenderNearbyBarChart(
+      data: chartData,
+      timeFrame: timeFrame,
+    );
+  }
+
+  Widget buildMapWidget() {
+    if (savedUserLocation == null) {
+      return CircularProgressIndicator(); // Loader until data is ready
+    }
+
+    return FlutterMap(
+      options: MapOptions(
+        center: savedUserLocation,
+        zoom: 8.5
+      ),
+      children: [
+        TileLayer(
+          urlTemplate:
+              // TODO: add api key
+          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=',
+        ),
+        MarkerLayer(markers: markers),
+      ],
+    );
+  }
+
+
+
+
+  List<Marker> buildVirtueMarkers(
+      Map<String, List<Map<String, dynamic>>> virtueLocations
+      ) {
+    List<Marker> markers = [];
+    virtueLocations.forEach((virtue, locations) {
+      for (var location in locations) {
+        LatLng position = LatLng(location['latitude'], location['longitude']);
+        String colorString = location['color'];
+        if (colorString.startsWith("0x")) {
+          colorString = colorString.substring(2);
+        }
+        DateTime today = DateTime.now();
+        DateTime? dateEntered =  location['dateEntried'];
+        if (!isMapEntryValid(dateEntered: dateEntered, entryLocation:position))
+        {
+          continue;
+        }
+
+        Color virtueColor = Color(int.parse(colorString, radix: 16));
+        markers.add(
+          Marker(
+            point: position,
+            child: Icon(
+              Icons.location_on,
+              color: virtueColor,
+            ),
+          ),
+        );
+      }
+    });
+
+    return markers;
+  }
+
+
+  bool isMapEntryValid({
+    required DateTime? dateEntered,
+    required LatLng entryLocation,
+  }) {
+    final Distance distanceCalculator = Distance();
+    DateTime today = DateTime.now();
+    DateTime startDate = getStartDate(timeFrame, today);
+
+    // Ensure the entry date is within the specified time frame
+    if (dateEntered == null || dateEntered.isBefore(startDate)) {
+      return false;
+    }
+
+    // TODO: replace with calculation that makes more sense
+    // get distance between user location and entry location
+    double distance = distanceCalculator.as(
+      LengthUnit.Meter,
+      savedUserLocation!,
+      entryLocation,
+    );
+
+    // compare distance to desired radius
+    if (distance / 1000 > radius) {
+      return false;
+    }
+
+    // Entry is valid
+    return true;
   }
 }
 
@@ -435,7 +523,6 @@ class RenderNearbyBarChart extends StatefulWidget {
 class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

@@ -625,6 +625,7 @@ class Users {
                 virtueLocationsMap[virtue['quadrantName']]?.add({
                   'latitude': geoPoint.latitude,
                   'longitude': geoPoint.longitude,
+                  'color' : virtueColor,
                   'dateEntried': dateEntered,
                 });
               } else {
