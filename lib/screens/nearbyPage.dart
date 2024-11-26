@@ -1,9 +1,12 @@
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
@@ -11,6 +14,8 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
+
 //import '../widgets/appBarWidget.dart';
 
 // Color palette
@@ -79,9 +84,35 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   List<_ChartData> chartData = [];
+
+  // map center point for viewing
+  //static final _defaultCenter = LatLng(51.509364, -0.128928);
+  static var _currentCenter = LatLng(51.509364, -0.128928);
+  // Generate 300 markers with randomized locations
+  static final _random = Random(42);
+  static final _markers = List<Marker>.generate(
+    300,
+    (_) => Marker(
+        //builder: (context) => const Icon(Icons.location_on),
+        point: LatLng(
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.latitude,
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.longitude,
+        ),
+        // Marker Icon
+        builder: (context) => const Icon(Icons.location_on)),
+  );
+
+  // Set these with whatever want for backend
+  final MapController _mapController = MapController();
+  // Experimenting with bounds
+  // LatLng _southwestCorner = LatLng(51.0, -0.5);
+  // LatLng _northeastCorner = LatLng(52.0, 0.5);
+  double _currentZoom = 8.5;
+  double _minZoom = 3;
+  double _maxZoom = 12;
+
   @override
   Widget build(BuildContext context) {
-
     final userInfo = ref.watch(userInfoProviderr);
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
@@ -119,7 +150,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top,
+                  height: MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -127,7 +159,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         height: 20,
                       ),
                       Text(
-                        " ${communityName} Community",
+                        " ${communityName}",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -135,62 +167,86 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
-                      // Flexible(
-                      //   child: 
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('Map View'),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            SizedBox(
-                              height: 30,
-                              width: 190,
-                              child: DropdownButtonFormField<String>(
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide()), // Remove the border from the dropdown field
-                                  contentPadding: EdgeInsets.only(
-                                      left: 10), // Remove content padding
-                                ),
-                                value: 'County',
-                                iconSize:
-                                    24, // Set the size of the dropdown icon
-                                onChanged: (String? newValue) async {
-
-                                },
-                                items: <String>[
-                                  'State',
-                                  'City',
-                                  'County',
-                                ].map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      // ),
-                      SizedBox(
-                        height: 20,
-                      ),
                       Container(
-                        height: 300,
-                        width: 300,
-                        // alignment: ,
-                        child: Image.asset(
-                          'assets/images/blank_map.png', 
-                          fit: BoxFit.fitHeight,
-                        ),
-                      ),
+                          height: 300,
+                          width: 300,
+                          // Start of Flutter Map
+                          child: FlutterMap(
+                            mapController: _mapController,
+
+                            options: MapOptions(
+                              // location to center map on
+                              center: _currentCenter,
+                              // zoom radius
+                              zoom: _currentZoom,
+                              minZoom: _minZoom,
+                              maxZoom: _maxZoom,
+                              
+                              // Alicia:
+                              // interactiveFlags could help us limit user interaction
+                                // directly with the map if we need to
+                              // we can set bounds but idk what it would be
+                              // bounds: LatLngBounds(
+                              //   _southwestCorner,
+                              //   _northeastCorner,
+                              // ),
+                              // boundsOptions: FitBoundsOptions(
+                              //   padding:EdgeInsets.all(10.0),
+                              // ),
+
+                              onPositionChanged: (mapPosition, _) {
+                                // Update slider
+                                setState(() {
+                                  _currentZoom = mapPosition.zoom!;
+                                  _currentCenter = mapPosition.center!;
+                                });
+                              },
+                            ),
+                            children: [
+                              TileLayer(
+                                // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                              ),
+                              SuperclusterLayer.immutable(
+                                // Replaces MarkerLayer
+                                initialMarkers: _markers,
+                                indexBuilder: IndexBuilders.rootIsolate,
+                                builder: (context, position, markerCount,
+                                        extraClusterData) =>
+                                    Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    color: Colors.blue,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      markerCount.toString(),
+                                      style:
+                                          const TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
                       SizedBox(width: 30),
-                      // radio buttons
+                      // Basic Slider Implementation with Dummy Variables
+                      Slider(
+                        value: _currentZoom,
+                        min: _minZoom,
+                        max: _maxZoom,
+                        label: _currentZoom.toStringAsFixed(1),
+                        onChanged: (value) {
+                          setState(() {
+                            _currentZoom = value;
+                            _mapController.move(
+                                _currentCenter,
+                                _currentZoom,
+                            );
+                          });
+                        },
+                      ),
                       SizedBox(height: 25),
                       SizedBox(width: 30),
                       Padding(
@@ -203,7 +259,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [ 
+                                children: [
                                   Text('Time Range'),
                                   SizedBox(
                                     height: 5,
@@ -234,7 +290,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                         });
                                       },
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.only(left: 10),
+                                        contentPadding:
+                                            EdgeInsets.only(left: 10),
                                         border: OutlineInputBorder(
                                           borderSide:
                                               BorderSide(), // Remove circular border
@@ -270,12 +327,14 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       iconSize:
                                           24, // Set the size of the dropdown icon
                                       onChanged: (String? newValue) async {
-                                        String num = newValue!.replaceAll('km', '');
+                                        String num =
+                                            newValue!.replaceAll('km', '');
                                         double newRadius = double.parse(num);
                                         print('radius in onchange: $newRadius');
                                         setState(() {
                                           radius = newRadius;
-                                          cachedVirtueEntriesMap = null; //delete the old map to trigger its replacement
+                                          cachedVirtueEntriesMap =
+                                              null; //delete the old map to trigger its replacement
                                         });
                                         // ref
                                         //     .read(usersRepositoryProvider)
@@ -318,9 +377,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     print('radius in render $radius');
     return StreamBuilder<Map<String, Map<String, dynamic>>>(
       stream: cachedVirtueEntriesMap == null
-          ? usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame) : null,
+          ? usesAPI.getNearbyEntries(
+              shareLocation, radius, communityName, timeFrame)
+          : null,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting && cachedVirtueEntriesMap == null) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            cachedVirtueEntriesMap == null) {
           return CircularProgressIndicator();
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
@@ -328,7 +390,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           if (cachedVirtueEntriesMap == null) {
             cachedVirtueEntriesMap = snapshot.data!;
           }
-          List<_ChartData> chartData = buildChartData(cachedVirtueEntriesMap!, timeFrame);
+          List<_ChartData> chartData =
+              buildChartData(cachedVirtueEntriesMap!, timeFrame);
           //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
           //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
 
@@ -348,8 +411,6 @@ class RenderNearbyBarChart extends StatefulWidget {
       {super.key, required this.data, required this.timeFrame});
   final List<_ChartData> data;
   final String timeFrame;
-
-
 
   @override
   State<RenderNearbyBarChart> createState() => Render_NearbyBarChartState();
@@ -427,8 +488,6 @@ class NearbyBarChart extends StatelessWidget {
   const NearbyBarChart({super.key, required this.data});
   final List<_ChartData> data;
 
-
-
   @override
   Widget build(BuildContext context) {
     return SfCartesianChart(
@@ -503,14 +562,10 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   }
 
   return startDate;
-
 }
 
-
-
-
-List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
-
+List<_ChartData> buildChartData(
+    Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
@@ -543,8 +598,6 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
     chartDataList.add(virtueData);
   }
   return chartDataList;
-
-
 }
 
 class _ChartData {
