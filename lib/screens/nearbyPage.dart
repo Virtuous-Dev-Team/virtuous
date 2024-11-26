@@ -62,16 +62,28 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Generate 300 markers with randomized locations
   static final _random = Random(42);
   static final _markers = List<Marker>.generate(
-    300,
-    (_) => Marker(
-        //builder: (context) => const Icon(Icons.location_on),
-        point: LatLng(
-          _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
-          _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
-        ),
-        // Marker Icon
-        builder: (context) => const Icon(Icons.location_on)),
-  );
+  300,
+  (_) {
+    // Generate a random color for the marker
+    final randomColor = Color.fromARGB(
+      255,
+      _random.nextInt(256), // Random red
+      _random.nextInt(256), // Random green
+      _random.nextInt(256), // Random blue
+    );
+
+    return Marker(
+      point: LatLng(
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
+        _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
+      ),
+      builder: (context) => Icon(
+        Icons.location_on,
+        color: randomColor,
+      ),
+    );
+  },
+);
 
   //
   double _sliderVal = 50.0;
