@@ -373,6 +373,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         ),
         SuperclusterLayer.immutable(
           // Replaces MarkerLayer
+          key: ValueKey(markers.hashCode),
           initialMarkers: markers,
           indexBuilder: IndexBuilders.rootIsolate,
           builder: (context, position, markerCount,
@@ -391,7 +392,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                 ),
               ),
         ),
-        MarkerLayer(markers: markers),
       ],
     );
   }
