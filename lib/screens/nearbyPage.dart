@@ -1,11 +1,7 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
@@ -15,7 +11,6 @@ import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 
-//import '../widgets/appBarWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -71,7 +66,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   //static final _defaultCenter = LatLng(51.509364, -0.128928);
   static var _currentCenter = LatLng(51.509364, -0.128928);
   // Generate 300 markers with randomized locations
-  static final _random = Random(42);
+  //static final _random = Random(42);
   /*
   static final _markers = List<Marker>.generate(
     300,
@@ -145,29 +140,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
-/*<<<<<<< develop
-                      Container(
-                          height: 300,
-                          width: 300,
-                          // Start of Flutter Map
-                          child: FlutterMap(
-                            mapController: _mapController,
-
-                            options: MapOptions(
-                              // location to center map on
-                              center: _currentCenter,
-                              // zoom radius
-                              zoom: _currentZoom,
-                              minZoom: _minZoom,
-                              maxZoom: _maxZoom,
-=======*/
                       SizedBox(
                         height: 300,
                         child: buildMapWidget(),
                       ),
                     SizedBox(height: 25),
-                     
-                              
+
                               // Alicia:
                               // interactiveFlags could help us limit user interaction
                                 // directly with the map if we need to
@@ -179,51 +157,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                               // boundsOptions: FitBoundsOptions(
                               //   padding:EdgeInsets.all(10.0),
                               // ),
-/* //TODO: add to new map location
-                              onPositionChanged: (mapPosition, _) {
-                                // Update slider
-                                setState(() {
-                                  _currentZoom = mapPosition.zoom!;
-                                  _currentCenter = mapPosition.center!;
-                                });
-                              },
-                            ),
-
-                            children: [
-                              TileLayer(
-                                // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                urlTemplate:
-                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              ),
-                              SuperclusterLayer.immutable(
-                                // Replaces MarkerLayer
-                                initialMarkers: _markers,
-                                indexBuilder: IndexBuilders.rootIsolate,
-                                builder: (context, position, markerCount,
-                                        extraClusterData) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      markerCount.toString(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )),
-
-
-                            // Uses the random markers from before
-                            MarkerLayer(markers: _markers),
-                          ],
-                        )  
-                      ),*/
 
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
@@ -331,10 +264,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                           radius = newRadius;
                                           markers = buildVirtueMarkers(cachedMarkers);
                                         });
-                                        // ref
-                                        //     .read(usersRepositoryProvider)
-                                        //     .getThoseEntries(
-                                        //         shareLocation, radius);
                                       },
                                       items: <String>[
                                         '10km',
@@ -385,6 +314,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
       setState(() {
         savedUserLocation = newUserLocation;
+        _currentCenter = newUserLocation!;
         cachedMarkers = data['mapEntries'];
         markers = buildVirtueMarkers(cachedMarkers);
       });
@@ -424,24 +354,47 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
-        //center: _currentCenter,
         center: savedUserLocation,
         zoom: _currentZoom,
         minZoom: _minZoom,
         maxZoom: _maxZoom,
+        onPositionChanged: (mapPosition, _) {
+          setState(() {
+            _currentZoom = mapPosition.zoom!;
+            _currentCenter = mapPosition.center!;
+          });
+        },
       ),
       children: [
         TileLayer(
           urlTemplate:
               // TODO: add api key
-          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=',
+          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=b4091f94-3dd2-4f6a-9ceb-46f00b95aeaa',
+        ),
+        SuperclusterLayer.immutable(
+          // Replaces MarkerLayer
+          initialMarkers: markers,
+          indexBuilder: IndexBuilders.rootIsolate,
+          builder: (context, position, markerCount,
+              extraClusterData) =>
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue,
+                ),
+                child: Center(
+                  child: Text(
+                    markerCount.toString(),
+                    style:
+                    const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
         ),
         MarkerLayer(markers: markers),
       ],
     );
   }
-
-
 
 
   List<Marker> buildVirtueMarkers(
@@ -455,7 +408,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         if (colorString.startsWith("0x")) {
           colorString = colorString.substring(2);
         }
-        DateTime today = DateTime.now();
+
         DateTime? dateEntered =  location['dateEntried'];
         if (!isMapEntryValid(dateEntered: dateEntered, entryLocation:position))
         {
