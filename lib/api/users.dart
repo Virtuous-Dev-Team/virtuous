@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
@@ -487,6 +488,7 @@ class Users {
     }
   }
 
+  // Not in use, remove at end of sprint if we don't start using it here
   DateTime getTimeRange(String timeFrame) {
     DateTime now = DateTime.now();
     DateTime timeRange = now;
@@ -510,16 +512,17 @@ class Users {
 
 
   // Get entries for nearby feature
-  Stream<Map<String, Map<String, dynamic>>> getNearbyEntries(
+  Stream<Map<String, dynamic>> getNearbyEntries(
       bool shareLocation, double radius, String communityName, String timeFrame) async* {
 
     // get time frame formatted for search
-    DateTime timeRange = getTimeRange(timeFrame);
+    //DateTime timeRange = getTimeRange(timeFrame);
+
+    radius = 500;
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
 
-    print(communityLookup);
     final communityDocRef = 
       FirebaseFirestore.instance.collection('Communities');
 
@@ -536,11 +539,13 @@ class Users {
     if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
+      final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
 
-      // Get current position and setup Geolocator
+      // Get current position and setup Geolocator with it
       Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       GeoFirePoint geoFireLocation =
       geo.point(latitude: position.latitude, longitude: position.longitude);
+      LatLng userLocation = LatLng(position.latitude, position.longitude);
 
       // Search for matching entries for each virtue
 
@@ -556,11 +561,11 @@ class Users {
         print('Accessing shared entries for Virtue: ${virtue['quadrantName']}');
 
         // Retrieve all documents within 'sharedEntries' and log them
-        final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
-        print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
-        for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
-          print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
-        }
+        //final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
+        //print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
+        //for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
+       //   print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
+       // }
 
         // Get color data for the virtue
         var virtueColor = virtue['quadrantColor'];
@@ -569,6 +574,10 @@ class Users {
           'color': virtueColor,
           'entries': <DocumentSnapshot>[],
         };
+
+        // start with an empty list for the heat map list
+        virtueLocationsMap[virtue['quadrantName']] = [];
+
 
         print('looking at all virtues');
         final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
@@ -586,10 +595,60 @@ class Users {
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
+        for (var entry in virtueEntries) {
+          // get entry data that should exist
+          var entryData = entry.data();
+          if (entryData == null) {
+            print("Entry data is null, bad news. Skipping it.");
+            continue;
+          }
+
+          // check the format
+          if (entryData is Map<String, dynamic>) {
+            // make sure everything we are accessing exists
+            if (entryData.containsKey('userLocation') &&
+                entryData['userLocation'] is Map<String, dynamic>) {
+              final userLocation = entryData['userLocation'] as Map<
+                  String,
+                  dynamic>;
+              if (userLocation.containsKey('geopoint') &&
+                  userLocation['geopoint'] is GeoPoint) {
+                GeoPoint geoPoint = userLocation['geopoint'] as GeoPoint;
+
+                // get the entry time
+                DateTime? dateEntered;
+                if (entryData.containsKey('dateEntried') &&
+                    entryData['dateEntried'] is Timestamp) {
+                  dateEntered = (entryData['dateEntried'] as Timestamp).toDate();
+                }
+
+                virtueLocationsMap[virtue['quadrantName']]?.add({
+                  'latitude': geoPoint.latitude,
+                  'longitude': geoPoint.longitude,
+                  'color' : virtueColor,
+                  'dateEntried': dateEntered,
+                });
+              } else {
+                print("bad location for virtue entry: ${entry.id}");
+              }
+            } else {
+              print("wrong format for entry: ${entry.id}");
+            }
+          }
+        }
 
       }
-      print("This is the virtuesEntriesMap!: $virtueEntriesMap");
-      yield virtueEntriesMap;
+      virtueLocationsMap.forEach((virtueName, locations) {
+        print("Virtue: $virtueName");
+        for (var location in locations) {
+          print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}, Date: ${location['dateEntried']}");        }
+      });
+      //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
+      yield {
+      'chartEntries':virtueEntriesMap,
+        'mapEntries':virtueLocationsMap,
+        'userLocation': userLocation,
+    };
     }
   }
 
