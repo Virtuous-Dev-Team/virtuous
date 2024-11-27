@@ -69,6 +69,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   static final _defaultCenter = LatLng(51.509364, -0.128928);
   // Generate 300 markers with randomized locations
   static final _random = Random(42);
+  /*
   static final _markers = List<Marker>.generate(
     300, 
     (_) => Marker(
@@ -82,7 +83,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       ),
     ),
   );
-
+  */
   //
   double _sliderVal = 50.0;
 
@@ -464,7 +465,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         markers.add(
           Marker(
             point: position,
-            child: Icon(
+            builder: (context) => Icon(
               Icons.location_on,
               color: virtueColor,
             ),
