@@ -23,33 +23,6 @@ const Color textColor = Colors.white;
 
 Users usesAPI = Users();
 
-// map of zoom level with its corresponding tile width (in longitudes)
-final Map<int, double> zoomWidths = {
-  3 : 45,
-  4 : 22.5,
-  5 : 11.25,
-  6 : 5.625,
-  7 : 2.813,
-  8 : 1.406,
-  9 : 0.703,
-  10 : 0.352,
-  11 : 0.176,
-  12 : 0.088
-};
-
-// gets the radius (in miles) depending on center point and zoom level
-num getRadius(LatLng center, int zoomLevel) {
-  double tileWidth = zoomWidths[zoomLevel]!;
-  double longitudinalRadius = ((tileWidth * sqrt(2)) / 2);
-
-  double newLong = center.longitude + longitudinalRadius;
-
-  Distance distance = Distance();
-  double radius = distance.as(LengthUnit.Mile, center, LatLng(newLong, center.latitude));
-
-  return radius;
-}
-
 class NearbyPage extends ConsumerStatefulWidget {
   const NearbyPage({Key? key}) : super(key: key);
 
@@ -67,10 +40,13 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
 
-
     // get initial entry information
     prefetchNearbyEntries();
 
+    // get initial bounds on map load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      currentBounds = _mapController.bounds;
+    });
   }
 
   @override
@@ -81,6 +57,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   late bool shareLocation;
   late String communityName;
 
+  LatLngBounds? currentBounds;
   double radius = 10;
   String timeFrame = "Last week";
   // Store data from a call with the same radius
@@ -390,6 +367,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           setState(() {
             _currentZoom = mapPosition.zoom!;
             _currentCenter = mapPosition.center!;
+            currentBounds = mapPosition.bounds;
+            print("new camera bounds = $currentBounds");
           });
         },
       ),
