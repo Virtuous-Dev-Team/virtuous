@@ -381,7 +381,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         TileLayer(
           urlTemplate:
               // TODO: add api key
-          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=d8b4467d-0593-4381-96c9-9fcf8156f2f1',
+          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=',
         ),
         SuperclusterLayer.immutable(
           // Replaces MarkerLayer

@@ -590,10 +590,8 @@ class Users {
           .where('userLocation.geopoint', isGreaterThanOrEqualTo: SOUTH)
           .get();
 
-        print("Interesting doc snapshot: ${virtueEntriesQuery.docs.first.data()}");
         List<DocumentSnapshot> virtueEntries = [];
         for(var docSnapshot in virtueEntriesQuery.docs) {
-          print("Interesting doc snapshot: ${docSnapshot.data()}");
           virtueEntries.add(docSnapshot);
         }
         // await geoRef
