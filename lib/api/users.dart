@@ -13,7 +13,7 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-
+import 'package:flutter_map/flutter_map.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 class Users {
@@ -513,12 +513,10 @@ class Users {
 
   // Get entries for nearby feature
   Stream<Map<String, dynamic>> getNearbyEntries(
-      bool shareLocation, double radius, String communityName, String timeFrame) async* {
+      bool shareLocation, String communityName, String timeFrame) async* {
 
     // get time frame formatted for search
     //DateTime timeRange = getTimeRange(timeFrame);
-
-    radius = 500;
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
@@ -586,7 +584,7 @@ class Users {
         final List<DocumentSnapshot> virtueEntries = await geoRef
             .within(
           center: geoFireLocation,
-          radius: radius,
+          radius: 5000,
           field: 'userLocation',
           strictMode: true,
         )
