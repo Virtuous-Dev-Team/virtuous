@@ -518,6 +518,10 @@ class Users {
     // get time frame formatted for search
     //DateTime timeRange = getTimeRange(timeFrame);
 
+    // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
+    GeoPoint NORTH = GeoPoint(48.85, 0);
+    GeoPoint SOUTH = GeoPoint(28.70, 0);
+
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
 
@@ -578,17 +582,28 @@ class Users {
 
 
         print('looking at all virtues');
-        final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
+        // final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
 
         // Query the points within the radius once
-        final List<DocumentSnapshot> virtueEntries = await geoRef
-            .within(
-          center: geoFireLocation,
-          radius: 5000,
-          field: 'userLocation',
-          strictMode: true,
-        )
-            .first; // Fetch only a one time batch of results
+        final virtueEntriesQuery = await sharedEntriesCollectionRef
+          .where('userLocation.geopoint', isLessThanOrEqualTo: NORTH)
+          .where('userLocation.geopoint', isGreaterThanOrEqualTo: SOUTH)
+          .get();
+
+        print("Interesting doc snapshot: ${virtueEntriesQuery.docs.first.data()}");
+        List<DocumentSnapshot> virtueEntries = [];
+        for(var docSnapshot in virtueEntriesQuery.docs) {
+          print("Interesting doc snapshot: ${docSnapshot.data()}");
+          virtueEntries.add(docSnapshot);
+        }
+        // await geoRef
+        //     .within(
+        //   center: geoFireLocation,
+        //   radius: 10000,
+        //   field: 'userLocation',
+        //   strictMode: true,
+        // )
+        //     .first; // Fetch only a one time batch of results
 
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
