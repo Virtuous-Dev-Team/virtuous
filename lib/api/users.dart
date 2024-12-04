@@ -13,7 +13,7 @@ import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-
+import 'package:flutter_map/flutter_map.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 class Users {
@@ -513,12 +513,14 @@ class Users {
 
   // Get entries for nearby feature
   Stream<Map<String, dynamic>> getNearbyEntries(
-      bool shareLocation, double radius, String communityName, String timeFrame) async* {
+      bool shareLocation, String communityName, String timeFrame) async* {
 
     // get time frame formatted for search
     //DateTime timeRange = getTimeRange(timeFrame);
 
-    radius = 500;
+    // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
+    GeoPoint NORTH = GeoPoint(48.85, 0);
+    GeoPoint SOUTH = GeoPoint(28.70, 0);
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
@@ -580,17 +582,26 @@ class Users {
 
 
         print('looking at all virtues');
-        final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
+        // final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
 
         // Query the points within the radius once
-        final List<DocumentSnapshot> virtueEntries = await geoRef
-            .within(
-          center: geoFireLocation,
-          radius: radius,
-          field: 'userLocation',
-          strictMode: true,
-        )
-            .first; // Fetch only a one time batch of results
+        final virtueEntriesQuery = await sharedEntriesCollectionRef
+          .where('userLocation.geopoint', isLessThanOrEqualTo: NORTH)
+          .where('userLocation.geopoint', isGreaterThanOrEqualTo: SOUTH)
+          .get();
+
+        List<DocumentSnapshot> virtueEntries = [];
+        for(var docSnapshot in virtueEntriesQuery.docs) {
+          virtueEntries.add(docSnapshot);
+        }
+        // await geoRef
+        //     .within(
+        //   center: geoFireLocation,
+        //   radius: 10000,
+        //   field: 'userLocation',
+        //   strictMode: true,
+        // )
+        //     .first; // Fetch only a one time batch of results
 
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;

@@ -8,6 +8,7 @@ import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 
@@ -39,10 +40,15 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
 
-
     // get initial entry information
     prefetchNearbyEntries();
 
+    // get initial bounds on map load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      currentBounds = _mapController.bounds ?? currentBounds;
+      print("Initial bounds points: ");
+      print("   NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
+    });
   }
 
   @override
@@ -53,7 +59,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   late bool shareLocation;
   late String communityName;
 
-  double radius = 10;
+  // current bounds initializes as all of North America, should change on map load
+  LatLngBounds currentBounds = LatLngBounds(
+    LatLng(28.70, -127.50),
+    LatLng(48.85, -55.90)
+  );
+
   String timeFrame = "Last week";
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
@@ -85,7 +96,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // Experimenting with bounds
   // LatLng _southwestCorner = LatLng(51.0, -0.5);
   // LatLng _northeastCorner = LatLng(52.0, 0.5);
-  double _currentZoom = 8.5;
+  double _currentZoom = 10;
   double _minZoom = 3;
   double _maxZoom = 12;
 
@@ -237,47 +248,47 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('Maximum Distance'),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 190,
-                                    child: DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide()), // Remove the border from the dropdown field
-                                        contentPadding: EdgeInsets.only(
-                                            left: 10), // Remove content padding
-                                      ),
-                                      value: '10km',
-                                      iconSize:
-                                          24, // Set the size of the dropdown icon
-                                      onChanged: (String? newValue) async {
-                                        String num =
-                                            newValue!.replaceAll('km', '');
-                                        double newRadius = double.parse(num);
-                                        print('radius in onchange: $newRadius');
-                                        setState(() {
-                                          radius = newRadius;
-                                          markers = buildVirtueMarkers(cachedMarkers);
-                                        });
-                                      },
-                                      items: <String>[
-                                        '10km',
-                                        '50km',
-                                        '250km',
-                                        '1000km',
-                                      ].map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
+                                  // Text('Maximum Distance'),
+                                  // SizedBox(
+                                  //   height: 5,
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 30,
+                                  //   width: 190,
+                                  //   child: DropdownButtonFormField<String>(
+                                  //     decoration: InputDecoration(
+                                  //       border: OutlineInputBorder(
+                                  //           borderSide:
+                                  //               BorderSide()), // Remove the border from the dropdown field
+                                  //       contentPadding: EdgeInsets.only(
+                                  //           left: 10), // Remove content padding
+                                  //     ),
+                                  //     value: '10km',
+                                  //     iconSize:
+                                  //         24, // Set the size of the dropdown icon
+                                  //     onChanged: (String? newValue) async {
+                                  //       String num =
+                                  //           newValue!.replaceAll('km', '');
+                                  //       double newRadius = double.parse(num);
+                                  //       print('radius in onchange: $newRadius');
+                                  //       setState(() {
+                                  //         radius = newRadius;
+                                  //         markers = buildVirtueMarkers(cachedMarkers);
+                                  //       });
+                                  //     },
+                                  //     items: <String>[
+                                  //       '10km',
+                                  //       '50km',
+                                  //       '250km',
+                                  //       '1000km',
+                                  //     ].map((String value) {
+                                  //       return DropdownMenuItem<String>(
+                                  //         value: value,
+                                  //         child: Text(value),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -300,7 +311,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // get the entries from the api
   Future<void> prefetchNearbyEntries() async {
     try {
-      final data = await usesAPI.getNearbyEntries(shareLocation, radius, communityName, timeFrame).first;
+      final data = await usesAPI.getNearbyEntries(shareLocation, communityName, timeFrame).first;
 
       // Cache chart data
       cachedVirtueEntriesMap = (data['chartEntries'] as Map<String, dynamic>?)?.map(
@@ -335,8 +346,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     List<_ChartData> chartData = buildChartData(
       cachedVirtueEntriesMap!,
       timeFrame,
-      radius,
-      savedUserLocation ?? LatLng(38, -123), // Default HQ location
+      currentBounds
     );
 
     // Return the bar chart widget
@@ -362,6 +372,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           setState(() {
             _currentZoom = mapPosition.zoom!;
             _currentCenter = mapPosition.center!;
+            currentBounds = mapPosition.bounds!;
+            print("new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
           });
         },
       ),
@@ -410,7 +422,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         }
 
         DateTime? dateEntered =  location['dateEntried'];
-        if (!isMapEntryValid(dateEntered: dateEntered, entryLocation:position))
+        if (!isMapEntryValid(
+          dateEntered: dateEntered,
+          entryLocation: position,
+          cameraBounds: currentBounds
+        ))
         {
           continue;
         }
@@ -435,8 +451,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   bool isMapEntryValid({
     required DateTime? dateEntered,
     required LatLng entryLocation,
+    required LatLngBounds cameraBounds
   }) {
-    final Distance distanceCalculator = Distance();
     DateTime today = DateTime.now();
     DateTime startDate = getStartDate(timeFrame, today);
 
@@ -445,19 +461,12 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       return false;
     }
 
-    // TODO: replace with calculation that makes more sense
-    // get distance between user location and entry location
-    double distance = distanceCalculator.as(
-      LengthUnit.Meter,
-      savedUserLocation!,
-      entryLocation,
-    );
-
-    // compare distance to desired radius
-    if (distance / 1000 > radius) {
+    // Compare entry location to bounds to determine if it is in the camera view
+    if (!cameraBounds.contains(entryLocation)){
+      // out of bounds
       return false;
     }
-
+   
     // Entry is valid
     return true;
   }
@@ -620,9 +629,7 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   return startDate;
 }
 
-
-
-List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame, double radius, LatLng centerLocation) {
+List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame, LatLngBounds cameraBounds) {
 
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
@@ -661,8 +668,7 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
         timeFrame: timeFrame,        // Provide named arguments
         dateEntered: dateEntered,
         entryLocation: entryLocation,
-        userLocation: centerLocation, // Match the argument name
-        radius: radius,
+        cameraBounds: cameraBounds, 
       ))
         {
           virtueData.y.add(data);
@@ -674,14 +680,11 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
 }
 
 bool isEntryValid({
-required String timeFrame,
-required DateTime? dateEntered,
-required LatLng entryLocation,
-required LatLng userLocation,
-required double radius,
+  required String timeFrame,
+  required DateTime? dateEntered,
+  required LatLng entryLocation,
+  required LatLngBounds cameraBounds
 }) {
-
-  final Distance distanceCalculator = Distance();
   DateTime today = DateTime.now();
   DateTime startDate = getStartDate(timeFrame, today);
 
@@ -690,16 +693,9 @@ required double radius,
     return false;
   }
 
-  // TODO: replace with calculation that makes more sense
-  // get distance between user location and entry location
-  double distance = distanceCalculator.as(
-    LengthUnit.Meter,
-    userLocation,
-    entryLocation,
-  );
-
-  // compare distance to desired radius
-  if (distance / 1000 > radius) {
+  // Compare entry location to bounds to determine if it is in the camera view
+  if (!cameraBounds.contains(entryLocation)){
+    // out of bounds
     return false;
   }
 
@@ -707,8 +703,6 @@ required double radius,
   return true;
 
 }
-
-
 
 class _ChartData {
   _ChartData(this.x, this.y, this.color);
