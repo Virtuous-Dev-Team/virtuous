@@ -58,6 +58,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   late bool shareLocation;
   late String communityName;
+  late String mapKey;
 
   // current bounds initializes as all of North America, should change on map load
   LatLngBounds currentBounds = LatLngBounds(
@@ -312,6 +313,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Future<void> prefetchNearbyEntries() async {
     try {
       final data = await usesAPI.getNearbyEntries(shareLocation, communityName, timeFrame).first;
+      final keyDoc = await FirebaseFirestore.instance.collection('Keys').doc('StadiaKey').get();
 
       // Cache chart data
       cachedVirtueEntriesMap = (data['chartEntries'] as Map<String, dynamic>?)?.map(
@@ -328,6 +330,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         _currentCenter = newUserLocation!;
         cachedMarkers = data['mapEntries'];
         markers = buildVirtueMarkers(cachedMarkers);
+        mapKey = keyDoc.data()!['key'];
       });
 
     } catch (e) {
@@ -381,7 +384,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         TileLayer(
           urlTemplate:
               // TODO: add api key
-          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=',
+          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=$mapKey',
         ),
         SuperclusterLayer.immutable(
           // Replaces MarkerLayer
