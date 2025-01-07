@@ -1,21 +1,17 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 
-//import '../widgets/appBarWidget.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -39,8 +35,20 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
+    cachedVirtueEntriesMap = null;
+    cachedMarkers;
     shareLocation = userInfo.shareLocation;
     communityName = userInfo.currentCommunity;
+
+    // get initial entry information
+    prefetchNearbyEntries();
+
+    // get initial bounds on map load
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      currentBounds = _mapController.bounds ?? currentBounds;
+      print("Initial bounds points: ");
+      print("   NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
+    });
   }
 
   @override
@@ -50,49 +58,62 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   late bool shareLocation;
   late String communityName;
+  late String mapKey;
 
-  double radius = 10;
+  // current bounds initializes as all of North America, should change on map load
+  LatLngBounds currentBounds = LatLngBounds(
+    LatLng(28.70, -127.50),
+    LatLng(48.85, -55.90)
+  );
+
   String timeFrame = "Last week";
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
+  LatLng? savedUserLocation;
   List<_ChartData> chartData = [];
+  Map<String, List<Map<String, dynamic>>> cachedMarkers = {};
+  List<Marker> markers = [];
 
   // map center point for viewing
-  static final _defaultCenter = LatLng(51.509364, -0.128928);
+  //static final _defaultCenter = LatLng(51.509364, -0.128928);
+  static var _currentCenter = LatLng(51.509364, -0.128928);
   // Generate 300 markers with randomized locations
-  static final _random = Random(42);
+  //static final _random = Random(42);
+  /*
   static final _markers = List<Marker>.generate(
-  300,
-  (_) {
-    // Generate a random color for the marker
-    final randomColor = Color.fromARGB(
-      255,
-      _random.nextInt(256), // Random red
-      _random.nextInt(256), // Random green
-      _random.nextInt(256), // Random blue
-    );
-
-    return Marker(
-      point: LatLng(
-        _random.nextDouble() * 3 - 1.5 + _defaultCenter.latitude,
-        _random.nextDouble() * 3 - 1.5 + _defaultCenter.longitude,
-      ),
-      builder: (context) => Icon(
-        Icons.location_on,
-        color: randomColor,
-      ),
-    );
-  },
-);
-
-  //
-  double _sliderVal = 50.0;
+    300,
+    (_) => Marker(
+        //builder: (context) => const Icon(Icons.location_on),
+        point: LatLng(
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.latitude,
+          _random.nextDouble() * 3 - 1.5 + _currentCenter.longitude,
+        ),
+        // Marker Icon
+        builder: (context) => const Icon(Icons.location_on)),
+  );
+*/
+  // Set these with whatever want for backend
+  final MapController _mapController = MapController();
+  // Experimenting with bounds
+  // LatLng _southwestCorner = LatLng(51.0, -0.5);
+  // LatLng _northeastCorner = LatLng(52.0, 0.5);
+  double _currentZoom = 10;
+  double _minZoom = 3;
+  double _maxZoom = 12;
 
   @override
   Widget build(BuildContext context) {
     final userInfo = ref.watch(userInfoProviderr);
+
+    // Detect if community has changed
+    if (communityName != userInfo.currentCommunity) {
+      setState(() {
+        communityName = userInfo.currentCommunity;
+        cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
+      });
+    }
+
     shareLocation = userInfo.shareLocation;
-    communityName = userInfo.currentCommunity;
 
     late TooltipBehavior _tooltip;
 
@@ -100,19 +121,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return Scaffold(
         backgroundColor: Color(0xFFEFE5CC),
         appBar: AppBarWidget('regular'),
-        // appBar: AppBar(
-        //   backgroundColor: appBarColor,
-        //   elevation: 0,
-        //   actions: [
-        //     IconButton(
-        //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-        //       onPressed: () {
-        //         // TODO: Implement profile icon functionality.
-        //       },
-        //     ),
-        //     SizedBox(width: 12),
-        //   ],
-        // ),
         body: Container(
           child: Center(
             child: Container(
@@ -136,7 +144,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         height: 20,
                       ),
                       Text(
-                        " ${communityName} Community",
+                        " ${communityName}",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w500,
@@ -144,121 +152,38 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         ),
                       ),
                       SizedBox(height: 25),
-                      // Drop Down Implementation ------------------------------------------------------------
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     Text('Map View'),
-                      //     SizedBox(
-                      //       height: 5,
-                      //     ),
-                      //     SizedBox(
-                      //       height: 30,
-                      //       width: 190,
-                      //       child: DropdownButtonFormField<String>(
-                      //         decoration: InputDecoration(
-                      //           border: OutlineInputBorder(
-                      //               borderSide:
-                      //                   BorderSide()), // Remove the border from the dropdown field
-                      //           contentPadding: EdgeInsets.only(
-                      //               left: 10), // Remove content padding
-                      //         ),
-                      //         value: 'County',
-                      //         iconSize:
-                      //             24, // Set the size of the dropdown icon
-                      //         onChanged: (String? newValue) async {
+                      SizedBox(
+                        height: 300,
+                        child: buildMapWidget(),
+                      ),
+                    SizedBox(height: 25),
 
-                      //         },
-                      //         items: <String>[
-                      //           'State',
-                      //           'City',
-                      //           'County',
-                      //         ].map((String value) {
-                      //           return DropdownMenuItem<String>(
-                      //             value: value,
-                      //             child: Text(value),
-                      //           );
-                      //         }).toList(),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // SizedBox(
-                      //   height: 20,
-                      // ),
-                      // ----------------------------------------------------------------------------------
-                      Container(
-                          height: 300,
-                          width: 300,
-                          // Map Placholder
-                          // alignment: ,
-                          // child: Image.asset(
-                          //   'assets/images/blank_map.png',
-                          //   fit: BoxFit.fitHeight,
-                          // ),
-                          //
-                          // Start of Flutter Map
-                          child: FlutterMap(
-                            options: MapOptions(
-                              // location to center map on
-                              center: _defaultCenter, // deprecated
-                              // zoom radius
-                              zoom: 8.5, // deprecated
-                            ),
-                            children: [
-                              TileLayer(
-                                // The basic template that works: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                // This is where the template from the provider goes
-                                urlTemplate:
-                                    'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
+                              // Alicia:
+                              // interactiveFlags could help us limit user interaction
+                                // directly with the map if we need to
+                              // we can set bounds but idk what it would be
+                              // bounds: LatLngBounds(
+                              //   _southwestCorner,
+                              //   _northeastCorner,
+                              // ),
+                              // boundsOptions: FitBoundsOptions(
+                              //   padding:EdgeInsets.all(10.0),
+                              // ),
 
-                                /*
-                                See if the url template works on your machine, or you can try some of the ones I experimented with:
-                                Alt Toner1: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png',
-                                Alt Toner2: 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png',
-                                Alt Toner3: 'https://stamen-tiles.a.ssl.fastly.net/toner-background/{z}/{x}/{y}.png',
-                                Alt Toner4: 'https://tile.stamen.com/toner/{z}/{x}/{y}.png',
-                                Positron: 'https://basemaps.cartocdn.com/light-all/{z}/{x}/{y}.png',
-                                Note: There's also a Dark Matter stamen template.
-                              */
-
-                                // If you don't know what the commented out stuff is below, I don't think you need to worry about it right now
-                                //subdomains: ['a', 'b', 'c', 'd'], //userAgentPackageName: 'com.virtuetracker.app',
-                              ),
-                              SuperclusterLayer.immutable(
-                                // Replaces MarkerLayer
-                                initialMarkers: _markers,
-                                indexBuilder: IndexBuilders.rootIsolate,
-                                builder: (context, position, markerCount,
-                                        extraClusterData) =>
-                                    Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                    color: Colors.blue,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      markerCount.toString(),
-                                      style:
-                                          const TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )),
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
                       Slider(
-                        value: _sliderVal,
-                        min: 0.0,
-                        max: 100.0,
-                        // maybe 9 divisions? (number of zoom levels)
-                        label: _sliderVal.toStringAsFixed(1),
-                        onChanged: (double newVal) {
+                        value: _currentZoom,
+                        min: _minZoom,
+                        max: _maxZoom,
+                        label: _currentZoom.toStringAsFixed(1),
+                        onChanged: (value) {
                           setState(() {
-                            _sliderVal = newVal;
+                            _currentZoom = value;
+                            _mapController.move(
+                                _currentCenter,
+                                _currentZoom,
+                            );
                           });
                         },
                       ),
@@ -302,6 +227,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           timeFrame = newValue!;
+                                          markers = buildVirtueMarkers(cachedMarkers);
                                         });
                                       },
                                       decoration: InputDecoration(
@@ -323,52 +249,47 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('Maximum Distance'),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  SizedBox(
-                                    height: 30,
-                                    width: 190,
-                                    child: DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        border: OutlineInputBorder(
-                                            borderSide:
-                                                BorderSide()), // Remove the border from the dropdown field
-                                        contentPadding: EdgeInsets.only(
-                                            left: 10), // Remove content padding
-                                      ),
-                                      value: '10km',
-                                      iconSize:
-                                          24, // Set the size of the dropdown icon
-                                      onChanged: (String? newValue) async {
-                                        String num =
-                                            newValue!.replaceAll('km', '');
-                                        double newRadius = double.parse(num);
-                                        print('radius in onchange: $newRadius');
-                                        setState(() {
-                                          radius = newRadius;
-                                          cachedVirtueEntriesMap =
-                                              null; //delete the old map to trigger its replacement
-                                        });
-                                        // ref
-                                        //     .read(usersRepositoryProvider)
-                                        //     .getThoseEntries(
-                                        //         shareLocation, radius);
-                                      },
-                                      items: <String>[
-                                        '10km',
-                                        '50km',
-                                        '250km',
-                                        '1000km',
-                                      ].map((String value) {
-                                        return DropdownMenuItem<String>(
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
+                                  // Text('Maximum Distance'),
+                                  // SizedBox(
+                                  //   height: 5,
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 30,
+                                  //   width: 190,
+                                  //   child: DropdownButtonFormField<String>(
+                                  //     decoration: InputDecoration(
+                                  //       border: OutlineInputBorder(
+                                  //           borderSide:
+                                  //               BorderSide()), // Remove the border from the dropdown field
+                                  //       contentPadding: EdgeInsets.only(
+                                  //           left: 10), // Remove content padding
+                                  //     ),
+                                  //     value: '10km',
+                                  //     iconSize:
+                                  //         24, // Set the size of the dropdown icon
+                                  //     onChanged: (String? newValue) async {
+                                  //       String num =
+                                  //           newValue!.replaceAll('km', '');
+                                  //       double newRadius = double.parse(num);
+                                  //       print('radius in onchange: $newRadius');
+                                  //       setState(() {
+                                  //         radius = newRadius;
+                                  //         markers = buildVirtueMarkers(cachedMarkers);
+                                  //       });
+                                  //     },
+                                  //     items: <String>[
+                                  //       '10km',
+                                  //       '50km',
+                                  //       '250km',
+                                  //       '1000km',
+                                  //     ].map((String value) {
+                                  //       return DropdownMenuItem<String>(
+                                  //         value: value,
+                                  //         child: Text(value),
+                                  //       );
+                                  //     }).toList(),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -378,7 +299,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                       SizedBox(
                         height: 10,
                       ),
-                      renderNearbyBarChart(shareLocation)
+                      renderNearbyBarChart()
                     ],
                   ),
                 ),
@@ -388,36 +309,169 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         ));
   }
 
-  Widget renderNearbyBarChart(bool shareLocation) {
-    print('radius in render $radius');
-    return StreamBuilder<Map<String, Map<String, dynamic>>>(
-      stream: cachedVirtueEntriesMap == null
-          ? usesAPI.getNearbyEntries(
-              shareLocation, radius, communityName, timeFrame)
-          : null,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            cachedVirtueEntriesMap == null) {
-          return CircularProgressIndicator();
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          if (cachedVirtueEntriesMap == null) {
-            cachedVirtueEntriesMap = snapshot.data!;
-          }
-          List<_ChartData> chartData =
-              buildChartData(cachedVirtueEntriesMap!, timeFrame);
-          //Map<String, Map<String, dynamic>> virtueEntriesMap = snapshot.data!;
-          //List<_ChartData> chartData = buildChartData(virtueEntriesMap, timeFrame);
+  // get the entries from the api
+  Future<void> prefetchNearbyEntries() async {
+    try {
+      final data = await usesAPI.getNearbyEntries(shareLocation, communityName, timeFrame).first;
+      final keyDoc = await FirebaseFirestore.instance.collection('Keys').doc('StadiaKey').get();
 
-          // Use the documents list here
-          return RenderNearbyBarChart(
-            data: chartData,
-            timeFrame: timeFrame,
-          );
-        }
-      },
+      // Cache chart data
+      cachedVirtueEntriesMap = (data['chartEntries'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      );
+
+      // Cache user location
+      LatLng? newUserLocation  = data['userLocation'] != null
+          ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
+          : null;
+
+      setState(() {
+        savedUserLocation = newUserLocation;
+        _currentCenter = newUserLocation!;
+        cachedMarkers = data['mapEntries'];
+        markers = buildVirtueMarkers(cachedMarkers);
+        mapKey = keyDoc.data()!['key'];
+      });
+
+    } catch (e) {
+      print("Error getting data from API: $e");
+    }
+  }
+
+  // make the nearby bar chart
+  Widget renderNearbyBarChart() {
+
+    if (cachedVirtueEntriesMap == null) {
+      return CircularProgressIndicator(); // Show a loader until data is ready
+    }
+
+    // Build chart data
+    List<_ChartData> chartData = buildChartData(
+      cachedVirtueEntriesMap!,
+      timeFrame,
+      currentBounds
     );
+
+    // Return the bar chart widget
+    return RenderNearbyBarChart(
+      data: chartData,
+      timeFrame: timeFrame,
+    );
+  }
+
+  Widget buildMapWidget() {
+    if (savedUserLocation == null) {
+      return CircularProgressIndicator(); // Loader until data is ready
+    }
+
+    return FlutterMap(
+      mapController: _mapController,
+      options: MapOptions(
+        center: savedUserLocation,
+        zoom: _currentZoom,
+        minZoom: _minZoom,
+        maxZoom: _maxZoom,
+        onPositionChanged: (mapPosition, _) {
+          setState(() {
+            _currentZoom = mapPosition.zoom!;
+            _currentCenter = mapPosition.center!;
+            currentBounds = mapPosition.bounds!;
+            print("new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
+          });
+        },
+      ),
+      children: [
+        TileLayer(
+          urlTemplate:
+              // TODO: add api key
+          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=$mapKey',
+        ),
+        SuperclusterLayer.immutable(
+          // Replaces MarkerLayer
+          key: ValueKey(markers.hashCode),
+          initialMarkers: markers,
+          indexBuilder: IndexBuilders.rootIsolate,
+          builder: (context, position, markerCount,
+              extraClusterData) =>
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.blue,
+                ),
+                child: Center(
+                  child: Text(
+                    markerCount.toString(),
+                    style:
+                    const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+        ),
+      ],
+    );
+  }
+
+
+  List<Marker> buildVirtueMarkers(
+      Map<String, List<Map<String, dynamic>>> virtueLocations
+      ) {
+    List<Marker> markers = [];
+    virtueLocations.forEach((virtue, locations) {
+      for (var location in locations) {
+        LatLng position = LatLng(location['latitude'], location['longitude']);
+        String colorString = location['color'];
+        if (colorString.startsWith("0x")) {
+          colorString = colorString.substring(2);
+        }
+
+        DateTime? dateEntered =  location['dateEntried'];
+        if (!isMapEntryValid(
+          dateEntered: dateEntered,
+          entryLocation: position,
+          cameraBounds: currentBounds
+        ))
+        {
+          continue;
+        }
+
+        Color virtueColor = Color(int.parse(colorString, radix: 16));
+        markers.add(
+          Marker(
+            point: position,
+              builder: (context) => Icon(
+              Icons.location_on,
+              color: virtueColor,
+            ),
+          ),
+        );
+      }
+    });
+
+    return markers;
+  }
+
+
+  bool isMapEntryValid({
+    required DateTime? dateEntered,
+    required LatLng entryLocation,
+    required LatLngBounds cameraBounds
+  }) {
+    DateTime today = DateTime.now();
+    DateTime startDate = getStartDate(timeFrame, today);
+
+    // Ensure the entry date is within the specified time frame
+    if (dateEntered == null || dateEntered.isBefore(startDate)) {
+      return false;
+    }
+
+    // Compare entry location to bounds to determine if it is in the camera view
+    if (!cameraBounds.contains(entryLocation)){
+      // out of bounds
+      return false;
+    }
+   
+    // Entry is valid
+    return true;
   }
 }
 
@@ -434,7 +488,6 @@ class RenderNearbyBarChart extends StatefulWidget {
 class Render_NearbyBarChartState extends State<RenderNearbyBarChart> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -579,13 +632,12 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   return startDate;
 }
 
-List<_ChartData> buildChartData(
-    Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame) {
+List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame, LatLngBounds cameraBounds) {
+
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
   DateTime today = DateTime.now();
-  DateTime startDate = getStartDate(timeFrame, today);
 
   // for each virtue from the map
   for (var entry in virtueEntriesMap.entries) {
@@ -596,23 +648,63 @@ List<_ChartData> buildChartData(
       colorString = colorString.substring(2);
     }
     Color virtueColor = Color(int.parse(colorString, radix: 16));
+
     List<DocumentSnapshot<Object?>> virtueEntries = virtueDataMap['entries'];
     _ChartData virtueData = _ChartData(virtueUsed, [], virtueColor);
 
     // Decide whether to add each entry
     for (var doc in virtueEntries) {
       dynamic data = doc.data();
-      // Check the time of each entry
+      // Get the time of each entry
       Timestamp? entryTime = data['dateEntried'] as Timestamp?;
       DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
-      if (!dateEntered.isAfter(startDate)) {
-        continue;
-      }
-      virtueData.y.add(data);
+
+      // get entry location as LatLng
+      final locationEntered = data['userLocation'] as Map<String,dynamic>;
+      GeoPoint entryGeoPoint = locationEntered['geopoint'] as GeoPoint;
+      final latitude = entryGeoPoint.latitude;
+      final longitude = entryGeoPoint.longitude;
+      LatLng entryLocation = LatLng(latitude, longitude);
+
+      // check all parameters and add if all are met
+      if (isEntryValid(
+        timeFrame: timeFrame,        // Provide named arguments
+        dateEntered: dateEntered,
+        entryLocation: entryLocation,
+        cameraBounds: cameraBounds, 
+      ))
+        {
+          virtueData.y.add(data);
+        }
     }
     chartDataList.add(virtueData);
   }
   return chartDataList;
+}
+
+bool isEntryValid({
+  required String timeFrame,
+  required DateTime? dateEntered,
+  required LatLng entryLocation,
+  required LatLngBounds cameraBounds
+}) {
+  DateTime today = DateTime.now();
+  DateTime startDate = getStartDate(timeFrame, today);
+
+  // Ensure the entry date is within the specified time frame
+  if (dateEntered == null || dateEntered.isBefore(startDate)) {
+    return false;
+  }
+
+  // Compare entry location to bounds to determine if it is in the camera view
+  if (!cameraBounds.contains(entryLocation)){
+    // out of bounds
+    return false;
+  }
+
+  // Entry is valid
+  return true;
+
 }
 
 class _ChartData {
