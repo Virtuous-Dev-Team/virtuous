@@ -51,9 +51,15 @@ class CommunityShared {
 
       print('Location changed from ($realLat, $realLong) to ($randomLat, $randomLong)');
 
+      final DateTime now = DateTime.now();
+      final DateTime date = DateTime(now.year, now.month, now.day);
+      DateTime expireDate = date.add(const Duration(days: 30));
+      print("HERE IS AN EXPIRATION DATE: $expireDate");
+
       // double realLong = updatedLocation.getLong
       final sharedEntry = {
         "dateEntried": FieldValue.serverTimestamp(),
+        "expireDate" : expireDate,
         "userLocation": randomizedLocation.data,
       };
 
