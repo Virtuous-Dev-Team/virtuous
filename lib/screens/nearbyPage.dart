@@ -224,8 +224,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           timeFrame = newValue!;
-                                          markers =
-                                              buildVirtueMarkers(cachedMarkers);
+                                          customMarkers = buildCustomVirtueMarkers(cachedMarkers);
                                         });
                                       },
                                       decoration: InputDecoration(
@@ -334,8 +333,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         savedUserLocation = newUserLocation;
         _currentCenter = newUserLocation!;
         cachedMarkers = data['mapEntries'];
-        markers = buildVirtueMarkers(cachedMarkers);
-        customMarkers = buildVirtueMarkersWithExtraData(cachedMarkers);
+        customMarkers = buildCustomVirtueMarkers(cachedMarkers);
         mapKey = keyDoc.data()!['key'];
       });
     } catch (e) {
@@ -394,78 +392,45 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               customMarkers.map((customMarker) => customMarker.marker).toList(),
           indexBuilder: IndexBuilders.rootIsolate,
           builder: (context, position, markerCount, extraClusterData) {
-            // Aggregate virtue data for the cluster
-            Map<String, int> virtueCounts = {};
+            
+            double clusterRadius = calculateClusterRadius(_currentZoom);
 
+            //Go through every marker on the map and see if it is contained within the supercluster
+            //need to test with multiple superclusters
+            Map<String, int> virtueCounts = {};
             for (var customMarker in customMarkers) {
-              if (currentBounds.contains(customMarker.marker.point)) {
+              if (distance(customMarker.marker.point, position) <=
+                  clusterRadius) {
                 virtueCounts[customMarker.virtue] =
                     (virtueCounts[customMarker.virtue] ?? 0) + 1;
               }
             }
-           // print("Virtue Counts: $virtueCounts");
-            // Build the cluster widget with a pie chart
+
             return SizedBox(
               height: 150,
               width: 150,
               child: SfCircularChart(
-                  series: <CircularSeries>[
-                    PieSeries<MapEntry<String, int>, String>(
-                      dataSource: virtueCounts.entries.toList(),
-                      xValueMapper: (entry, _) => entry.key,
-                      yValueMapper: (entry, _) => entry.value,
-                      pointColorMapper: (entry, _) => VirtueColor(communityName, entry.key),
-                      dataLabelMapper: (entry, _) => entry.key,
-                      dataLabelSettings: DataLabelSettings(isVisible: false),
-                      radius: '400%',
-                    )
-                  ],
-                  //tooltipBehavior: TooltipBehavior(enable: true),
-                ),
+                series: <CircularSeries>[
+                  PieSeries<MapEntry<String, int>, String>(
+                    dataSource: virtueCounts.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                    pointColorMapper: (entry, _) => VirtueColor(communityName, entry.key),
+                    dataLabelMapper: (entry, _) => entry.key,
+                    dataLabelSettings: DataLabelSettings(isVisible: false),
+                    radius: '400%', //adjust this to make the pie chart bigger or smaller
+                  )
+                ],
+              ),
             );
-  
           },
         ),
       ],
     );
   }
 
-  List<Marker> buildVirtueMarkers(
-      Map<String, List<Map<String, dynamic>>> virtueLocations) {
-    List<Marker> markers = [];
-    virtueLocations.forEach((virtue, locations) {
-      for (var location in locations) {
-        LatLng position = LatLng(location['latitude'], location['longitude']);
-        String colorString = location['color'];
-        if (colorString.startsWith("0x")) {
-          colorString = colorString.substring(2);
-        }
-
-        DateTime? dateEntered = location['dateEntried'];
-        if (!isMapEntryValid(
-            dateEntered: dateEntered,
-            entryLocation: position,
-            cameraBounds: currentBounds)) {
-          continue;
-        }
-
-        Color virtueColor = Color(int.parse(colorString, radix: 16));
-        markers.add(
-          Marker(
-            point: position,
-            builder: (context) => Icon(
-              Icons.location_on,
-              color: virtueColor,
-            ),
-          ),
-        );
-      }
-    });
-
-    return markers;
-  }
-
-  List<CustomMarker> buildVirtueMarkersWithExtraData(
+  //Same as buildVirtueMarkers, but returns a list of custom markers
+  List<CustomMarker> buildCustomVirtueMarkers(
       Map<String, List<Map<String, dynamic>>> virtueLocations) {
     List<CustomMarker> customMarkers = [];
 
@@ -476,6 +441,15 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         if (colorString.startsWith("0x")) {
           colorString = colorString.substring(2);
         }
+        
+        DateTime? dateEntered = location['dateEntried'];
+        if (!isMapEntryValid(
+            dateEntered: dateEntered,
+            entryLocation: position,
+            cameraBounds: currentBounds)) {
+          continue;
+        }
+
         Color virtueColor = Color(int.parse(colorString, radix: 16));
 
         // Create the marker
@@ -487,7 +461,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           ),
         );
 
-        // Add to the custom markers list
+        // Add marker to the custom markers list
         customMarkers.add(CustomMarker(
           marker: marker,
           virtue: virtue,
@@ -761,6 +735,8 @@ class _ChartData {
   Color color;
 }
 
+//Custom Markers so that the pie chart can be made
+//Doing it this way meant I didn't have to rewrite the code as much
 class CustomMarker {
   final Marker marker;
   final String virtue;

@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
+import 'package:latlong2/latlong.dart';
 
 List<String> careerDropdownValues = [
     'Legal',
@@ -170,4 +172,28 @@ String formatTime(TimeOfDay timeOfDay) {
       now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
   final format = DateFormat('h:mm a');
   return format.format(dateTime);
+}
+
+//This might be overkill, I(Reed) just wanted to get the distance in meters between two points give their longitude and latitude
+//Got this from stack overflow
+double distance(LatLng point1, LatLng point2) {
+  const earthRadius = 6371000; 
+  final lat1 = point1.latitude * pi / 180;
+  final lon1 = point1.longitude * pi / 180;
+  final lat2 = point2.latitude * pi / 180;
+  final lon2 = point2.longitude * pi / 180;
+
+  final dLat = lat2 - lat1;
+  final dLon = lon2 - lon1;
+
+  final a = pow(sin(dLat / 2), 2) +
+      cos(lat1) * cos(lat2) * pow(sin(dLon / 2), 2);
+  final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+  return earthRadius * c;
+}
+
+double calculateClusterRadius(double zoomLevel) {
+  double scaling = 3;
+  return scaling * pow(2, (20 - zoomLevel)); 
 }
