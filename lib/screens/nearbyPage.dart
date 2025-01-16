@@ -107,6 +107,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
     // Detect if community has changed
     if (communityName != userInfo.currentCommunity) {
+      print("changed changed community alert");
       setState(() {
         communityName = userInfo.currentCommunity;
         cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
@@ -134,9 +135,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               padding: const EdgeInsets.all(10.0),
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -306,7 +304,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               ),
             ),
           ),
-        ));
+        );
   }
 
   // get the entries from the api
