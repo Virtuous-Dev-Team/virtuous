@@ -519,8 +519,8 @@ class Users {
     //DateTime timeRange = getTimeRange(timeFrame);
 
     // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
-    const GeoPoint NORTH = GeoPoint(48.85, 0);
-    const GeoPoint SOUTH = GeoPoint(28.70, 0);
+    const GeoPoint NORTH = GeoPoint(71.5, 0);
+    const GeoPoint SOUTH = GeoPoint(12.5, 0);
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
