@@ -8,7 +8,6 @@ import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 
@@ -111,7 +110,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       setState(() {
         communityName = userInfo.currentCommunity;
         cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
+        cachedMarkers = {}; // Clear cached markers
+        markers = []; // Clear markers
       });
+      // get new data
+      prefetchNearbyEntries();
     }
 
     shareLocation = userInfo.shareLocation;
