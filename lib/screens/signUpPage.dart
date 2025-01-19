@@ -55,6 +55,7 @@ class SignUpPage extends ConsumerWidget {
   TextEditingController email = TextEditingController();
   TextEditingController fullName = TextEditingController();
   TextEditingController password = TextEditingController();
+  bool isChecked = false;
 
   String? validateEmail(String? email) {
     RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
@@ -214,6 +215,18 @@ class SignUpPage extends ConsumerWidget {
                                 AutovalidateMode.onUserInteraction,
                           ),
                         ),
+                        SizedBox(height: 20.0),
+                        CheckboxListTile(
+                          title: Text(
+                            'I have read and agree to the Terms of Service and Privacy Policy',
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          value: isChecked, 
+                          onChanged: (bool? value) {
+                            // functionality will go here
+                          },
+                          controlAffinity: ListTileControlAffinity.leading, // left aligning the checkbox
+                        ),
                         SizedBox(height: 10.0),
                       ],
                     )),
@@ -281,12 +294,8 @@ class SignUpPage extends ConsumerWidget {
                   ],
                 ),
 
-                SizedBox(height: 100),
-                Text(
-                  'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 10.0),
-                ),
+                //SizedBox(height: 100),
+                
               ],
             ),
           ),
