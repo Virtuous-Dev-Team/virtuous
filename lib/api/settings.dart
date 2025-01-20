@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:virtuetracker/api/users.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Settings {
   // Instance of Firebase auth class to call Firebase methods
@@ -68,6 +69,11 @@ class Settings {
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
+
+      // subscribe to fcm topic 
+      await FirebaseMessaging.instance.subscribeToTopic("notifications");
+      print("subscribed to notifications");
+
       final response = await usersCollectionRef.doc(user.uid).update({
         'notificationPreferences.allowNotifications': newAllowNotificationa,
         'notificationPreferences.notificationTime': newNotificationTime

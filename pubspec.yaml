@@ -41,6 +41,7 @@ dependencies:
   flutter_map: ^5.0.0
   latlong2: ^0.9.1
   flutter_map_supercluster: ^4.3.0
+  firebase_messaging: ^14.7.10
 
 dev_dependencies:
   flutter_test:
