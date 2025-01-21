@@ -3,17 +3,12 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
-import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
-import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 
 class Users {
@@ -537,17 +532,9 @@ class Users {
       print('Virtue Name: ${virtue['quadrantName']}, Color: ${virtue['quadrantColor']}');
     }
 
-
-    if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
       final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
-
-      // Get current position and setup Geolocator with it
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      GeoFirePoint geoFireLocation =
-      geo.point(latitude: position.latitude, longitude: position.longitude);
-      LatLng userLocation = LatLng(position.latitude, position.longitude);
 
       // Search for matching entries for each virtue
 
@@ -654,13 +641,30 @@ class Users {
         for (var location in locations) {
           print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}, Date: ${location['dateEntried']}");        }
       });
-      //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
-      yield {
-      'chartEntries':virtueEntriesMap,
-        'mapEntries':virtueLocationsMap,
-        'userLocation': userLocation,
-    };
-    }
+
+      if (shareLocation) {
+
+        // Get current position and setup Geolocator with it
+        Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        GeoFirePoint geoFireLocation =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+        LatLng userLocation = LatLng(position.latitude, position.longitude);
+
+        //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
+        yield {
+          'chartEntries':virtueEntriesMap,
+          'mapEntries':virtueLocationsMap,
+          'userLocation': userLocation,
+        };
+
+      }
+      else {
+        yield {
+          'chartEntries':virtueEntriesMap,
+          'mapEntries':virtueLocationsMap,
+          'userLocation': null,
+        };
+      }
   }
 
 

@@ -324,7 +324,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       // Cache user location
       LatLng? newUserLocation  = data['userLocation'] != null
           ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
-          : null;
+          : const LatLng(28.6283, -81.2095);
 
       setState(() {
         savedUserLocation = newUserLocation;
