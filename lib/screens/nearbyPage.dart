@@ -366,6 +366,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
+        maxBounds: LatLngBounds(const LatLng(71.5, -175), const LatLng(12.5, -50)) ,
         center: savedUserLocation,
         zoom: _currentZoom,
         minZoom: _minZoom,
