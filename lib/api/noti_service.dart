@@ -1,58 +1,36 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 // Tried implementing notifications but didn't work
 class NotificationService {
-  final FlutterLocalNotificationsPlugin notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+    final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  Future<void> initNotification() async {
-    AndroidInitializationSettings initializationSettingsAndroid =
-        const AndroidInitializationSettings('app_icon');
-    var initializationSettingsIOS = DarwinInitializationSettings(
-        requestAlertPermission: true,
-        requestBadgePermission: true,
-        requestSoundPermission: true,
-        onDidReceiveLocalNotification:
-            (int id, String? title, String? body, String? payload) async {});
-    var initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse:
-            (NotificationResponse notificationResponse) async {});
-  }
+    bool _isInitialized = false;
 
-  notificationDetails() {
-    return const NotificationDetails(
-        android: AndroidNotificationDetails('channelId', 'channelName',
-            importance: Importance.max),
-        iOS: DarwinNotificationDetails());
-  }
+    bool get isInitialized => _isInitialized;
 
-  Future showNotification(
-      {int id = 0, String? title, String? body, String? payload}) async {
-    return notificationsPlugin.show(
-        id, title, body, await notificationDetails());
-  }
+    // initialization called in main
+    Future<void> initNotification() async {
+        if (_isInitialized) return; // prevent re-initialization
 
-  Future scheduleNotification(
-      {int id = 0,
-      String? title,
-      String? body,
-      String? payload,
-      required DateTime scheduledNotificationDateTime}) async {
-    return notificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tz.TZDateTime.from(
-          scheduledNotificationDateTime,
-          tz.local,
-        ),
-        await notificationDetails(),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime);
-  }
+        // android initialization
+        const initSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher_foreground');
+
+        // ios initialization
+        const initSettingsIOS = DarwinInitializationSettings(
+            requestAlertPermission: true,
+            requestBadgePermission: true,
+            requestSoundPermission: true
+        );
+
+        // init settings
+        const initSettings = InitializationSettings(
+            android: initSettingsAndroid,
+            iOS: initSettingsIOS
+        );
+
+        // init plugin
+        await notificationsPlugin.initialize(initSettings);
+
+    }
+
 }

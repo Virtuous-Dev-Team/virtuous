@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:virtuetracker/api/users.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class Settings {
   // Instance of Firebase auth class to call Firebase methods
@@ -63,19 +66,42 @@ class Settings {
   }
 
   Future<dynamic> updateNotificationPreferences(
-      bool newAllowNotificationa, String newNotificationTime) async {
+      bool newAllowNotifications, String newNotificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
+      FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin(); 
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      // subscribe to fcm topic 
-      await FirebaseMessaging.instance.subscribeToTopic("notifications");
-      print("subscribed to notifications");
+      tz.initializeTimeZones();
+      final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(currentTimeZone));
+
+      print('your time zone is $currentTimeZone');
+      print('your tz location is ${tz.local}');
+
+  
+      if (newAllowNotifications) {
+        await notiPlugin.zonedSchedule(
+          0,
+          'Be Virtuous!',
+          'Dont forget to be virtuous',
+          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'daily_channel_id',
+                'Reminders',
+                importance: Importance.max,
+                priority: Priority.high,
+            )),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+        );
+      }
 
       final response = await usersCollectionRef.doc(user.uid).update({
-        'notificationPreferences.allowNotifications': newAllowNotificationa,
+        'notificationPreferences.allowNotifications': newAllowNotifications,
         'notificationPreferences.notificationTime': newNotificationTime
       });
       return {"Success": true, 'response': "Done"};
