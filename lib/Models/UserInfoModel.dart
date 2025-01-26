@@ -42,7 +42,7 @@ class UserInfoProvider extends ChangeNotifier {
 
 class NotificationPreferences {
   final bool allowNotifications;
-  final String notificationTime;
+  final DateTime notificationTime;
   final bool phoneVerified;
   final String? fcmToken;
 

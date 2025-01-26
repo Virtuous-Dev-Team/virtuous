@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:timezone/timezone.dart';
 import 'package:virtuetracker/api/users.dart';
-import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
 class Settings {
@@ -66,7 +66,7 @@ class Settings {
   }
 
   Future<dynamic> updateNotificationPreferences(
-      bool newAllowNotifications, String newNotificationTime) async {
+      bool newAllowNotifications, DateTime newNotificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin(); 
@@ -74,20 +74,29 @@ class Settings {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      tz.initializeTimeZones();
-      final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(currentTimeZone));
-
-      print('your time zone is $currentTimeZone');
-      print('your tz location is ${tz.local}');
-
-  
+      // User has enabled notifications or is updating noti time
       if (newAllowNotifications) {
+
+        // Converting DateTime to TZDateTime for zoneSchedule function
+        tz.initializeTimeZones();
+        final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+        tz.setLocalLocation(tz.getLocation(currentTimeZone));
+        TZDateTime usableTime = TZDateTime.from(newNotificationTime, tz.local);
+
+        print('your time zone is $currentTimeZone');
+        print('your tz location is ${tz.local}');
+        print('The specified noti time is ${usableTime.toString()}');
+
+        // Cancel other notifications to prevent unintentional stacking
+        await notiPlugin.cancelAll();
+
+        // TODO: iOS notification details?
+        // schedules notification
         await notiPlugin.zonedSchedule(
           0,
           'Be Virtuous!',
           'Dont forget to be virtuous',
-          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)),
+          usableTime,
           const NotificationDetails(
             android: AndroidNotificationDetails(
                 'daily_channel_id',
@@ -98,12 +107,16 @@ class Settings {
           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
         );
+      } else {
+        // User has turned off notifications and all notifications need to be cleared
+        await notiPlugin.cancelAll();
       }
 
-      final response = await usersCollectionRef.doc(user.uid).update({
+      await usersCollectionRef.doc(user.uid).update({
         'notificationPreferences.allowNotifications': newAllowNotifications,
         'notificationPreferences.notificationTime': newNotificationTime
       });
+
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};

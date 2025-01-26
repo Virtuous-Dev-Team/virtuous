@@ -306,7 +306,7 @@ class Users {
       bool shareLocation,
       bool allowNotifications,
       String phoneNumber,
-      String notificationTime,
+      DateTime notificationTime,
       bool phoneVerified,
       dynamic userLocation) async {
     try {
@@ -479,6 +479,11 @@ class Users {
           await usersCollectionRef.doc(user.uid).get();
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;
+
+        // convert firebase timestamp to DateTime
+        Timestamp timestamp = userInfo['notificationPreferences']['notificationTime'] as Timestamp;
+        DateTime conversion = timestamp.toDate();
+        userInfo['notificationPreferences']['notificationTime'] = conversion;
 
         return {'Success': true, "response": userInfo};
       }

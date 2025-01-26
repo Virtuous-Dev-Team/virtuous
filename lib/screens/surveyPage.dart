@@ -983,7 +983,8 @@ class SurveyPageState extends State<SurveyPage> {
                                     shareLocation == "Yes" ? true : false,
                                     allowNotifications == "Yes" ? true : false,
                                     phoneNumber.text,
-                                    notificationTime.text,
+                                    // TODO: UPDATE SURVEY PAGE NOTIFICATION TIME SELECTION
+                                    DateTime.now(),
                                     phoneVerified,
                                     userLocation.data);
                           }

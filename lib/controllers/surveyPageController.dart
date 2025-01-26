@@ -26,7 +26,7 @@ class SurveyPageController extends _$SurveyPageController {
       bool shareLocation,
       bool allowNotifications,
       String phoneNumber,
-      String notificationTime,
+      DateTime notificationTime,
       bool phoneVerified,
       dynamic userLocation) async {
     try {
