@@ -116,6 +116,24 @@ final Map<String, String> alAnDefinitions = {
   "Service": " Service - Selflessly helping others within the AA community, contributing to the welfare and unity of the fellowship, and fostering a sense of purpose and fulfillment in recovery.",
 };
 
+String? virtueDef (String? communityName, String virtueName) {
+
+  String? def;
+  
+  switch (communityName) 
+  {
+    case "Legal":
+      def = legalDefinitions[virtueName];
+      break;
+    case "Alcoholics Anonymous":
+      def = alAnDefinitions[virtueName];
+      break;
+    default:
+      def = 'ERROR: communityName entered does not exist';
+  }
+  return def;
+}
+
 Color getColor(Set<MaterialState> states) {
   const Set<MaterialState> interactiveStates = <MaterialState>{
     MaterialState.pressed,
@@ -197,3 +215,5 @@ double calculateClusterRadius(double zoomLevel) {
   double scaling = 3;
   return scaling * pow(2, (20 - zoomLevel)); 
 }
+
+String privacyPolicy = '';

@@ -10,6 +10,7 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -224,7 +225,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           timeFrame = newValue!;
-                                          customMarkers = buildCustomVirtueMarkers(cachedMarkers);
+                                          customMarkers =
+                                              buildCustomVirtueMarkers(
+                                                  cachedMarkers);
                                         });
                                       },
                                       decoration: InputDecoration(
@@ -376,7 +379,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
             _currentCenter = mapPosition.center!;
             currentBounds = mapPosition.bounds!;
             print(
-                "new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
+                "new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}\ncurrent zoom level: ${_currentZoom}");
           });
         },
       ),
@@ -391,8 +394,69 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           initialMarkers:
               customMarkers.map((customMarker) => customMarker.marker).toList(),
           indexBuilder: IndexBuilders.rootIsolate,
+          popupOptions: PopupOptions(
+            selectedMarkerBuilder: (context, marker) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  // AnimatedScale to animate the marker size
+                  return AnimatedScale(
+                    scale: 1.5, // Enlarged scale
+                    duration:
+                        const Duration(milliseconds: 200), // Animation duration
+                    curve: Curves.easeInOut, // Smooth transition curve
+                    child: marker.builder(context),
+                  );
+                },
+              );
+            },
+            popupDisplayOptions: PopupDisplayOptions(
+              builder: (BuildContext context, Marker marker) {
+                // Find the virtue associated with this marker
+                final customMarker = customMarkers.firstWhere(
+                  (m) => m.marker == marker,
+                );
+
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4.0,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Text(
+                          '${customMarker.virtue}',
+                          style: GoogleFonts.inter(
+                                textStyle: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                        
+                        ),
+                      ),
+                      Text(
+                        '${virtueDef(communityName, customMarker.virtue)}',
+                        style: GoogleFonts.tinos(
+                          textStyle: TextStyle(),
+                          
+                          fontWeight: FontWeight.normal,
+                          color: Colours.swatch(clrBlack),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
           builder: (context, position, markerCount, extraClusterData) {
-            
             double clusterRadius = calculateClusterRadius(_currentZoom);
 
             //Go through every marker on the map and see if it is contained within the supercluster
@@ -412,13 +476,16 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               child: SfCircularChart(
                 series: <CircularSeries>[
                   PieSeries<MapEntry<String, int>, String>(
-                    dataSource: virtueCounts.entries.toList()..sort((a, b) => b.value.compareTo(a.value)),
+                    dataSource: virtueCounts.entries.toList()
+                      ..sort((a, b) => b.value.compareTo(a.value)),
                     xValueMapper: (entry, _) => entry.key,
                     yValueMapper: (entry, _) => entry.value,
-                    pointColorMapper: (entry, _) => VirtueColor(communityName, entry.key),
+                    pointColorMapper: (entry, _) =>
+                        VirtueColor(communityName, entry.key),
                     dataLabelMapper: (entry, _) => entry.key,
                     dataLabelSettings: DataLabelSettings(isVisible: false),
-                    radius: '400%', //adjust this to make the pie chart bigger or smaller
+                    radius:
+                        '400%', //adjust this to make the pie chart bigger or smaller
                   )
                 ],
               ),
@@ -441,7 +508,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         if (colorString.startsWith("0x")) {
           colorString = colorString.substring(2);
         }
-        
+
         DateTime? dateEntered = location['dateEntried'];
         if (!isMapEntryValid(
             dateEntered: dateEntered,

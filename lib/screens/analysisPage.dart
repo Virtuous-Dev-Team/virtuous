@@ -172,6 +172,7 @@ class RenderPieChart extends ConsumerWidget {
               isVisible: true,
               position: LegendPosition.right,
               overflowMode: LegendItemOverflowMode.wrap,
+              toggleSeriesVisibility: true, //Tapping on the virtue in the legend makes it not appear in the pie chart when this is set to true
               textStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
