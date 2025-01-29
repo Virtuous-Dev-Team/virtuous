@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:timezone/standalone.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
@@ -15,6 +16,10 @@ import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -314,6 +319,40 @@ class Users {
       if (user == null) {
         return {'Success': false, 'Error': 'User not found'};
       }
+
+      // create notification if specified in survey
+      if (allowNotifications) {
+        FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin(); 
+
+        // Converting DateTime to TZDateTime for zoneSchedule function
+        tz.initializeTimeZones();
+        final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
+        tz.setLocalLocation(tz.getLocation(currentTimeZone));
+        TZDateTime usableTime = TZDateTime.from(notificationTime, tz.local);
+
+        // Cancel other notifications to prevent unintentional stacking
+        await notiPlugin.cancelAll();
+
+        // TODO: iOS notification details?
+        // schedules notification
+        await notiPlugin.zonedSchedule(
+          0,
+          'Be Virtuous!',
+          'Dont forget to be virtuous',
+          usableTime,
+          const NotificationDetails(
+            android: AndroidNotificationDetails(
+                'daily_channel_id',
+                'Reminders',
+                importance: Importance.max,
+                priority: Priority.high,
+            )),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+        );
+
+      }
+
       final careerInfo = {
         "currentPosition": currentPosition,
         "careerLength": careerLength

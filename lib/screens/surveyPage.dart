@@ -71,7 +71,7 @@ class SurveyPageState extends State<SurveyPage> {
   List<String> answers = ['', '', '', '', '', '', '', '', ''];
 
   bool _shouldShowContent = false;
-  TimeOfDay? selectedTime;
+  TimeOfDay selectedTime = TimeOfDay.now();
 
 // bool _shouldShowContent = false; // Declare _shouldShowContent here
 
@@ -699,209 +699,13 @@ class SurveyPageState extends State<SurveyPage> {
             height: 20,
           ),
 
-          // Sean implementation
-          // Visibility(
-          //   visible: allowNotifications ==
-          //       'Yes', // Set this to true when 'Yes' is selected
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       Text(
-          //         'Enter your phone number.',
-          //         style: GoogleFonts.tinos(
-          //           textStyle: TextStyle(),
-          //         ),
-          //       ),
-          //       SizedBox(
-          //         height: 3,
-          //       ),
-          //       Container(
-          //         padding: EdgeInsets.all(3.0),
-          //         decoration: BoxDecoration(
-          //           border: Border.all(
-          //             color: Color(0xFFCEC0A1),
-          //             width: 2.0, // Set the border width
-          //           ),
-          //           borderRadius: BorderRadius.circular(5.0),
-          //         ),
-          //         child: TextField(
-          //           controller: phoneNumber,
-          //           keyboardType: TextInputType.phone,
-          //           decoration: InputDecoration(
-          //             contentPadding: EdgeInsets.zero,
-          //             isDense: true,
-          //             border: InputBorder
-          //                 .none, // Hide the default border
-          //             hintText: '(999)-999-9999',
-          //             hintStyle: GoogleFonts.tinos(
-          //               textStyle:
-          //                   TextStyle(color: Colors.black),
-          //             ),
-          //           ),
-          //         ),
-          //       ),
-          //       SizedBox(
-          //         height: 20,
-          //       ),
-          // Rachel Implementation
+          // User wants to set notifications
           Visibility(
             visible: allowNotifications ==
                 "Yes", // Set this to true when 'Yes' is selected
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Enter your phone number.',
-                  style: GoogleFonts.tinos(
-                    textStyle: TextStyle(fontSize: 16,),
-                  ),
-                ),
-                Container(
-                    padding: EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFFCEC0A1),
-                        width: 2.0, // Set the border width
-                      ),
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: TextFormField(
-                        controller: phoneNumber,
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                            prefixText: "+1 ",
-                            contentPadding: EdgeInsets.zero,
-                            isDense: true,
-                            border: InputBorder.none, // Hide the default border
-                            hintStyle: GoogleFonts.tinos(
-                                textStyle: TextStyle(fontSize: 16,),
-                              ),
-                            hintText: '(999)-999-9999'),
-                        validator: (value) {
-                          if (value!.length != 12)
-                            return "Invalid phone number";
-                          return null;
-                        },
-                      ),
-                    )),
-                SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        // call send Otop
-                        ref.read(surveyPageControllerProvider.notifier);
-                        print("phone number no parse: ${phoneNumber.text}");
-                        Users().sendOtp(
-                            phone: phoneNumber.text
-                                .replaceAll(RegExp('[^0-9]'), ''),
-                            errorStep: () => ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text(
-                                    "Error sending OTP",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  backgroundColor: Colors.red,
-                                )),
-                            nextStep: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                        title: Text("OTP Verification"),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("Enter 6 digit OTP"),
-                                            SizedBox(
-                                              height: 12,
-                                            ),
-                                            Form(
-                                              key: _formKey1,
-                                              // text field is kinda invisible someone pls make it visible
-                                              child: TextFormField(
-                                                keyboardType:
-                                                    TextInputType.number,
-                                                controller: _otpController,
-                                                decoration: InputDecoration(
-                                                  fillColor: Colors.white,
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  isDense: true,
-                                                  // border: InputBorder.
-                                                ),
-                                                validator: (value) {
-                                                  if (value!.length != 6)
-                                                    return "Invalid OTP";
-                                                  return null;
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                              onPressed: () {
-                                                if (_formKey1.currentState!
-                                                    .validate()) {
-                                                  // call confirm Otp
-                                                  // ref.read(
-                                                  //     surveyPageControllerProvider
-                                                  //         .notifier);
-                                                  Users()
-                                                      .confirmOtp(
-                                                          otp: _otpController
-                                                              .text)
-                                                      .then((value) {
-                                                    if (value['Success']) {
-                                                      phoneVerified = true;
-                                                      Navigator.pop(context);
-                                                      print(
-                                                          "Phone number verified");
-                                                    } else {
-                                                      Navigator.pop(context);
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(
-                                                          value,
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white),
-                                                        ),
-                                                        backgroundColor:
-                                                            Colors.red,
-                                                      ));
-                                                    }
-                                                  });
-                                                }
-                                              },
-                                              child: Text("Submit"))
-                                        ],
-                                      ));
-                            });
-                      }
-                    },
-                    child: Center(
-                      child: Text(
-                        'Verify',
-                        style: GoogleFonts.inter(
-                                textStyle: TextStyle(fontSize: 16,),
-                              ),
-                        ),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: buttonColor,
-                        foregroundColor: Colors.white),
-                  ),
-                ),
                 Text(
                   'Select a time to receive notifications.',
                   style: GoogleFonts.tinos(
@@ -972,6 +776,13 @@ class SurveyPageState extends State<SurveyPage> {
                             print('Fields missing');
                             return;
                           } else {
+                            late DateTime usableTime = DateTime.now();
+
+                            if (allowNotifications == "Yes") {
+                              final now = DateTime.now();
+                              usableTime = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+                            }
+
                             ref
                                 .read(surveyPageControllerProvider.notifier)
                                 .surveyInfo(
@@ -983,8 +794,7 @@ class SurveyPageState extends State<SurveyPage> {
                                     shareLocation == "Yes" ? true : false,
                                     allowNotifications == "Yes" ? true : false,
                                     phoneNumber.text,
-                                    // TODO: UPDATE SURVEY PAGE NOTIFICATION TIME SELECTION
-                                    DateTime.now(),
+                                    usableTime,
                                     phoneVerified,
                                     userLocation.data);
                           }
@@ -1022,25 +832,6 @@ class SurveyPageState extends State<SurveyPage> {
     }
   }
 
-  // Future<void> _selectTime(BuildContext context) async {
-  //   TimeOfDay? pickedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.now(),
-  //   );
-
-  //   if (pickedTime != null && pickedTime != selectedTime) {
-  //     setState(() {
-  //       print(pickedTime.format(context));
-  //       String timey = pickedTime.format(context).toString();
-  //       selectedTime = pickedTime;
-  //       answers[8] =
-  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
-  //       notificationTime.text =
-  //           '${selectedTime!.hour}:${selectedTime!.minute} ${selectedTime!.period == DayPeriod.am ? 'AM' : 'PM'}';
-  //     });
-  //   }
-  // }
-
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? pickedTime = await showTimePicker(
       builder: (context, child) {
@@ -1068,8 +859,8 @@ class SurveyPageState extends State<SurveyPage> {
 
     if (pickedTime != null && pickedTime != selectedTime) {
       setState(() {
-        //widget._selectedTime = pickedTime;
         notificationTime.text = formatTime(pickedTime);
+        selectedTime = pickedTime;
       });
     }
   }
