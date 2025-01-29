@@ -26,16 +26,25 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   TextEditingController notificationTime = TextEditingController();
   late int notiHour;
   late int notiMinute;
+  late String ampm;
 
   // TODO: Get this to show the current notification time when enabled, it goes away once you leave the page.
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
-    notiHour = userInfo.notificationPreferences.notificationTime.hour;
-    notiMinute = userInfo.notificationPreferences.notificationTime.hour;
+
+    if (userInfo.notificationPreferences.notificationTime.hour > 12) {
+      ampm = "PM";
+      notiHour = userInfo.notificationPreferences.notificationTime.hour - 12;
+    } else {
+      ampm = "AM";
+      notiHour = userInfo.notificationPreferences.notificationTime.hour;
+    }
+
+    notiMinute = userInfo.notificationPreferences.notificationTime.minute;
     enableNotifications = userInfo.notificationPreferences.allowNotifications;
-    notificationTime.text = '$notiHour:$notiMinute';
+    notificationTime.text = '$notiHour:$notiMinute $ampm';
   }
 
   @override
