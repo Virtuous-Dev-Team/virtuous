@@ -30,6 +30,8 @@ class NearbyPage extends ConsumerStatefulWidget {
 }
 
 class _NearbyPageState extends ConsumerState<NearbyPage> {
+  bool _hasShownSnackBar = false;
+
   @override
   void initState() {
     super.initState();
@@ -118,6 +120,22 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     }
 
     shareLocation = userInfo.shareLocation;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!shareLocation && !_hasShownSnackBar) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Location sharing is disabled. Enable location sharing to start closer to home."),
+            duration: Duration(seconds: 5),
+            backgroundColor: Color(0xFF000000),
+            shape: StadiumBorder(),
+            behavior: SnackBarBehavior.floating,
+
+          ),
+        );
+        _hasShownSnackBar = true;
+      }
+    });
 
     late TooltipBehavior _tooltip;
 
