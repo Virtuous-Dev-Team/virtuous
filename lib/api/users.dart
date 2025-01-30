@@ -318,8 +318,10 @@ class Users {
       }
 
       // schedule notification if specified in survey
-      await notificationService.handleNotification(allowNotifications, notificationTime);
-
+      if (allowNotifications) {
+        await notificationService.handleNotification(allowNotifications, notificationTime!);
+      }
+      
       final careerInfo = {
         "currentPosition": currentPosition,
         "careerLength": careerLength
@@ -332,6 +334,7 @@ class Users {
         "shareEntries": shareEntries,
         "shareLocation": shareLocation
       };
+
       final notificationPreferences = {
         "allowNotifications": allowNotifications,
         "notificationTime": notificationTime,
@@ -486,9 +489,16 @@ class Users {
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;
 
-        // convert firebase timestamp to DateTime
-        Timestamp timestamp = userInfo['notificationPreferences']['notificationTime'] as Timestamp;
-        DateTime conversion = timestamp.toDate();
+        // convert firebase timestamp to DateTime if noti stored
+        late DateTime conversion;
+        if (userInfo['notificationPreferences']['notificationTime'] == "") {
+          // checking for old accounts with empty noti value
+          conversion = DateTime(1);
+        } else {
+          Timestamp timestamp = userInfo['notificationPreferences']['notificationTime'] as Timestamp;
+          conversion = timestamp.toDate();
+        }
+
         userInfo['notificationPreferences']['notificationTime'] = conversion;
 
         return {'Success': true, "response": userInfo};

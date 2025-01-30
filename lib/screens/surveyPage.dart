@@ -776,7 +776,7 @@ class SurveyPageState extends State<SurveyPage> {
                             print('Fields missing');
                             return;
                           } else {
-                            late DateTime usableTime = DateTime.now();
+                            DateTime usableTime = DateTime(1); // default, as DateTime cannot be null
 
                             if (allowNotifications == "Yes") {
                               final now = DateTime.now();
