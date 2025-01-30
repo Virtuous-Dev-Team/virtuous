@@ -37,9 +37,6 @@ Future<dynamic> callAuthCreateAccount(
       dynamic result =
           await auth.createAccount(emailInput, passwordInput, fullNameInput);
       if (result['Success']) {
-        // user is authenticated in firebase authenctication
-        // send to SignInPage
-        // ref.read(AppNavigation.router).go('/signIn');
         return {
           'Success': result['Success'],
           'msg': "Account created successfully"
@@ -49,9 +46,7 @@ Future<dynamic> callAuthCreateAccount(
 
         return {'Success': result['Success'], 'msg': result['Error']};
       }
-    } else {
-      // Show user error and remind them to fill out fields.
-    }
+    } else {return {'Success': false, 'msg': 'All fields must be filled out'};}
   } catch (error) {
     print(error);
   }
@@ -60,116 +55,117 @@ Future<dynamic> callAuthCreateAccount(
 final checkboxProvider = StateProvider<bool>((ref) => false);
 
 class SignUpPage extends ConsumerWidget {
-  TextEditingController email = TextEditingController();
-  TextEditingController fullName = TextEditingController();
-  TextEditingController password = TextEditingController();
-  
+  final TextEditingController email = TextEditingController();
+  final TextEditingController fullName = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
-  String? validateEmail(String? email) {
-    RegExp emailRegex = RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?$');
-    final isEmailValid = emailRegex.hasMatch(email ?? '');
-    if (!isEmailValid) {
-      return 'Please enter a valid email';
-    }
-    return null;
+  final ValueNotifier<bool> hasUpperCase = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> hasLowerCase = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> hasNumber = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> hasSpecialChar = ValueNotifier<bool>(false);
+  final ValueNotifier<bool> hasMinLength = ValueNotifier<bool>(false);
+
+  void validatePassword(String password) {
+    hasUpperCase.value = RegExp(r'(?=.*[A-Z])').hasMatch(password);
+    hasLowerCase.value = RegExp(r'(?=.*[a-z])').hasMatch(password);
+    hasNumber.value = RegExp(r'(?=.*[0-9])').hasMatch(password);
+    hasSpecialChar.value = RegExp(r'(?=.*[!@#\\$&*~])').hasMatch(password);
+    hasMinLength.value = password.length >= 8;
   }
 
-  String? validatePassword(String? pass) {
-    RegExp passRegex =
-        RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-    final isPassValid = passRegex.hasMatch(pass ?? '');
-    if (!isPassValid) {
-      return 'Please enter a stronger password';
-    }
-    return null;
-  }
-
-  ToastNotificationWidget toast = ToastNotificationWidget();
-  void showToasty(msg, success, context) {
-    print('calling toast widget in sign up page');
-    toast.successOrError(context, msg, success);
+  Widget buildPasswordRequirement(String label, ValueNotifier<bool> notifier) {
+    return ValueListenableBuilder(
+      valueListenable: notifier,
+      builder: (context, value, child) {
+        return Row(
+          children: [
+            Icon(
+              value ? Icons.check_circle : Icons.cancel,
+              color: value ? Colors.green : Colors.red,
+              size: 18,
+            ),
+            SizedBox(width: 5),
+            Text(
+              label,
+              style: TextStyle(
+                color: value ? Colors.green : Colors.red,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final formGlobalKey = GlobalKey<FormState>();
+
     final isChecked = ref.watch(checkboxProvider);
     final checkboxNotifier = ref.read(checkboxProvider.notifier);
 
-    // ToastNotificationWidget toast = ToastNotificationWidget();
-    void showToasty(msg, success, context2) {
-      print('calling toast widget in sign up page');
-      WidgetsBinding.instance?.addPostFrameCallback((_) {
-        ToastNotificationWidget().successOrError(
-          context,
-          msg,
-          success,
-        );
-      });
+    double? spacing = 5;
+    void showToasty(String msg, bool success) {
+      ToastNotificationWidget().successOrError(context, msg, success);
     }
 
-    final formGlobalKey = GlobalKey<FormState>();
     ref.watch(authControllerProvider).when(
-      loading: () => CircularProgressIndicator(),
-      error: (error, stackTrace) {
-        Future.delayed(Duration.zero, () {
-            WidgetsBinding.instance?.addPostFrameCallback((_) {
-              // ref.read(authControllerProvider.notifier).state = AsyncLoading();
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) {
+            Future.delayed(Duration.zero, () {
               dynamic errorType = error;
-              if (errorType['Function'] == 'createAccount')
-                showToasty(errorType['msg'], false, context);
+              if (errorType['Function'] == 'createAccount') {
+                showToasty(errorType['msg'], false);
+              }
             });
-        });
-      },
-      data: (response) {
-        print('going to sign in page, after signing out ');
-        WidgetsBinding.instance?.addPostFrameCallback((_) {
-            GoRouter.of(context).go(response);
-        });
-    });
+          },
+          data: (response) {
+            Future.delayed(Duration.zero, () {
+              GoRouter.of(context).go(response);
+            });
+          },
+        );
+
     return Scaffold(
-      backgroundColor: Color(0xFFFFFDF9),
-      // appBar: AppBar(
-      //   backgroundColor: Color(0xFFFFFDF9),
-      //   // elevation: 0,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.arrow_back),
-      //     onPressed: () {
-      //       GoRouter.of(context).pop();
-      //     },
-      //   ),
-      // ),
+      backgroundColor: const Color(0xFFFFFDF9),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFFFDF9),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => GoRouter.of(context).pop(),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              SizedBox(height: 50),
-              Image(
-                image: const AssetImage(
-                    "assets/images/virtuous_circle_outline.png"),
+              const SizedBox(height: 50),
+              const Image(
+                image: AssetImage("assets/images/virtuous_circle_outline.png"),
                 height: 100,
               ),
-              Text(
+              const Text(
                 'Your journey starts with just one entry',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontStyle: FontStyle.italic, fontSize: 15.0),
               ),
-              SizedBox(height: 20.0),
+              const SizedBox(height: 20.0),
               Form(
                 key: formGlobalKey,
                 child: Column(
                   children: [
-                    // Email input field
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: TextFormField(
                         controller: email,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Email',
                           labelStyle: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black,
                           ),
                           prefixIcon: Icon(
                             Icons.mail_outline,
@@ -177,59 +173,96 @@ class SignUpPage extends ConsumerWidget {
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        validator: validateEmail,
-                        autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                        validator: (email) {
+                          if (!RegExp(
+                                  r'^[\w\.-]+@[\w-]+\.[a-zA-Z]{2,}$')
+                              .hasMatch(email ?? '')) {
+                            return 'Please enter a valid email';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
-                    SizedBox(height: 10.0),
-                    // Full Name input field
+                    const SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: TextFormField(
                         controller: fullName,
-                        decoration: InputDecoration(
-                          labelText: 'Username', // full name is now username
+                        decoration: const InputDecoration(
+                          labelText: 'Username',
                           labelStyle: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black,
                           ),
                           prefixIcon: Icon(
                             Icons.person_outline,
                             color: Colors.black,
                           ),
                         ),
-                        validator: (fullName) => fullName!.length < 3
-                            ? 'Username should be at least 3 characters'
-                            : null,
-                        autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                        validator: (fullName) {
+                          if ((fullName ?? '').length < 3) {
+                            return 'Name should be at least 3 characters';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
-                    SizedBox(height: 10.0),
-                    // Password input field
+                    const SizedBox(height: 10.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: TextFormField(
                         controller: password,
                         obscureText: true,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Password',
                           labelStyle: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.black,
                           ),
                           prefixIcon: Icon(
                             Icons.fingerprint_outlined,
                             color: Colors.black,
                           ),
                         ),
-                        validator: validatePassword,
-                        autovalidateMode:
-                            AutovalidateMode.onUserInteraction,
+                        onChanged: validatePassword,
+                        validator: (password) {
+                          if (!RegExp(
+                                  r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$')
+                              .hasMatch(password ?? '')) {
+                            return 'Please enter a stronger password';
+                          }
+                          return null;
+                        },
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                       ),
                     ),
-                    SizedBox(height: 15.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildPasswordRequirement(
+                              'At least 8 characters', hasMinLength),
+                          SizedBox(height: spacing),
+                          buildPasswordRequirement(
+                              'At least one uppercase letter', hasUpperCase),
+                          SizedBox(height: spacing),
+                          buildPasswordRequirement(
+                              'At least one lowercase letter', hasLowerCase),
+                          SizedBox(height: spacing),
+                          buildPasswordRequirement(
+                              'At least one number', hasNumber),
+                          SizedBox(height: spacing),
+                          buildPasswordRequirement(
+                              'At least one special character (!@#\$&*~)',
+                              hasSpecialChar),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: Row(
@@ -240,109 +273,112 @@ class SignUpPage extends ConsumerWidget {
                             activeColor: Color(0xFFC5B898),
                             checkColor: Colors.white,
                             onChanged: (bool? value) {
-
                               checkboxNotifier.state = value ?? false;
                             },
-                            
                           ),
                           Expanded(
                             child: RichText(
                               textAlign: TextAlign.start,
                               text: TextSpan(
                                 text: "I have read and agree to the ",
-                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  fontStyle: FontStyle.italic,
-                                ),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                 children: [
                                   TextSpan(
                                     text: "Terms of Service ",
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
-                                      ),
-
+                                    ),
                                     recognizer: TapGestureRecognizer()
                                       ..onTap = () {
                                         // open Terms of Service Dialog
-                                        showDialog(context: context, builder: (context) {
-                                          return LegalDialog(mdFileName: 'terms_of_service.md');
-                                        },
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return LegalDialog(
+                                                mdFileName:
+                                                    'terms_of_service.md');
+                                          },
                                         );
                                       },
                                   ),
-                                  TextSpan( text: "and "),
+                                  TextSpan(text: "and "),
                                   TextSpan(
                                     text: "Privacy Policy",
                                     style: TextStyle(
                                       decoration: TextDecoration.underline,
-                                      ),
-
-                                      recognizer: TapGestureRecognizer()
+                                    ),
+                                    recognizer: TapGestureRecognizer()
                                       ..onTap = () {
                                         // open Priacy Policy Dialog
-                                        showDialog(context: context, builder: (context) {
-                                          return LegalDialog(mdFileName: 'privacy_policy.md');
-                                        },
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return LegalDialog(
+                                                mdFileName:
+                                                    'privacy_policy.md');
+                                          },
                                         );
                                       },
                                   ),
-                                  TextSpan( text: "."),
+                                  TextSpan(text: "."),
                                 ],
                               ),
                             ),
                           ),
                         ],
+                      ),
                     ),
-                  ),
-                ],
-              )),
-              SizedBox(height: 20.0), //20
-              // Sign Up button
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: ElevatedButton(
-                  child: Text(
+                  child: const Text(
                     'Create Account',
                     style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
                     elevation: 4,
-                    backgroundColor: Color(0xFFC5B898),
-                    padding: EdgeInsets.symmetric(vertical: 25.0),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                    backgroundColor: const Color(0xFFC5B898),
+                    padding: const EdgeInsets.symmetric(vertical: 25.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
                     shadowColor: Colors.black,
                   ),
                   onPressed: () async {
                     if (formGlobalKey.currentState!.validate()) {
-                      print('Fields pass validation');
-                      try {
-                        // Redirect to Survey or Verify Email page after calling function
-                        ref
-                            .read(authControllerProvider.notifier)
-                            .createAccount(email.text, password.text, fullName.text);
-                        ref.invalidate(authControllerProvider);
-                      } catch (e) {
-                        print(e);
-                      }
+                      ref.read(authControllerProvider.notifier).createAccount(
+                          email.text, password.text, fullName.text);
+                      ref.invalidate(authControllerProvider);
                     } else {
-                      print('Fields not passing validation');
+                      showToasty('Please correct the errors', false);
                     }
                   },
                 ),
               ),
-              SizedBox(height: 10.0),
+              const SizedBox(height: 10.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Already have an account?',
-                      style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w400,
-                      ),
+                  const Text(
+                    'Already have an account?',
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                   TextButton(
                     child: const Text(
@@ -354,16 +390,14 @@ class SignUpPage extends ConsumerWidget {
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    onPressed: () {
-                      // Redirect to Sign In page
-                      GoRouter.of(context).go('/signIn');
-                    },
+                    onPressed: () => GoRouter.of(context).go('/signIn'),
                   ),
                 ],
               ),
             ],
           ),
         ),
-      ));
+      ),
+    );
   }
 }
