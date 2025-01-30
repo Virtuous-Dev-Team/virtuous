@@ -37,6 +37,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newCareerLength = TextEditingController(); //newLength
   late String currentCommunity;
   bool newListExist = false;
+  bool isToastShown = false; // don't show two toasts for one action
+
   @override
   void initState() {
     super.initState();
@@ -46,9 +48,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     if (user != null) {
       print('edit profile : ${userInfo.currentCommunity}');
       currentCommunity = userInfo.currentCommunity;
-
-      // if (currentCommunity == 'legal')
-      //   currentCommunity = currentCommunity.capitalizeFirst!;
       newCareer.text = userInfo.careerInfo.currentPosition;
       newCareerLength.text = userInfo.careerInfo.careerLength;
       newEmail.text = user.email ?? ''; // User's email
@@ -65,61 +64,48 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
-    // Dropdown values for each page - should be renamed to communities
-    // List<String> careerDropdownValues = [
-    //   'Legal',
-    //   'Alcoholics Anonymous',
-    // ];
-    // var count = ref.watch<UserInfoProvider>().currentCommunity;
-
-    // final userInfoProvider =
-    //     ChangeNotifierProvider((ref) => UserInfoProvider());
-
-    // _readUserInfo() async {
-    //   final result = await ref.read(usersRepositoryProvider).getUserInfo();
-    //   if (result['Success']) {
-    //     print('edit profile: _readUserInfo: ${result['response']}');
-    //   }
-    // }
-    // final u = _readUserInfo();
     ref.watch(updateProfileControllerProvider).when(
           loading: () => CircularProgressIndicator(),
           error: (error, stackTrace) {
-            Future.delayed(Duration.zero, () {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                // ref.read(authControllerProvider.notifier).state =
-                //     AsyncLoading();
-                dynamic errorType = error;
-                if (errorType['Function'] == 'updateProfile') {
-                  showToasty(errorType['msg'], false, context);
-                }
+                handleErrors(error, context);
               });
-            });
           },
           data: (response) async {
+            if (!mounted) return; // stop if widget isn't in the tree
             WidgetsBinding.instance.addPostFrameCallback((_) async {
-              if (response != null) {
-                if (response['Function'] == "updateProfile") {
+              if (response != null && response['Function'] == "updateProfile") {
+                // check if the toast is shown
+                if(!isToastShown) {
                   showToasty(response['msg'], true, context);
-                  // TODO: should we clear them?
-                  //newProfileName.clear();
-                  //newEmail.clear();
-                  //newCareer.clear(); // change this to newMemberRole
-                  //newCareerLength.clear(); // change this to newMemberLength
-                   //Update UserInfo Provider
-                  await setUserInfoProvider(ref);
-                  await ref
-                      .read(resourcesControllerProvider.notifier)
-                      .getResources(currentCommunity);
-                  await ref
-                      .read(virtueEntryControllerProvider.notifier)
-                      .getMostRecentEntries(currentCommunity);
-                  await ref
-                      .read(statsControllerProvider.notifier)
-                      .getAllStats(currentCommunity);
-                  GoRouter.of(context).pop();
-                  // newProfileName.
+                  setState(() {
+                    isToastShown = true;
+                  });
                 }
+                // TODO: should we clear them?
+                //newProfileName.clear();
+                //newEmail.clear();
+                //newCareer.clear(); // change this to newMemberRole
+                //newCareerLength.clear(); // change this to newMemberLength
+                 //Update UserInfo Provider
+                await setUserInfoProvider(ref);
+                await ref
+                    .read(resourcesControllerProvider.notifier)
+                    .getResources(currentCommunity);
+                await ref
+                    .read(virtueEntryControllerProvider.notifier)
+                    .getMostRecentEntries(currentCommunity);
+                await ref
+                    .read(statsControllerProvider.notifier)
+                    .getAllStats(currentCommunity);
+
+                setState(() {
+                  isToastShown = false;
+                });
+
+                //GoRouter.of(context).pop();
+                // newProfileName.
+
               }
               else {
                 print("error null response");
@@ -502,3 +488,18 @@ String? validatePassword(String? pass) {
   }
   return null;
 }
+
+// Grab a better error message if an error occurs
+void handleErrors(dynamic error, BuildContext context) {
+  final errorCode = error['msg'] ?? 'default';
+  final errorMessage = errorMessages[errorCode] ?? errorMessages['default'];
+  showToasty(errorMessage, false, context);
+}
+
+Map<String, String> errorMessages = {
+  'network-request-failed': 'Network connection failed. Please check your internet connection.',
+  'requires-recent-login': 'Account reverification in progress. Please try again.',
+  'invalid-email': 'Email address is invalid.',
+  'user-not-found': 'No account found with the provided details.',
+  'default': 'An unexpected error occurred. Please try again.',
+};

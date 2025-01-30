@@ -43,6 +43,8 @@ dependencies:
   flutter_map_supercluster: ^4.3.0
   markdown_widget: ^2.3.2+6
   flutter_markdown: ^0.6.19
+  firebase_messaging: ^14.7.10
+  flutter_timezone: ^1.0.8
 
 dev_dependencies:
   flutter_test:
