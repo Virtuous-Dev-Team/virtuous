@@ -41,6 +41,8 @@ dependencies:
   flutter_map: ^5.0.0
   latlong2: ^0.9.1
   flutter_map_supercluster: ^4.3.0
+  markdown_widget: ^2.3.2+6
+  flutter_markdown: ^0.6.19
 
 dev_dependencies:
   flutter_test:
@@ -64,3 +66,5 @@ flutter:
     - assets/images/appleLogo.png
     - assets/images/intro_virtue.png
     - assets/images/blank_map.png
+    - assets/markdown/privacy_policy.md
+    - assets/markdown/terms_of_service.md
