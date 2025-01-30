@@ -24,13 +24,27 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   bool onChanged = false;
   TimeOfDay _selectedTime = TimeOfDay.now();
   TextEditingController notificationTime = TextEditingController();
+  late int notiHour;
+  late int notiMinute;
+  late String ampm;
 
+  // TODO: Get this to show the current notification time when enabled, it goes away once you leave the page.
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
+
+    if (userInfo.notificationPreferences.notificationTime.hour > 12) {
+      ampm = "PM";
+      notiHour = userInfo.notificationPreferences.notificationTime.hour - 12;
+    } else {
+      ampm = "AM";
+      notiHour = userInfo.notificationPreferences.notificationTime.hour;
+    }
+
+    notiMinute = userInfo.notificationPreferences.notificationTime.minute;
     enableNotifications = userInfo.notificationPreferences.allowNotifications;
-    notificationTime.text = userInfo.notificationPreferences.notificationTime;
+    notificationTime.text = '$notiHour:$notiMinute $ampm';
   }
 
   @override
@@ -109,31 +123,6 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        InkWell(
-                          onTap: () {
-                            GoRouter.of(context).go(
-                                '/SettingsPage/NotificationsPage/UpdatePhoneNumber');
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Phone number",
-                                style: GoogleFonts.adamina(
-                                  textStyle: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_right,
-                                size: 25,
-                              )
-                            ],
-                          ),
-                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -252,48 +241,22 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 40,
                     ),
-                    // Center(
-                    //   child: Container(
-                    //     decoration: BoxDecoration(
-                    //       color: Colours.swatch(
-                    //           clrBackground), // Dark purple color
-                    //       borderRadius: BorderRadius.circular(
-                    //           5), // Adjusted border radius
-                    //       boxShadow: [
-                    //         BoxShadow(
-                    //           color: Colors.grey.withOpacity(0.5),
-                    //           spreadRadius: 2,
-                    //           blurRadius: 4,
-                    //           offset: Offset(0, 3),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //     width: 310,
-                    //     height: 60,
-                    //     child: Center(
-                    //       child: Text(
-                    //         "Submit",
-                    //         style: GoogleFonts.tinos(
-                    //           textStyle: TextStyle(
-                    //             fontSize: 18,
-                    //             fontWeight: FontWeight.normal,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Center(
                       child: MaterialButton(
                         onPressed: () {
                           if (onChanged) {
+                            // convert TimeOfDay selected time to DateTime
+                            final now = DateTime.now();
+                            
                             ref
                                 .read(settingsControllerProvider.notifier)
                                 .updateNotificationPreferences(
-                                    enableNotifications, notificationTime.text);
+                                    enableNotifications, 
+                                    DateTime(now.year, now.month, now.day, _selectedTime.hour, _selectedTime.minute)
+                                );
 
                             ref.invalidate(settingsControllerProvider);
                           }
@@ -408,9 +371,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
     if (pickedTime != null && pickedTime != _selectedTime) {
       setState(() {
-        //widget._selectedTime = pickedTime;
-
         notificationTime.text = formatTime(pickedTime);
+        _selectedTime = pickedTime;
       });
     }
   }

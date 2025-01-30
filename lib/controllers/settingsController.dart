@@ -67,7 +67,7 @@ class SettingsController extends _$SettingsController {
 
   
   Future<void> updateNotificationPreferences(
-      bool newAllowNotificationa, String newNotificationTime) async {
+      bool newAllowNotificationa, DateTime newNotificationTime) async {
     try {
       final settingsRepo = ref.read(settingsRepositoryProvider);
       final result = await AsyncValue.guard(() =>
