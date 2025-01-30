@@ -44,9 +44,11 @@ class ReauthenticateShowDialogWidget {
                     //   showToasty(response, true, context);
                     //   Navigator.pop(context);
                     // }
-                    if (response['Function'] == 'reauthenticateUser') {
-                      showToasty(response['msg'], true, context);
-                      Navigator.pop(context);
+                    if (response != null) {
+                      if (response['Function'] == 'reauthenticateUser') {
+                        showToasty(response['msg'], true, context);
+                        Navigator.pop(context);
+                      }
                     }
                   });
                 },

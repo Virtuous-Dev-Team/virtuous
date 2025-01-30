@@ -36,7 +36,7 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
         loading: () => CircularProgressIndicator(),
         error: (error, stackTrace) {
           Future.delayed(Duration.zero, () {
-            WidgetsBinding.instance?.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
               dynamic errorType = error;
               if (errorType['Function'] == 'signOut')
                 showToasty(errorType['msg'], false, context);
@@ -45,8 +45,11 @@ class AppBarWidget extends ConsumerWidget implements PreferredSizeWidget {
         },
         data: (response) {
           // print('going to sign in page, after signing out ');
-          WidgetsBinding.instance?.addPostFrameCallback((_) {
-            GoRouter.of(context).go(response);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if(response != null)
+              {
+                GoRouter.of(context).go(response);
+              }
           });
         });
     return appBarChoice.compareTo('regular') == 0

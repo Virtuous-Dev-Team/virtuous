@@ -111,7 +111,10 @@ class SignInPage extends ConsumerWidget {
             await setUserInfoProvider(ref);
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              GoRouter.of(context).go(response);
+              if(response != null)
+              {
+                GoRouter.of(context).go(response);
+              }
             });
           },
         );

@@ -8,7 +8,6 @@ import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
 
@@ -31,6 +30,8 @@ class NearbyPage extends ConsumerStatefulWidget {
 }
 
 class _NearbyPageState extends ConsumerState<NearbyPage> {
+  bool _hasShownSnackBar = false;
+
   @override
   void initState() {
     super.initState();
@@ -107,13 +108,34 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
     // Detect if community has changed
     if (communityName != userInfo.currentCommunity) {
+      print("changed changed community alert");
       setState(() {
         communityName = userInfo.currentCommunity;
         cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
+        cachedMarkers = {}; // Clear cached markers
+        markers = []; // Clear markers
       });
+      // get new data
+      prefetchNearbyEntries();
     }
 
     shareLocation = userInfo.shareLocation;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!shareLocation && !_hasShownSnackBar) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Location sharing is disabled. Enable location sharing to start closer to home."),
+            duration: Duration(seconds: 5),
+            backgroundColor: Color(0xFF000000),
+            shape: StadiumBorder(),
+            behavior: SnackBarBehavior.floating,
+
+          ),
+        );
+        _hasShownSnackBar = true;
+      }
+    });
 
     late TooltipBehavior _tooltip;
 
@@ -134,9 +156,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               padding: const EdgeInsets.all(10.0),
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -305,7 +324,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               ),
             ),
           ),
-        ));
+        );
   }
 
   // get the entries from the api
@@ -322,7 +341,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       // Cache user location
       LatLng? newUserLocation  = data['userLocation'] != null
           ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
-          : null;
+          : const LatLng(28.6283, -81.2095);
 
       setState(() {
         savedUserLocation = newUserLocation;
