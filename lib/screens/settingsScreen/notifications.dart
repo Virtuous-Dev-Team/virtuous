@@ -28,23 +28,28 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   late int notiMinute;
   late String ampm;
 
-  // TODO: Get this to show the current notification time when enabled, it goes away once you leave the page.
   @override
   void initState() {
     super.initState();
     final userInfo = ref.read(userInfoProviderr);
 
-    if (userInfo.notificationPreferences.notificationTime.hour > 12) {
-      ampm = "PM";
-      notiHour = userInfo.notificationPreferences.notificationTime.hour - 12;
-    } else {
-      ampm = "AM";
-      notiHour = userInfo.notificationPreferences.notificationTime.hour;
-    }
+    if (userInfo.notificationPreferences.notificationTime != DateTime(1)) {
+      // DateTime(1) represents no notification time preference
+      if (userInfo.notificationPreferences.notificationTime.hour > 12) {
+        ampm = "PM";
+        notiHour = userInfo.notificationPreferences.notificationTime.hour - 12;
+      } else {
+        ampm = "AM";
+        notiHour = userInfo.notificationPreferences.notificationTime.hour;
+      }
 
-    notiMinute = userInfo.notificationPreferences.notificationTime.minute;
-    enableNotifications = userInfo.notificationPreferences.allowNotifications;
-    notificationTime.text = '$notiHour:$notiMinute $ampm';
+      notiMinute = userInfo.notificationPreferences.notificationTime.minute;
+      enableNotifications = userInfo.notificationPreferences.allowNotifications;
+      notificationTime.text = '$notiHour:$notiMinute $ampm';
+    } else {
+      notificationTime.text = 'None';
+    }
+    
   }
 
   @override
@@ -251,12 +256,22 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                             // convert TimeOfDay selected time to DateTime
                             final now = DateTime.now();
                             
-                            ref
+                            if (enableNotifications) {
+                              ref
                                 .read(settingsControllerProvider.notifier)
                                 .updateNotificationPreferences(
                                     enableNotifications, 
                                     DateTime(now.year, now.month, now.day, _selectedTime.hour, _selectedTime.minute)
                                 );
+                            } else {
+                              ref
+                                .read(settingsControllerProvider.notifier)
+                                .updateNotificationPreferences(
+                                    enableNotifications, 
+                                    DateTime(1)
+                                );
+                            }
+                            
 
                             ref.invalidate(settingsControllerProvider);
                           }
