@@ -7,6 +7,7 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:virtuetracker/api/noti_service.dart';
 
 class Settings {
   // Instance of Firebase auth class to call Firebase methods
@@ -69,48 +70,13 @@ class Settings {
       bool newAllowNotifications, DateTime newNotificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
-      FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin(); 
+      NotificationService notificationService = NotificationService();
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      // User has enabled notifications or is updating noti time
-      if (newAllowNotifications) {
-
-        // Converting DateTime to TZDateTime for zoneSchedule function
-        tz.initializeTimeZones();
-        final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-        tz.setLocalLocation(tz.getLocation(currentTimeZone));
-        TZDateTime usableTime = TZDateTime.from(newNotificationTime, tz.local);
-
-        print('your time zone is $currentTimeZone');
-        print('your tz location is ${tz.local}');
-        print('The specified noti time is ${usableTime.toString()}');
-
-        // Cancel other notifications to prevent unintentional stacking
-        await notiPlugin.cancelAll();
-
-        // TODO: iOS notification details?
-        // schedules notification
-        await notiPlugin.zonedSchedule(
-          0,
-          'Be Virtuous!',
-          'Dont forget to be virtuous',
-          usableTime,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'daily_channel_id',
-                'Reminders',
-                importance: Importance.max,
-                priority: Priority.high,
-            )),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
-        );
-      } else {
-        // User has turned off notifications and all notifications need to be cleared
-        await notiPlugin.cancelAll();
-      }
+      // schedule notifications
+      await notificationService.handleNotification(newAllowNotifications, newNotificationTime);
 
       await usersCollectionRef.doc(user.uid).update({
         'notificationPreferences.allowNotifications': newAllowNotifications,

@@ -20,6 +20,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:virtuetracker/api/noti_service.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -316,42 +317,13 @@ class Users {
       dynamic userLocation) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
+      NotificationService notificationService = NotificationService();
       if (user == null) {
         return {'Success': false, 'Error': 'User not found'};
       }
 
-      // create notification if specified in survey
-      if (allowNotifications) {
-        FlutterLocalNotificationsPlugin notiPlugin = FlutterLocalNotificationsPlugin(); 
-
-        // Converting DateTime to TZDateTime for zoneSchedule function
-        tz.initializeTimeZones();
-        final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-        tz.setLocalLocation(tz.getLocation(currentTimeZone));
-        TZDateTime usableTime = TZDateTime.from(notificationTime, tz.local);
-
-        // Cancel other notifications to prevent unintentional stacking
-        await notiPlugin.cancelAll();
-
-        // TODO: iOS notification details?
-        // schedules notification
-        await notiPlugin.zonedSchedule(
-          0,
-          'Be Virtuous!',
-          'Dont forget to be virtuous',
-          usableTime,
-          const NotificationDetails(
-            android: AndroidNotificationDetails(
-                'daily_channel_id',
-                'Reminders',
-                importance: Importance.max,
-                priority: Priority.high,
-            )),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
-        );
-
-      }
+      // schedule notification if specified in survey
+      await notificationService.handleNotification(allowNotifications, notificationTime);
 
       final careerInfo = {
         "currentPosition": currentPosition,
