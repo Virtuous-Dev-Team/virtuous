@@ -488,11 +488,11 @@ class Users {
           await usersCollectionRef.doc(user.uid).get();
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;
-
+        
         // convert firebase timestamp to DateTime if noti stored
         late DateTime conversion;
-        if (userInfo['notificationPreferences']['notificationTime'] == "") {
-          // checking for old accounts with empty noti value
+        if (userInfo['notificationPreferences']['notificationTime'] == "\"\"") {
+          // checking for old accounts with empty noti value (truly despicable i know)
           conversion = DateTime(1);
         } else {
           Timestamp timestamp = userInfo['notificationPreferences']['notificationTime'] as Timestamp;
