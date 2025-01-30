@@ -46,9 +46,7 @@ Future<dynamic> callAuthCreateAccount(
 
         return {'Success': result['Success'], 'msg': result['Error']};
       }
-    } else {
-      
-    }
+    } else {return {'Success': false, 'msg': 'All fields must be filled out'};}
   } catch (error) {
     print(error);
   }
@@ -113,21 +111,21 @@ class SignUpPage extends ConsumerWidget {
     }
 
     ref.watch(authControllerProvider).when(
-      loading: () => const CircularProgressIndicator(),
-      error: (error, stackTrace) {
-        Future.delayed(Duration.zero, () {
-          dynamic errorType = error;
-          if (errorType['Function'] == 'createAccount') {
-            showToasty(errorType['msg'], false);
-          }
-        });
-      },
-      data: (response) {
-        Future.delayed(Duration.zero, () {
-          GoRouter.of(context).go(response);
-        });
-      },
-    );
+          loading: () => const CircularProgressIndicator(),
+          error: (error, stackTrace) {
+            Future.delayed(Duration.zero, () {
+              dynamic errorType = error;
+              if (errorType['Function'] == 'createAccount') {
+                showToasty(errorType['msg'], false);
+              }
+            });
+          },
+          data: (response) {
+            Future.delayed(Duration.zero, () {
+              GoRouter.of(context).go(response);
+            });
+          },
+        );
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDF9),
@@ -176,7 +174,8 @@ class SignUpPage extends ConsumerWidget {
                         ),
                         keyboardType: TextInputType.emailAddress,
                         validator: (email) {
-                          if (!RegExp(r'^[\w\.-]+@[\w-]+\.\w{2,3}(\.\w{2,3})?\$')
+                          if (!RegExp(
+                                  r'^[\w\.-]+@[\w-]+\.[a-zA-Z]{2,}$')
                               .hasMatch(email ?? '')) {
                             return 'Please enter a valid email';
                           }
@@ -229,7 +228,8 @@ class SignUpPage extends ConsumerWidget {
                         ),
                         onChanged: validatePassword,
                         validator: (password) {
-                          if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\\$&*~]).{8,}\$')
+                          if (!RegExp(
+                                  r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$')
                               .hasMatch(password ?? '')) {
                             return 'Please enter a stronger password';
                           }
@@ -239,7 +239,8 @@ class SignUpPage extends ConsumerWidget {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 10),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -258,6 +259,77 @@ class SignUpPage extends ConsumerWidget {
                           buildPasswordRequirement(
                               'At least one special character (!@#\$&*~)',
                               hasSpecialChar),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Checkbox(
+                            value: isChecked,
+                            activeColor: Color(0xFFC5B898),
+                            checkColor: Colors.white,
+                            onChanged: (bool? value) {
+                              checkboxNotifier.state = value ?? false;
+                            },
+                          ),
+                          Expanded(
+                            child: RichText(
+                              textAlign: TextAlign.start,
+                              text: TextSpan(
+                                text: "I have read and agree to the ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelLarge
+                                    ?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                children: [
+                                  TextSpan(
+                                    text: "Terms of Service ",
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // open Terms of Service Dialog
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return LegalDialog(
+                                                mdFileName:
+                                                    'terms_of_service.md');
+                                          },
+                                        );
+                                      },
+                                  ),
+                                  TextSpan(text: "and "),
+                                  TextSpan(
+                                    text: "Privacy Policy",
+                                    style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        // open Priacy Policy Dialog
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return LegalDialog(
+                                                mdFileName:
+                                                    'privacy_policy.md');
+                                          },
+                                        );
+                                      },
+                                  ),
+                                  TextSpan(text: "."),
+                                ],
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -287,10 +359,8 @@ class SignUpPage extends ConsumerWidget {
                   ),
                   onPressed: () async {
                     if (formGlobalKey.currentState!.validate()) {
-                      ref
-                          .read(authControllerProvider.notifier)
-                          .createAccount(
-                              email.text, password.text, fullName.text);
+                      ref.read(authControllerProvider.notifier).createAccount(
+                          email.text, password.text, fullName.text);
                       ref.invalidate(authControllerProvider);
                     } else {
                       showToasty('Please correct the errors', false);
@@ -324,12 +394,6 @@ class SignUpPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 100),
-              const Text(
-                'We Value Your Privacy\nBy signing up, you agree to our Terms and Privacy Policy',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 10.0),
-              ),
             ],
           ),
         ),
@@ -337,4 +401,3 @@ class SignUpPage extends ConsumerWidget {
     );
   }
 }
-
