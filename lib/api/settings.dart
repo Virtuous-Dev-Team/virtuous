@@ -1,8 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
+import 'package:timezone/timezone.dart';
 import 'package:virtuetracker/api/users.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:virtuetracker/api/noti_service.dart';
 
 class Settings {
   // Instance of Firebase auth class to call Firebase methods
@@ -62,16 +67,22 @@ class Settings {
   }
 
   Future<dynamic> updateNotificationPreferences(
-      bool newAllowNotificationa, String newNotificationTime) async {
+      bool newAllowNotifications, DateTime newNotificationTime) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
+      NotificationService notificationService = NotificationService();
       if (user == null) {
         return {'Success': false, 'Error': "User not found"};
       }
-      final response = await usersCollectionRef.doc(user.uid).update({
-        'notificationPreferences.allowNotifications': newAllowNotificationa,
+
+      // schedule notifications
+      await notificationService.handleNotification(newAllowNotifications, newNotificationTime);
+
+      await usersCollectionRef.doc(user.uid).update({
+        'notificationPreferences.allowNotifications': newAllowNotifications,
         'notificationPreferences.notificationTime': newNotificationTime
       });
+
       return {"Success": true, 'response': "Done"};
     } on FirebaseAuthException catch (error) {
       return {'Success': false, 'Error': error.message};

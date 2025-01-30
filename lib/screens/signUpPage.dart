@@ -6,14 +6,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toastification/toastification.dart';
+import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communities.dart';
 import 'package:virtuetracker/app_router/app_navigation.dart';
 import 'package:virtuetracker/controllers/authControllers.dart';
 import 'package:virtuetracker/firebase_options.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:virtuetracker/screens/gridPage.dart';
 import 'package:virtuetracker/screens/signInPage.dart';
 import 'package:virtuetracker/widgets/toastNotificationWidget.dart';
+import 'package:flutter/services.dart';
+import 'package:markdown_widget/markdown_widget.dart';
+import 'package:flutter/gestures.dart';
+import 'package:virtuetracker/dialogs/legal_dialog.dart';
 
 Future<dynamic> callAuthCreateAccount(
     email, password, fullName, context, ref) async {
@@ -47,6 +53,8 @@ Future<dynamic> callAuthCreateAccount(
     print(error);
   }
 }
+
+final checkboxProvider = StateProvider<bool>((ref) => false);
 
 class SignUpPage extends ConsumerWidget {
   final TextEditingController email = TextEditingController();
@@ -95,6 +103,9 @@ class SignUpPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final formGlobalKey = GlobalKey<FormState>();
+
+    final isChecked = ref.watch(checkboxProvider);
+    final checkboxNotifier = ref.read(checkboxProvider.notifier);
 
     double? spacing = 5;
     void showToasty(String msg, bool success) {

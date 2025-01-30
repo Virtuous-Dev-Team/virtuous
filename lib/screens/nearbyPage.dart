@@ -30,6 +30,8 @@ class NearbyPage extends ConsumerStatefulWidget {
 }
 
 class _NearbyPageState extends ConsumerState<NearbyPage> {
+  bool _hasShownSnackBar = false;
+
   @override
   void initState() {
     super.initState();
@@ -63,7 +65,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   LatLngBounds currentBounds =
       LatLngBounds(LatLng(28.70, -127.50), LatLng(48.85, -55.90));
 
-  String timeFrame = "Last week";
+  String timeFrame = "Last 24 hours"; // initial
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   LatLng? savedUserLocation;
@@ -105,13 +107,34 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
     // Detect if community has changed
     if (communityName != userInfo.currentCommunity) {
+      print("changed changed community alert");
       setState(() {
         communityName = userInfo.currentCommunity;
         cachedVirtueEntriesMap = null; // Reset cached data to trigger API call
+        cachedMarkers = {}; // Clear cached markers
+        markers = []; // Clear markers
       });
+      // get new data
+      prefetchNearbyEntries();
     }
 
     shareLocation = userInfo.shareLocation;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!shareLocation && !_hasShownSnackBar) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Location sharing is disabled. Enable location sharing to start closer to home."),
+            duration: Duration(seconds: 5),
+            backgroundColor: Color(0xFF000000),
+            shape: StadiumBorder(),
+            behavior: SnackBarBehavior.floating,
+
+          ),
+        );
+        _hasShownSnackBar = true;
+      }
+    });
 
     late TooltipBehavior _tooltip;
 
@@ -132,9 +155,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               padding: const EdgeInsets.all(10.0),
               //height: MediaQuery.of(context).size.height,
               child: SingleChildScrollView(
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height -
-                      MediaQuery.of(context).padding.top,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -206,12 +226,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     height: 30,
                                     width: 180,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'Last week',
+                                      value: 'Last 24 hours',
                                       items: <String>[
-                                        'Last week',
-                                        'Last 3 mo',
-                                        'Last 6 mo',
-                                        'Last yr'
+                                        'Last 24 hours',
+                                        'Last 7 days',
+                                        'Last 30 days'
                                       ].map<DropdownMenuItem<String>>(
                                           (String value) {
                                         return DropdownMenuItem<String>(
@@ -306,7 +325,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
               ),
             ),
           ),
-        ));
+        );
   }
 
   // get the entries from the api
@@ -327,10 +346,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       );
 
       // Cache user location
-      LatLng? newUserLocation = data['userLocation'] != null
-          ? LatLng(
-              data['userLocation'].latitude, data['userLocation'].longitude)
-          : null;
+      LatLng? newUserLocation  = data['userLocation'] != null
+          ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
+          : const LatLng(28.6283, -81.2095);
 
       setState(() {
         savedUserLocation = newUserLocation;
@@ -369,6 +387,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
+        maxBounds: LatLngBounds(const LatLng(71.5, -175), const LatLng(12.5, -50)) ,
         center: savedUserLocation,
         zoom: _currentZoom,
         minZoom: _minZoom,
@@ -704,14 +723,12 @@ class NearbyBarChart extends StatelessWidget {
 DateTime getStartDate(String timeFrame, DateTime today) {
   DateTime startDate;
   // get start date for qualified entries
-  if (timeFrame == 'Last week') {
+  if (timeFrame == 'Last 24 hours') {
+    startDate = today.subtract(const Duration(days: 1));
+  } else if (timeFrame == 'Last 7 days') {
     startDate = today.subtract(const Duration(days: 7));
-  } else if (timeFrame == 'Last 3 mo') {
-    startDate = today.subtract(const Duration(days: 90));
-  } else if (timeFrame == 'Last 6 mo') {
-    startDate = today.subtract(const Duration(days: 180));
-  } else if (timeFrame == 'Last yr') {
-    startDate = today.subtract(const Duration(days: 365));
+  } else if (timeFrame == 'Last 30 days') {
+    startDate = today.subtract(const Duration(days: 30));
   } else {
     print('invalid time frame');
     startDate = today.subtract(const Duration(days: 0));

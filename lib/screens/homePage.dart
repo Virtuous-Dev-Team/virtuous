@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtuetracker/Models/UserInfoModel.dart';
@@ -223,11 +224,20 @@ class BuildRecentEntriesList extends ConsumerWidget {
                         int.tryParse(item['quadrantColor'].toString()) ??
                             0xFFA6A1CC,
                     docId: item['docId'],
-                    dateEntried: item['dateEntried'].toString(), // DateTime format?
+                    dateEntried: formatDateTime(item['dateEntried'].toString()), // DateTime format?
                     ref: ref,
                   );
                 }),
           );
+  }
+}
+
+String formatDateTime(String rawDate) {
+  try {
+    DateTime parsedDate = DateTime.parse(rawDate); // Parse the raw date string
+    return DateFormat('MM/dd/yyyy, h:mm a').format(parsedDate); // Format the date
+  } catch (e) {
+    return rawDate; // Return the original string if parsing fails
   }
 }
 
@@ -272,39 +282,42 @@ class RecentEntryWidget extends StatelessWidget {
         child: Wrap(
           direction: Axis.horizontal,
           runAlignment: WrapAlignment.center,
-          // alignment: WrapAlignment.center,
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 20,
           children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                  height: 55,
-                  width: 55,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    color: entryColor,
-                  ),
-                  child: Text("")),
+            Container(
+              height: 55,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: entryColor,
+              ),
+              child: SizedBox(
+                width: 55, // Optional, ensures a fixed box size
+                child: Text(""),
+              ),
             ),
-            Expanded(
-                flex: 1,
-                child: Text(
-                  quadrantName,
-                  maxLines: 1,
-                  style: GoogleFonts.tinos(
-                    textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
-                )),
-            Expanded(
-                flex: 1,
-                child: Text(
-                  dateEntried,
-                  maxLines: 1,
-                  style: GoogleFonts.tinos(
-                    textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                  ),
-                )),
+            Container(
+              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
+              child: Text(
+                quadrantName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ),
+            Container(
+              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
+              child: Text(
+                dateEntried,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.tinos(
+                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+              ),
+            ),
           ],
         ),
       ),

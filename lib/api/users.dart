@@ -3,18 +3,19 @@ import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:timezone/standalone.dart';
 import 'package:virtuetracker/Models/VirtueEntryModels.dart';
-import 'package:virtuetracker/api/auth.dart';
 import 'package:virtuetracker/api/communityShared.dart';
-import 'package:virtuetracker/Models/UserInfoModel.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:virtuetracker/api/noti_service.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -306,14 +307,19 @@ class Users {
       bool shareLocation,
       bool allowNotifications,
       String phoneNumber,
-      String notificationTime,
+      DateTime notificationTime,
       bool phoneVerified,
       dynamic userLocation) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
+      NotificationService notificationService = NotificationService();
       if (user == null) {
         return {'Success': false, 'Error': 'User not found'};
       }
+
+      // schedule notification if specified in survey
+      await notificationService.handleNotification(allowNotifications, notificationTime);
+
       final careerInfo = {
         "currentPosition": currentPosition,
         "careerLength": careerLength
@@ -480,6 +486,11 @@ class Users {
       if (documentSnapshot.exists) {
         final userInfo = documentSnapshot.data() as Map<String, dynamic>;
 
+        // convert firebase timestamp to DateTime
+        Timestamp timestamp = userInfo['notificationPreferences']['notificationTime'] as Timestamp;
+        DateTime conversion = timestamp.toDate();
+        userInfo['notificationPreferences']['notificationTime'] = conversion;
+
         return {'Success': true, "response": userInfo};
       }
       return {'Success': false, "Error": 'User not found in Users collection'};
@@ -519,8 +530,10 @@ class Users {
     //DateTime timeRange = getTimeRange(timeFrame);
 
     // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
-    const GeoPoint NORTH = GeoPoint(48.85, 0);
-    const GeoPoint SOUTH = GeoPoint(28.70, 0);
+
+    const GeoPoint NORTH = GeoPoint(71.5, 0);
+    const GeoPoint SOUTH = GeoPoint(12.5, 0);
+
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
@@ -537,17 +550,9 @@ class Users {
       print('Virtue Name: ${virtue['quadrantName']}, Color: ${virtue['quadrantColor']}');
     }
 
-
-    if (shareLocation) {
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
       final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
-
-      // Get current position and setup Geolocator with it
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      GeoFirePoint geoFireLocation =
-      geo.point(latitude: position.latitude, longitude: position.longitude);
-      LatLng userLocation = LatLng(position.latitude, position.longitude);
 
       // Search for matching entries for each virtue
 
@@ -654,13 +659,30 @@ class Users {
         for (var location in locations) {
           print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}, Date: ${location['dateEntried']}");        }
       });
-      //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
-      yield {
-      'chartEntries':virtueEntriesMap,
-        'mapEntries':virtueLocationsMap,
-        'userLocation': userLocation,
-    };
-    }
+
+      if (shareLocation) {
+
+        // Get current position and setup Geolocator with it
+        Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        GeoFirePoint geoFireLocation =
+        geo.point(latitude: position.latitude, longitude: position.longitude);
+        LatLng userLocation = LatLng(position.latitude, position.longitude);
+
+        //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
+        yield {
+          'chartEntries':virtueEntriesMap,
+          'mapEntries':virtueLocationsMap,
+          'userLocation': userLocation,
+        };
+
+      }
+      else {
+        yield {
+          'chartEntries':virtueEntriesMap,
+          'mapEntries':virtueLocationsMap,
+          'userLocation': null,
+        };
+      }
   }
 
 
