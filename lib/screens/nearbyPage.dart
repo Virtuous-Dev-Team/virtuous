@@ -67,7 +67,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     LatLng(48.85, -55.90)
   );
 
-  String timeFrame = "Last week";
+  String timeFrame = "Last 24 hours"; // initial
   // Store data from a call with the same radius
   Map<String, Map<String, dynamic>>? cachedVirtueEntriesMap;
   LatLng? savedUserLocation;
@@ -227,12 +227,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                     height: 30,
                                     width: 180,
                                     child: DropdownButtonFormField<String>(
-                                      value: 'Last week',
+                                      value: 'Last 24 hours',
                                       items: <String>[
-                                        'Last week',
-                                        'Last 3 mo',
-                                        'Last 6 mo',
-                                        'Last yr'
+                                        'Last 24 hours',
+                                        'Last 7 days',
+                                        'Last 30 days'
                                       ].map<DropdownMenuItem<String>>(
                                           (String value) {
                                         return DropdownMenuItem<String>(
@@ -386,6 +385,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
+        maxBounds: LatLngBounds(const LatLng(71.5, -175), const LatLng(12.5, -50)) ,
         center: savedUserLocation,
         zoom: _currentZoom,
         minZoom: _minZoom,
@@ -635,14 +635,12 @@ class NearbyBarChart extends StatelessWidget {
 DateTime getStartDate(String timeFrame, DateTime today) {
   DateTime startDate;
   // get start date for qualified entries
-  if (timeFrame == 'Last week') {
+  if (timeFrame == 'Last 24 hours') {
+    startDate = today.subtract(const Duration(days: 1));
+  } else if (timeFrame == 'Last 7 days') {
     startDate = today.subtract(const Duration(days: 7));
-  } else if (timeFrame == 'Last 3 mo') {
-    startDate = today.subtract(const Duration(days: 90));
-  } else if (timeFrame == 'Last 6 mo') {
-    startDate = today.subtract(const Duration(days: 180));
-  } else if (timeFrame == 'Last yr') {
-    startDate = today.subtract(const Duration(days: 365));
+  } else if (timeFrame == 'Last 30 days') {
+    startDate = today.subtract(const Duration(days: 30));
   } else {
     print('invalid time frame');
     startDate = today.subtract(const Duration(days: 0));
