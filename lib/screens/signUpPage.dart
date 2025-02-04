@@ -129,13 +129,13 @@ class SignUpPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDF9),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFDF9),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xFFFFFDF9),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back, color: Colors.black),
+      //     onPressed: () => GoRouter.of(context).pop(),
+      //   ),
+      // ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
