@@ -41,6 +41,7 @@ dependencies:
   flutter_map: ^5.0.0
   latlong2: ^0.9.1
   flutter_map_supercluster: ^4.3.0
+  url_launcher: 6.2.4
   markdown_widget: ^2.3.2+6
   flutter_markdown: ^0.6.19
   firebase_messaging: ^14.7.10

@@ -247,7 +247,7 @@ class AppNavigation {
                       GoRoute(
                         path: 'TermOfUsePage',
                         name: 'TermOfUsePage',
-                        builder: (context, state) => TermOfUsePage(),
+                        builder: (context, state) => TermsOfUsePage(),
                       ),
                       GoRoute(
                         path: 'PrivacyPolicyPage',
