@@ -129,22 +129,26 @@ class SignUpPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFDF9),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFFFDF9),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => GoRouter.of(context).pop(),
-        ),
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color(0xFFFFFDF9),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back, color: Colors.black),
+      //     onPressed: () => GoRouter.of(context).pop(),
+      //   ),
+      // ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              const SizedBox(height: 50),
-              const Image(
-                image: AssetImage("assets/images/virtuous_circle_outline.png"),
+              // SizedBox(height: 50),
+              Container(
+                height: MediaQuery.of(context).size.height * .1,
+              ),
+              Image(
+                image: const AssetImage(
+                    "assets/images/virtuous_circle_outline.png"),
                 height: 100,
               ),
               const Text(
@@ -265,78 +269,106 @@ class SignUpPage extends ConsumerWidget {
                     const SizedBox(height: 20.0),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            value: isChecked,
-                            activeColor: Color(0xFFC5B898),
-                            checkColor: Colors.white,
-                            onChanged: (bool? value) {
-                              checkboxNotifier.state = value ?? false;
-                            },
-                          ),
-                          Expanded(
-                            child: RichText(
-                              textAlign: TextAlign.start,
-                              text: TextSpan(
-                                text: "I have read and agree to the ",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(
-                                      fontStyle: FontStyle.italic,
-                                    ),
+                      child: FormField<bool>(
+                        builder: (state) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextSpan(
-                                    text: "Terms of Service ",
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // open Terms of Service Dialog
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return LegalDialog(
-                                                mdFileName:
-                                                    'terms_of_service.md');
-                                          },
-                                        );
-                                      },
-                                  ),
-                                  TextSpan(text: "and "),
-                                  TextSpan(
-                                    text: "Privacy Policy",
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                    recognizer: TapGestureRecognizer()
-                                      ..onTap = () {
-                                        // open Priacy Policy Dialog
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return LegalDialog(
-                                                mdFileName:
-                                                    'privacy_policy.md');
-                                          },
-                                        );
-                                      },
-                                  ),
-                                  TextSpan(text: "."),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: isChecked,
+                                        activeColor: Color(0xFFC5B898),
+                                        checkColor: Colors.white,
+                                        onChanged: (bool? value) {
+                                          checkboxNotifier.state = value ?? false;
+                                          state.didChange(value);
+                                        },           
+                                      ),
+                                      Expanded(
+                                        child: RichText(
+                                          textAlign: TextAlign.start,
+                                          text: TextSpan(
+                                            text: "I have read and agree to our ",
+                                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                            children: [
+                                              TextSpan(
+                                                text: "Terms of Service ",
+                                                style: TextStyle(
+                                                  decoration: TextDecoration.underline,
+                                                  ),
+
+                                                recognizer: TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    // open Terms of Service Dialog
+                                                    showDialog(context: context, builder: (context) {
+                                                      return LegalDialog(mdFileName: 'terms_of_service.md');
+                                                    },
+                                                    );
+                                                  },
+                                              ),
+                                              TextSpan( text: "and "),
+                                              TextSpan(
+                                                text: "Privacy Policy",
+                                                style: TextStyle(
+                                                  decoration: TextDecoration.underline,
+                                                  ),
+
+                                                  recognizer: TapGestureRecognizer()
+                                                  ..onTap = () {
+                                                    // open Priacy Policy Dialog
+                                                    showDialog(context: context, builder: (context) {
+                                                      return LegalDialog(mdFileName: 'privacy_policy.md');
+                                                    },
+                                                    );
+                                                  },
+                                              ),
+                                              TextSpan( text: "."),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      
+                                    ],
+                                ),
+                                Row(
+                                  children: [
+                                    if (state.hasError)
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 1.0),
+                                        child: Text(
+                                          state.errorText ?? '',
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.error,
+                                            fontSize: 12.0,
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
                                 ],
-                              ),
-                            ),
-                          ),
-                        ],
+                              )
+                            ],
+                          );
+                        },
+                        validator: (value) {
+                          if (checkboxNotifier.state == false) { 
+                            return 'Please accept our Terms to create an account';
+                          } else {
+                            return null;
+                          }
+                        },
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20.0),
+                  ),
+                ],
+              )),
+              SizedBox(height: 20.0), //20
+              // Sign Up button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
                 child: ElevatedButton(
