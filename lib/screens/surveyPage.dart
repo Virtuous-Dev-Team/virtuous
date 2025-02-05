@@ -143,17 +143,17 @@ class SurveyPageState extends State<SurveyPage> {
         child: Scaffold(
           // resizeToAvoidBottomInset: false,
           backgroundColor: mainBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: appBarColor,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-                onPressed: () {},
-              ),
-              SizedBox(width: 12),
-            ],
-          ),
+          // appBar: AppBar(
+          //   backgroundColor: appBarColor,
+          //   elevation: 0,
+          //   actions: [
+          //     IconButton(
+          //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+          //       onPressed: () {},
+          //     ),
+          //     SizedBox(width: 12),
+          //  ],
+          // ),
           body: Center(
             child: Container(
               width: double.infinity,
