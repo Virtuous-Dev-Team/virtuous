@@ -216,7 +216,7 @@ class RenderQuadrantUsedList extends StatelessWidget {
                 ? SizedBox(
                     height: 100,
                     child: Center(
-                      child: Text('No data found, sumbit entries'),
+                      child: Text('No data found, submit entries'),
                     ))
                 : TopBottomVirtuesWidget(
                     virtueList: topThreeVirtues,
@@ -243,7 +243,7 @@ class RenderQuadrantUsedList extends StatelessWidget {
                 ? SizedBox(
                     height: 100,
                     child: Center(
-                      child: Text('No data found, sumbit entries'),
+                      child: Text('No data found, submit entries'),
                     ))
                 : TopBottomVirtuesWidget(
                     virtueList: bottomThreeVirtues,

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -109,11 +110,16 @@ class Auth {
   }
 
   // --- google sign in ---, couldn't test due to computer
-  Future<UserCredential?> signInWithGoogle() async {
+  Future<dynamic?> signInWithGoogle() async {
     // Trigger the authentication flow
 
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return {'Success': false, 'Error': 'Sign-in canceled by user.'};
+      }
 
       // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth =
@@ -129,9 +135,15 @@ class Auth {
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       final user = FirebaseAuth.instance.currentUser;
+      final userDoc = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(user?.uid)
+          .get();
 
       // want to call this function after checking if the uid is already in the Users collection
-      // createNewUser(user?.uid, googleUser?.displayName);
+      //if (!userDoc.exists) {
+     //   createNewUser(user?.uid, googleUser.displayName);
+      //}
 
       // Once signed in, return the UserCredential
       return gSignIn;
