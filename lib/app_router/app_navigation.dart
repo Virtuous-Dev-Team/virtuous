@@ -26,6 +26,7 @@ import 'package:virtuetracker/screens/virtueEntry.dart';
 import 'package:virtuetracker/screens/dev/devsettings.dart';
 import 'package:virtuetracker/screens/dev/editCommunityVirtues.dart';
 
+import '../screens/settingsScreen/feedback.dart';
 import '../screens/settingsScreen/notifications.dart';
 import '../screens/settingsScreen/privacy.dart';
 import '../screens/settingsScreen/privacypolicy.dart';
@@ -253,6 +254,11 @@ class AppNavigation {
                         path: 'PrivacyPolicyPage',
                         name: 'PrivacyPolicyPage',
                         builder: (context, state) => PrivacyPolicyPage(),
+                      ),
+                      GoRoute(
+                        path: 'FeedbackPage',
+                        name: 'FeedbackPage',
+                        builder: (context, state) => FeedbackPage(),
                       ),
                     ]),
                 GoRoute(
