@@ -25,7 +25,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.example.virtuetracker"
     compileSdkVersion 34
-    ndkVersion flutter.ndkVersion
+    ndkVersion '28.0.12916984 rc3'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

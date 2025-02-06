@@ -75,6 +75,13 @@ class _AnalysisPageState extends ConsumerState<AnalysisPage> {
                     'get all stats ${quadrantListInfo} && ${response['calendarData']}');
                 setState(() {
                   chartData = quadrantListInfo['pieChart'];
+                  /*print('This is the chart data\n');
+                  for(int i = 0; i < chartData.length;i++){
+                    print(chartData[i].x);
+                    print(chartData[i].y);
+                    print(chartData[i].color);
+                  }
+                  print('\nend of chart data\n');*/
                   // calendarData = response['calendarData'];
                   _markedDateMap = response['calendarData'];
 
@@ -165,6 +172,7 @@ class RenderPieChart extends ConsumerWidget {
               isVisible: true,
               position: LegendPosition.right,
               overflowMode: LegendItemOverflowMode.wrap,
+              toggleSeriesVisibility: true, //Tapping on the virtue in the legend makes it not appear in the pie chart when this is set to true
               textStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 12,

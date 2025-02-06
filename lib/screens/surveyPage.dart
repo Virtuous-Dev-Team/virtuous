@@ -56,7 +56,7 @@ class SurveyPageState extends State<SurveyPage> {
   // If data is loading then we won't allow to submit
   bool isLoading = false;
   // Location of user
-  dynamic userLocation = null;
+  dynamic userLocation;
   // Selected values for dropdowns
   String currentCommunity = 'Legal';
   String shareEntries = 'No';
@@ -776,7 +776,7 @@ class SurveyPageState extends State<SurveyPage> {
                             print('Fields missing');
                             return;
                           } else {
-                            late DateTime usableTime = DateTime.now();
+                            DateTime usableTime = DateTime(1); // default, as DateTime cannot be null
 
                             if (allowNotifications == "Yes") {
                               final now = DateTime.now();
@@ -796,7 +796,7 @@ class SurveyPageState extends State<SurveyPage> {
                                     phoneNumber.text,
                                     usableTime,
                                     phoneVerified,
-                                    userLocation.data);
+                                    userLocation == null ? userLocation : userLocation.data); // return null if null, can grab data otherwise
                           }
                         },
                   child:

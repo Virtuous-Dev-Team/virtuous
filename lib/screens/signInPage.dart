@@ -44,7 +44,7 @@ Future<dynamic> callAuthSignIn(email, password, context, ref) async {
     // Error message is inside of error.
     // Message: The supplied auth credential is incorrect
 
-    print(error);
+    print("error is $error\nLMAO");
   }
 }
 

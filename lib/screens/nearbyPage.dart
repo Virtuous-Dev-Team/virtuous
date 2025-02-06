@@ -10,7 +10,7 @@ import 'package:virtuetracker/api/users.dart';
 import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_supercluster/flutter_map_supercluster.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -62,10 +62,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   late String mapKey;
 
   // current bounds initializes as all of North America, should change on map load
-  LatLngBounds currentBounds = LatLngBounds(
-    LatLng(28.70, -127.50),
-    LatLng(48.85, -55.90)
-  );
+  LatLngBounds currentBounds =
+      LatLngBounds(LatLng(28.70, -127.50), LatLng(48.85, -55.90));
 
   String timeFrame = "Last 24 hours"; // initial
   // Store data from a call with the same radius
@@ -74,6 +72,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   List<_ChartData> chartData = [];
   Map<String, List<Map<String, dynamic>>> cachedMarkers = {};
   List<Marker> markers = [];
+  List<CustomMarker> customMarkers = [];
 
   // map center point for viewing
   //static final _defaultCenter = LatLng(51.509364, -0.128928);
@@ -175,19 +174,19 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                         height: 300,
                         child: buildMapWidget(),
                       ),
-                    SizedBox(height: 25),
+                      SizedBox(height: 25),
 
-                              // Alicia:
-                              // interactiveFlags could help us limit user interaction
-                                // directly with the map if we need to
-                              // we can set bounds but idk what it would be
-                              // bounds: LatLngBounds(
-                              //   _southwestCorner,
-                              //   _northeastCorner,
-                              // ),
-                              // boundsOptions: FitBoundsOptions(
-                              //   padding:EdgeInsets.all(10.0),
-                              // ),
+                      // Alicia:
+                      // interactiveFlags could help us limit user interaction
+                      // directly with the map if we need to
+                      // we can set bounds but idk what it would be
+                      // bounds: LatLngBounds(
+                      //   _southwestCorner,
+                      //   _northeastCorner,
+                      // ),
+                      // boundsOptions: FitBoundsOptions(
+                      //   padding:EdgeInsets.all(10.0),
+                      // ),
 
                       SizedBox(width: 30),
                       // Basic Slider Implementation with Dummy Variables
@@ -200,8 +199,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                           setState(() {
                             _currentZoom = value;
                             _mapController.move(
-                                _currentCenter,
-                                _currentZoom,
+                              _currentCenter,
+                              _currentZoom,
                             );
                           });
                         },
@@ -245,7 +244,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                       onChanged: (String? newValue) {
                                         setState(() {
                                           timeFrame = newValue!;
-                                          markers = buildVirtueMarkers(cachedMarkers);
+                                          customMarkers =
+                                              buildCustomVirtueMarkers(
+                                                  cachedMarkers);
                                         });
                                       },
                                       decoration: InputDecoration(
@@ -330,12 +331,18 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   // get the entries from the api
   Future<void> prefetchNearbyEntries() async {
     try {
-      final data = await usesAPI.getNearbyEntries(shareLocation, communityName, timeFrame).first;
-      final keyDoc = await FirebaseFirestore.instance.collection('Keys').doc('StadiaKey').get();
+      final data = await usesAPI
+          .getNearbyEntries(shareLocation, communityName, timeFrame)
+          .first;
+      final keyDoc = await FirebaseFirestore.instance
+          .collection('Keys')
+          .doc('StadiaKey')
+          .get();
 
       // Cache chart data
-      cachedVirtueEntriesMap = (data['chartEntries'] as Map<String, dynamic>?)?.map(
-            (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      cachedVirtueEntriesMap =
+          (data['chartEntries'] as Map<String, dynamic>?)?.map(
+        (key, value) => MapEntry(key, value as Map<String, dynamic>),
       );
 
       // Cache user location
@@ -347,10 +354,9 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         savedUserLocation = newUserLocation;
         _currentCenter = newUserLocation!;
         cachedMarkers = data['mapEntries'];
-        markers = buildVirtueMarkers(cachedMarkers);
+        customMarkers = buildCustomVirtueMarkers(cachedMarkers);
         mapKey = keyDoc.data()!['key'];
       });
-
     } catch (e) {
       print("Error getting data from API: $e");
     }
@@ -358,17 +364,13 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
   // make the nearby bar chart
   Widget renderNearbyBarChart() {
-
     if (cachedVirtueEntriesMap == null) {
       return CircularProgressIndicator(); // Show a loader until data is ready
     }
 
     // Build chart data
-    List<_ChartData> chartData = buildChartData(
-      cachedVirtueEntriesMap!,
-      timeFrame,
-      currentBounds
-    );
+    List<_ChartData> chartData =
+        buildChartData(cachedVirtueEntriesMap!, timeFrame, currentBounds);
 
     // Return the bar chart widget
     return RenderNearbyBarChart(
@@ -395,7 +397,8 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
             _currentZoom = mapPosition.zoom!;
             _currentCenter = mapPosition.center!;
             currentBounds = mapPosition.bounds!;
-            print("new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}");
+            print(
+                "new camera bounds = NW: ${currentBounds.northWest} SE: ${currentBounds.southEast}\ncurrent zoom level: ${_currentZoom}");
           });
         },
       ),
@@ -403,38 +406,120 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         TileLayer(
           urlTemplate:
               // TODO: add api key
-          'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=$mapKey',
+              'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}.png?api_key=$mapKey',
         ),
         SuperclusterLayer.immutable(
-          // Replaces MarkerLayer
-          key: ValueKey(markers.hashCode),
-          initialMarkers: markers,
+          key: ValueKey(customMarkers.hashCode),
+          initialMarkers:
+              customMarkers.map((customMarker) => customMarker.marker).toList(),
           indexBuilder: IndexBuilders.rootIsolate,
-          builder: (context, position, markerCount,
-              extraClusterData) =>
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.0),
-                  color: Colors.blue,
-                ),
-                child: Center(
-                  child: Text(
-                    markerCount.toString(),
-                    style:
-                    const TextStyle(color: Colors.white),
+          popupOptions: PopupOptions(
+            selectedMarkerBuilder: (context, marker) {
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  // AnimatedScale to animate the marker size
+                  return AnimatedScale(
+                    scale: 1.5, // Enlarged scale
+                    duration:
+                        const Duration(milliseconds: 200), // Animation duration
+                    curve: Curves.easeInOut, // Smooth transition curve
+                    child: marker.builder(context),
+                  );
+                },
+              );
+            },
+            popupDisplayOptions: PopupDisplayOptions(
+              builder: (BuildContext context, Marker marker) {
+                // Find the virtue associated with this marker
+                final customMarker = customMarkers.firstWhere(
+                  (m) => m.marker == marker,
+                );
+
+                return Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4.0,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
                   ),
-                ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Center(
+                        child: Text(
+                          '${customMarker.virtue}',
+                          style: GoogleFonts.inter(
+                                textStyle: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                        
+                        ),
+                      ),
+                      Text(
+                        '${virtueDef(communityName, customMarker.virtue)}',
+                        style: GoogleFonts.tinos(
+                          textStyle: TextStyle(),
+                          
+                          fontWeight: FontWeight.normal,
+                          color: Colours.swatch(clrBlack),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          builder: (context, position, markerCount, extraClusterData) {
+            double clusterRadius = calculateClusterRadius(_currentZoom);
+
+            //Go through every marker on the map and see if it is contained within the supercluster
+            //need to test with multiple superclusters
+            Map<String, int> virtueCounts = {};
+            for (var customMarker in customMarkers) {
+              if (distance(customMarker.marker.point, position) <=
+                  clusterRadius) {
+                virtueCounts[customMarker.virtue] =
+                    (virtueCounts[customMarker.virtue] ?? 0) + 1;
+              }
+            }
+
+            return SizedBox(
+              height: 150,
+              width: 150,
+              child: SfCircularChart(
+                series: <CircularSeries>[
+                  PieSeries<MapEntry<String, int>, String>(
+                    dataSource: virtueCounts.entries.toList()
+                      ..sort((a, b) => b.value.compareTo(a.value)),
+                    xValueMapper: (entry, _) => entry.key,
+                    yValueMapper: (entry, _) => entry.value,
+                    pointColorMapper: (entry, _) =>
+                        VirtueColor(communityName, entry.key),
+                    dataLabelMapper: (entry, _) => entry.key,
+                    dataLabelSettings: DataLabelSettings(isVisible: false),
+                    radius:
+                        '400%', //adjust this to make the pie chart bigger or smaller
+                  )
+                ],
               ),
+            );
+          },
         ),
       ],
     );
   }
 
+  //Same as buildVirtueMarkers, but returns a list of custom markers
+  List<CustomMarker> buildCustomVirtueMarkers(
+      Map<String, List<Map<String, dynamic>>> virtueLocations) {
+    List<CustomMarker> customMarkers = [];
 
-  List<Marker> buildVirtueMarkers(
-      Map<String, List<Map<String, dynamic>>> virtueLocations
-      ) {
-    List<Marker> markers = [];
     virtueLocations.forEach((virtue, locations) {
       for (var location in locations) {
         LatLng position = LatLng(location['latitude'], location['longitude']);
@@ -443,38 +528,41 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
           colorString = colorString.substring(2);
         }
 
-        DateTime? dateEntered =  location['dateEntried'];
+        DateTime? dateEntered = location['dateEntried'];
         if (!isMapEntryValid(
-          dateEntered: dateEntered,
-          entryLocation: position,
-          cameraBounds: currentBounds
-        ))
-        {
+            dateEntered: dateEntered,
+            entryLocation: position,
+            cameraBounds: currentBounds)) {
           continue;
         }
 
         Color virtueColor = Color(int.parse(colorString, radix: 16));
-        markers.add(
-          Marker(
-            point: position,
-              builder: (context) => Icon(
-              Icons.location_on,
-              color: virtueColor,
-            ),
+
+        // Create the marker
+        Marker marker = Marker(
+          point: position,
+          builder: (context) => Icon(
+            Icons.location_on,
+            color: virtueColor,
           ),
         );
+
+        // Add marker to the custom markers list
+        customMarkers.add(CustomMarker(
+          marker: marker,
+          virtue: virtue,
+          color: virtueColor,
+        ));
       }
     });
 
-    return markers;
+    return customMarkers;
   }
 
-
-  bool isMapEntryValid({
-    required DateTime? dateEntered,
-    required LatLng entryLocation,
-    required LatLngBounds cameraBounds
-  }) {
+  bool isMapEntryValid(
+      {required DateTime? dateEntered,
+      required LatLng entryLocation,
+      required LatLngBounds cameraBounds}) {
     DateTime today = DateTime.now();
     DateTime startDate = getStartDate(timeFrame, today);
 
@@ -484,11 +572,11 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
     }
 
     // Compare entry location to bounds to determine if it is in the camera view
-    if (!cameraBounds.contains(entryLocation)){
+    if (!cameraBounds.contains(entryLocation)) {
       // out of bounds
       return false;
     }
-   
+
     // Entry is valid
     return true;
   }
@@ -649,8 +737,10 @@ DateTime getStartDate(String timeFrame, DateTime today) {
   return startDate;
 }
 
-List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesMap, String timeFrame, LatLngBounds cameraBounds) {
-
+List<_ChartData> buildChartData(
+    Map<String, Map<String, dynamic>> virtueEntriesMap,
+    String timeFrame,
+    LatLngBounds cameraBounds) {
   // Contain the new chart data
   List<_ChartData> chartDataList = [];
 
@@ -677,7 +767,7 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
       DateTime? dateEntered = entryTime != null ? entryTime.toDate() : today;
 
       // get entry location as LatLng
-      final locationEntered = data['userLocation'] as Map<String,dynamic>;
+      final locationEntered = data['userLocation'] as Map<String, dynamic>;
       GeoPoint entryGeoPoint = locationEntered['geopoint'] as GeoPoint;
       final latitude = entryGeoPoint.latitude;
       final longitude = entryGeoPoint.longitude;
@@ -685,26 +775,24 @@ List<_ChartData> buildChartData(Map<String, Map<String, dynamic>> virtueEntriesM
 
       // check all parameters and add if all are met
       if (isEntryValid(
-        timeFrame: timeFrame,        // Provide named arguments
+        timeFrame: timeFrame, // Provide named arguments
         dateEntered: dateEntered,
         entryLocation: entryLocation,
-        cameraBounds: cameraBounds, 
-      ))
-        {
-          virtueData.y.add(data);
-        }
+        cameraBounds: cameraBounds,
+      )) {
+        virtueData.y.add(data);
+      }
     }
     chartDataList.add(virtueData);
   }
   return chartDataList;
 }
 
-bool isEntryValid({
-  required String timeFrame,
-  required DateTime? dateEntered,
-  required LatLng entryLocation,
-  required LatLngBounds cameraBounds
-}) {
+bool isEntryValid(
+    {required String timeFrame,
+    required DateTime? dateEntered,
+    required LatLng entryLocation,
+    required LatLngBounds cameraBounds}) {
   DateTime today = DateTime.now();
   DateTime startDate = getStartDate(timeFrame, today);
 
@@ -714,14 +802,13 @@ bool isEntryValid({
   }
 
   // Compare entry location to bounds to determine if it is in the camera view
-  if (!cameraBounds.contains(entryLocation)){
+  if (!cameraBounds.contains(entryLocation)) {
     // out of bounds
     return false;
   }
 
   // Entry is valid
   return true;
-
 }
 
 class _ChartData {
@@ -730,4 +817,18 @@ class _ChartData {
   String x;
   List y;
   Color color;
+}
+
+//Custom Markers so that the pie chart can be made
+//Doing it this way meant I didn't have to rewrite the code as much
+class CustomMarker {
+  final Marker marker;
+  final String virtue;
+  final Color color;
+
+  CustomMarker({
+    required this.marker,
+    required this.virtue,
+    required this.color,
+  });
 }
