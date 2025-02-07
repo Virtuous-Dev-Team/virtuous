@@ -236,32 +236,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     InkWell(
                       onTap: () {
-                        GoRouter.of(context)
-                            .go('/SettingsPage/FeedbackPage');
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Feedback",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_right,
-                            size: 25,
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    InkWell(
-                      onTap: () {
                         final Uri launchEmail = Uri(
                           scheme: 'mailto',
                           path: 'virtuousdevteam@gmail.com',
