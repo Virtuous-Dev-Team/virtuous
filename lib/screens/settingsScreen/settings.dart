@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:colours/colours.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -190,6 +192,58 @@ class _SettingsPageState extends State<SettingsPage> {
                         children: [
                           Text(
                             "Privacy Policy",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_right,
+                            size: 25,
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        GoRouter.of(context)
+                            .go('/SettingsPage/FeedbackPage');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Feedback",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_right,
+                            size: 25,
+                          )
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        GoRouter.of(context)
+                            .go('/SettingsPage/FeedbackPage');
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Feedback",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.normal,
