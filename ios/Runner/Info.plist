@@ -93,5 +93,6 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<string>mailto</string>
 </dict>
 </plist>

@@ -104,7 +104,16 @@ class AuthController extends _$AuthController {
           () => authRepository.createAccount(email, password, fullName));
       print(result);
       if (result.value['Success']) {
-        state = AsyncData('/signIn');
+        final trySignIn = await AsyncValue.guard(
+          () => authRepository.signInUser(email, password));
+        
+        if (trySignIn.value['Success']) {
+          // new user is now signed in, go to survey
+          state = AsyncData('/survey');
+        } else {
+          print("new account created but failed to sign in: ${trySignIn.value['Error']}");
+          state = AsyncData('/signIn');
+        }
       } else {
         print("failed create accout ${result.value['Error']}");
         final error = {

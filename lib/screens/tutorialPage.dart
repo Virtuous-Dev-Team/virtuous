@@ -70,19 +70,18 @@ class _TutorialPageState extends State<TutorialPage> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: mainBackgroundColor,
-        //appBar: AppBarWidget('Tutorial'),             UNCOMMENT
         appBar: AppBar(
           backgroundColor: appBarColor,
           elevation: 0,
           actions: [
-            IconButton(
-              icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+            TextButton(
               onPressed: () {
-                // TODO: Implement profile icon functionality.
-              },
-            ),
-            SizedBox(width: 12),
+              GoRouter.of(context).go('/home');
+            }, 
+            child: const Text('Skip Tutorial', style: TextStyle(color: Colors.black))),
+            const SizedBox(width: 12),
           ],
+          automaticallyImplyLeading: false,
         ),
         body: Center(
           child: Container(

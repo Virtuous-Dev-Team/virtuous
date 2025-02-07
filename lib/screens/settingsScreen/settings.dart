@@ -12,7 +12,7 @@ import 'package:virtuetracker/screens/settingsScreen/notifications.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacy.dart';
 import 'package:virtuetracker/screens/settingsScreen/privacypolicy.dart';
 import 'package:virtuetracker/screens/settingsScreen/termofuse.dart';
-import 'package:virtuetracker/screens/dev/devsettings.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/appBarWidget.dart';
 import 'changepassword.dart';
@@ -236,14 +236,21 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     InkWell(
                       onTap: () {
-                        GoRouter.of(context)
-                            .go('/SettingsPage/DevSettingsPage');
+                        final Uri launchEmail = Uri(
+                          scheme: 'mailto',
+                          path: 'virtuousdevteam@gmail.com',
+                          queryParameters: {
+                            'subject': '',
+                            'body': ''
+                          }
+                        );
+                        launchUrl(launchEmail);
                       },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Developer Settings",
+                            "Contact Support",
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.normal,

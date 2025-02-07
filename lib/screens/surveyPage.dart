@@ -143,17 +143,17 @@ class SurveyPageState extends State<SurveyPage> {
         child: Scaffold(
           // resizeToAvoidBottomInset: false,
           backgroundColor: mainBackgroundColor,
-          appBar: AppBar(
-            backgroundColor: appBarColor,
-            elevation: 0,
-            actions: [
-              IconButton(
-                icon: Icon(Icons.account_circle, size: 30, color: iconColor),
-                onPressed: () {},
-              ),
-              SizedBox(width: 12),
-            ],
-          ),
+          // appBar: AppBar(
+          //   backgroundColor: appBarColor,
+          //   elevation: 0,
+          //   actions: [
+          //     IconButton(
+          //       icon: Icon(Icons.account_circle, size: 30, color: iconColor),
+          //       onPressed: () {},
+          //     ),
+          //     SizedBox(width: 12),
+          //  ],
+          // ),
           body: Center(
             child: Container(
               width: double.infinity,
@@ -470,7 +470,7 @@ class SurveyPageState extends State<SurveyPage> {
             style: GoogleFonts.tinos(textStyle: TextStyle(fontSize: 16,)),
           ),
           Text(
-            'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
+            'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, however virtue usage markers use a randomized location not too far from yours.',
             style: GoogleFonts.tinos(
               textStyle: TextStyle(
                 fontSize: 16,

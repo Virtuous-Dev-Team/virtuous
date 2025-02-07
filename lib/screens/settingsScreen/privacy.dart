@@ -155,7 +155,7 @@ class _PrivacyPageState extends ConsumerState<PrivacyPage> {
                           height: 5,
                         ),
                         Text(
-                          'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, only your virtue usage.',
+                          'If you select “Yes,” your data may be shown to other users. Your personal information won’t be shared, however virtue usage markers use a randomized location not too far from yours.',
                           style: GoogleFonts.adamina(
                             textStyle: TextStyle(
                                 fontSize: 13,
@@ -179,7 +179,7 @@ class _PrivacyPageState extends ConsumerState<PrivacyPage> {
                           height: 5,
                         ),
                         Text(
-                          'We will not share your location with other users. However you can’t use some features without location tuned on.',
+                          'We will not share your location with other users. However you can’t use some features without location turned on.',
                           style: GoogleFonts.adamina(
                             textStyle: TextStyle(
                                 fontSize: 13,
