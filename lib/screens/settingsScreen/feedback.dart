@@ -1,15 +1,18 @@
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
 import 'package:virtuetracker/Models/TextFieldNoteInputModel.dart';
+import 'package:virtuetracker/controllers/userFeedbackController.dart';
+import 'package:virtuetracker/api/userFeedback.dart';
 import '../../widgets/appBarWidget.dart';
 
-class FeedbackPage extends StatefulWidget {
+class FeedbackPage extends ConsumerStatefulWidget {
   _FeedbackPageState createState() => _FeedbackPageState();
 }
 
-class _FeedbackPageState extends State<FeedbackPage> {
+class _FeedbackPageState extends ConsumerState<FeedbackPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _feedbackType = 'Bug Report';
@@ -23,17 +26,35 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   TextEditingController _response = TextEditingController();
 
+  // @override void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     ref.read(userFeedbackControllerProvider.notifier);
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
 
-    void _submitForm() {
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState!.save();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Feedback submitted successfully!')),
-        );
+    void _submitForm() async {
+      try {
+        if (_formKey.currentState!.validate()) {
+          _formKey.currentState!.save();
+
+          final userFeedbackController = 
+            ref.read(userFeedbackProvider);
+          
+          await userFeedbackController.sendFeedback(_feedbackType, _response.text);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Feedback submitted successfully!')),
+          );
+        }
+      } catch (e) {
+        print('Error in feedback submission: $e');
       }
     }
 
