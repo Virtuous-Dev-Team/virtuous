@@ -47,6 +47,9 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
         }
       } catch (e) {
         print('Error in feedback submission: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Feedback could not be submitted')),
+        );
       }
     }
 
