@@ -26,14 +26,6 @@ class _FeedbackPageState extends ConsumerState<FeedbackPage> {
 
   TextEditingController _response = TextEditingController();
 
-  // @override void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     ref.read(userFeedbackControllerProvider.notifier);
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
