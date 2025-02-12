@@ -261,6 +261,12 @@ class Users {
     }
   }
 
+
+
+
+
+
+
   // Return a map with list of virtues in community, with each equal to zero
   // used to initialize virtue stats independent of what communities exist
   Future<Map<String, Map<String, dynamic>>> generateVirtueStats(String currentCommunity) async {
@@ -509,56 +515,21 @@ class Users {
     }
   }
 
-  // Not in use, remove at end of sprint if we don't start using it here
-  DateTime getTimeRange(String timeFrame) {
-    DateTime now = DateTime.now();
-    DateTime timeRange = now;
-    switch(timeFrame) {
-      case "Last week":
-        timeRange = now.subtract(Duration(days: 7));
-        break;
-      case "Last 3 mo":
-        timeRange = now.subtract(Duration(days: 90));
-        break;
-      case "Last 6 mo":
-        timeRange = now.subtract(Duration(days: 180));
-        break;
-      case "Last yr":
-        timeRange = now.subtract(Duration(days: 365));
-        break;
-    }
-    return timeRange;
-  }
-
 
 
   // Get entries for nearby feature
   Stream<Map<String, dynamic>> getNearbyEntries(
-      bool shareLocation, String communityName, String timeFrame) async* {
-
-    // get time frame formatted for search
-    //DateTime timeRange = getTimeRange(timeFrame);
+      bool shareLocation, String communityName) async* {
 
     // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
 
     const GeoPoint NORTH = GeoPoint(71.5, 0);
     const GeoPoint SOUTH = GeoPoint(12.5, 0);
 
-
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
-
-    final communityDocRef = 
-      FirebaseFirestore.instance.collection('Communities');
-
-    // Get colors and virtue names from Communities collection
-    final communitySnapshot = await communityDocRef.where("communityName", isEqualTo: communityName).get();
-    final communityData = communitySnapshot.docs.first.data();
-    print('Retrieved community Snapshot:');
-
-    for (final virtue in communityData["quadrantInformation"]) {
-      print('Virtue Name: ${virtue['quadrantName']}, Color: ${virtue['quadrantColor']}');
-    }
+    final communityData = await _getCommunitySnapshot(communityName);
+    if (communityData == null) return;
 
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
@@ -567,7 +538,6 @@ class Users {
       // Search for matching entries for each virtue
 
       for (final virtue in communityData['quadrantInformation']) {
-        print('before looking at virtues');
         final sharedEntriesCollectionRef = FirebaseFirestore.instance
           .collection('CommunitiesDemo')
           .doc(communityLookup)
@@ -576,13 +546,6 @@ class Users {
           .collection('sharedEntries');
 
         print('Accessing shared entries for Virtue: ${virtue['quadrantName']}');
-
-        // Retrieve all documents within 'sharedEntries' and log them
-        //final sharedEntriesSnapshots = await sharedEntriesCollectionRef.get();
-        //print('Documents in sharedEntries for Virtue ${virtue['quadrantName']}:');
-        //for (var sharedEntryDoc in sharedEntriesSnapshots.docs) {
-       //   print('Document ID: ${sharedEntryDoc.id}, Data: ${sharedEntryDoc.data()}');
-       // }
 
         // Get color data for the virtue
         var virtueColor = virtue['quadrantColor'];
@@ -595,10 +558,6 @@ class Users {
         // start with an empty list for the heat map list
         virtueLocationsMap[virtue['quadrantName']] = [];
 
-
-        print('looking at all virtues');
-        // final geoRef = geo.collection(collectionRef: sharedEntriesCollectionRef);
-
         // Query the points within the radius once
         final virtueEntriesQuery = await sharedEntriesCollectionRef
           .where('userLocation.geopoint', isLessThanOrEqualTo: NORTH)
@@ -609,73 +568,18 @@ class Users {
         for(var docSnapshot in virtueEntriesQuery.docs) {
           virtueEntries.add(docSnapshot);
         }
-        // await geoRef
-        //     .within(
-        //   center: geoFireLocation,
-        //   radius: 10000,
-        //   field: 'userLocation',
-        //   strictMode: true,
-        // )
-        //     .first; // Fetch only a one time batch of results
 
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
-        for (var entry in virtueEntries) {
-          // get entry data that should exist
-          var entryData = entry.data();
-          if (entryData == null) {
-            print("Entry data is null, bad news. Skipping it.");
-            continue;
-          }
-
-          // check the format
-          if (entryData is Map<String, dynamic>) {
-            // make sure everything we are accessing exists
-            if (entryData.containsKey('userLocation') &&
-                entryData['userLocation'] is Map<String, dynamic>) {
-              final userLocation = entryData['userLocation'] as Map<
-                  String,
-                  dynamic>;
-              if (userLocation.containsKey('geopoint') &&
-                  userLocation['geopoint'] is GeoPoint) {
-                GeoPoint geoPoint = userLocation['geopoint'] as GeoPoint;
-
-                // get the entry time
-                DateTime? dateEntered;
-                if (entryData.containsKey('dateEntried') &&
-                    entryData['dateEntried'] is Timestamp) {
-                  dateEntered = (entryData['dateEntried'] as Timestamp).toDate();
-                }
-
-                virtueLocationsMap[virtue['quadrantName']]?.add({
-                  'latitude': geoPoint.latitude,
-                  'longitude': geoPoint.longitude,
-                  'color' : virtueColor,
-                  'dateEntried': dateEntered,
-                });
-              } else {
-                print("bad location for virtue entry: ${entry.id}");
-              }
-            } else {
-              print("wrong format for entry: ${entry.id}");
-            }
-          }
-        }
+        virtueLocationsMap[virtue['quadrantName']] = _processVirtueLocations(
+            virtueEntries, virtue['quadrantColor']);
 
       }
-      virtueLocationsMap.forEach((virtueName, locations) {
-        print("Virtue: $virtueName");
-        for (var location in locations) {
-          print("  Latitude: ${location['latitude']}, Longitude: ${location['longitude']}, Date: ${location['dateEntried']}");        }
-      });
 
       if (shareLocation) {
-
-        // Get current position and setup Geolocator with it
+        // Get current position to return it
         Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-        GeoFirePoint geoFireLocation =
-        geo.point(latitude: position.latitude, longitude: position.longitude);
         LatLng userLocation = LatLng(position.latitude, position.longitude);
 
         //print("This is the virtuesEntriesMap!: $virtueEntriesMap");
@@ -693,6 +597,129 @@ class Users {
           'userLocation': null,
         };
       }
+  }
+
+
+  // Get entries for nearby feature
+  Stream<Map<String, dynamic>> getNewNearbyEntries(
+      bool shareLocation, String communityName, DateTime? lastRefresh) async* {
+
+    lastRefresh = lastRefresh ?? DateTime.fromMillisecondsSinceEpoch(0);
+
+    String communityLookup = communityName.replaceAll(' ', '');
+    final communityData = await _getCommunitySnapshot(communityName);
+    if (communityData == null) return;
+
+    // Build a map associating each array of virtue entries with its name
+    final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
+    final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
+
+    // Search for matching entries for each virtue
+    for (final virtue in communityData['quadrantInformation']) {
+      print('before looking at virtues');
+      final sharedEntriesCollectionRef = FirebaseFirestore.instance
+          .collection('CommunitiesDemo')
+          .doc(communityLookup)
+          .collection('Virtues')
+          .doc(virtue['quadrantName'])
+          .collection('sharedEntries');
+
+      print('Accessing new shared entries for Virtue: ${virtue['quadrantName']}');
+
+      // Get color data for the virtue
+      var virtueColor = virtue['quadrantColor'];
+      // Add the color to the map
+      virtueEntriesMap[virtue['quadrantName']] = {
+        'color': virtueColor,
+        'entries': <DocumentSnapshot>[],
+      };
+
+      // start with an empty list for the heat map list
+      virtueLocationsMap[virtue['quadrantName']] = [];
+
+      // Query the points within the radius once
+      final virtueEntriesQuery = await sharedEntriesCollectionRef
+          .where('dateEntried', isGreaterThan: Timestamp.fromDate(lastRefresh!)).get();
+
+      if (virtueEntriesQuery.docs.isEmpty) {
+        print('No new entries found for virtue: ${virtue['quadrantName']}');
+        continue;
+      }
+
+      List<DocumentSnapshot> virtueEntries = [];
+      for(var docSnapshot in virtueEntriesQuery.docs) {
+        virtueEntries.add(docSnapshot);
+      }
+
+      print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
+      virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
+
+      virtueLocationsMap[virtue['quadrantName']] = _processVirtueLocations(
+          virtueEntries, virtue['quadrantColor']);
+
+    }
+
+    if (shareLocation) {
+
+      // Get current position and return it
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      LatLng userLocation = LatLng(position.latitude, position.longitude);
+
+      yield {
+        'chartEntries':virtueEntriesMap,
+        'mapEntries':virtueLocationsMap,
+        'userLocation': userLocation,
+      };
+
+    }
+    else {
+      yield {
+        'chartEntries':virtueEntriesMap,
+        'mapEntries':virtueLocationsMap,
+        'userLocation': null,
+      };
+    }
+  }
+
+  // grab the community docs from Firebase
+  Future<Map<String, dynamic>?> _getCommunitySnapshot(String communityName) async {
+    final communityDocRef =
+    FirebaseFirestore.instance.collection('Communities');
+    final communitySnapshot =
+    await communityDocRef.where("communityName", isEqualTo: communityName).get();
+
+    return communitySnapshot.docs.isNotEmpty
+        ? communitySnapshot.docs.first.data()
+        : null;
+  }
+
+  // check that all entries are valid and add them to the list of locations
+  List<Map<String, dynamic>> _processVirtueLocations(
+      List<DocumentSnapshot> virtueEntries, String virtueColor) {
+    List<Map<String, dynamic>> locations = [];
+
+    for (var entry in virtueEntries) {
+      var entryData = entry.data();
+      if (entryData == null || entryData is! Map<String, dynamic>) continue;
+
+      final userLocation = entryData['userLocation'];
+      if (userLocation is! Map<String, dynamic> ||
+          userLocation['geopoint'] is! GeoPoint) continue;
+
+      GeoPoint geoPoint = userLocation['geopoint'] as GeoPoint;
+      DateTime? dateEntered = entryData['dateEntried'] is Timestamp
+          ? (entryData['dateEntried'] as Timestamp).toDate()
+          : null;
+
+      locations.add({
+        'latitude': geoPoint.latitude,
+        'longitude': geoPoint.longitude,
+        'color': virtueColor,
+        'dateEntried': dateEntered,
+      });
+    }
+
+    return locations;
   }
 
 
