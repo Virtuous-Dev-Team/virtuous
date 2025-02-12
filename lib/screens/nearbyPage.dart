@@ -337,6 +337,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
         cachedMarkers = data['mapEntries'];
         customMarkers = buildCustomVirtueMarkers(cachedMarkers);
         mapKey = keyDoc.data()!['key'];
+        lastRefresh = DateTime.now();
       });
     } catch (e) {
       print("Error getting data from API: $e");
@@ -371,12 +372,15 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
 
       final newMarkers = data['mapEntries'] as Map<String, List<Map<String, dynamic>>>?;
       if (newMarkers != null) {
-        newMarkers.forEach((virtue, newLocations) {
-          if (cachedMarkers.containsKey(virtue)) {
-            cachedMarkers[virtue]?.addAll(newLocations);
-          } else {
-            cachedMarkers[virtue] = newLocations;
-          }
+        setState(() {
+          newMarkers.forEach((virtue, newLocations) {
+            if (cachedMarkers.containsKey(virtue)) {
+              cachedMarkers[virtue]?.addAll(newLocations);
+            } else {
+              cachedMarkers[virtue] = newLocations;
+            }
+          });
+          customMarkers = buildCustomVirtueMarkers(cachedMarkers); // Rebuild custom markers
         });
       }
 
@@ -388,8 +392,6 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       setState(() {
         savedUserLocation = newUserLocation;
         //_currentCenter = newUserLocation; // I think it not moving is good, but it could also move
-        cachedMarkers = data['mapEntries'];
-        customMarkers = buildCustomVirtueMarkers(cachedMarkers);
         mapKey = keyDoc.data()!['key'];
       });
     } catch (e) {
