@@ -261,6 +261,8 @@ class RecentEntryWidget extends StatelessWidget {
     
     final Color? entryColor;
     entryColor = VirtueColor(globalCommunityName, quadrantName);
+    //String test = 'Responsibility';
+    //print('\nREED this is important ${test.length}\n');
     
     return GestureDetector(
       onTap: () async {
@@ -279,43 +281,36 @@ class RecentEntryWidget extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Wrap(
-          direction: Axis.horizontal,
-          runAlignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 20,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: 55,
+              width: 55,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: entryColor,
               ),
-              child: SizedBox(
-                width: 55, // Optional, ensures a fixed box size
-                child: Text(""),
-              ),
             ),
-            Container(
-              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
+            SizedBox(width: 15),
+
+            Expanded(
               child: Text(
                 quadrantName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.tinos(
-                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                ),
+                textStyle: TextStyle(color: Colors.black, fontSize: 16),
+              ),
               ),
             ),
-            Container(
-              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
-              child: Text(
-                dateEntried,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                ),
+
+            Text(
+              dateEntried,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.tinos(
+                textStyle: TextStyle(color: Colors.black, fontSize: 16),
               ),
             ),
           ],
