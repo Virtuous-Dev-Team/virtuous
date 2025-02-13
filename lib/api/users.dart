@@ -531,6 +531,9 @@ class Users {
     DateTime syncTime = lastSync != null ? DateTime.parse(lastSync) : now;
     final DateTime expiredTime = now.subtract(const Duration(days: 30));
 
+    // update cached sync time with current time
+    prefs.setString('lastSync', now.toString());
+
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
     final communityData = await _getCommunitySnapshot(communityName);
@@ -566,8 +569,9 @@ class Users {
         QuerySnapshot cacheEntriesQuery; 
         QuerySnapshot? serverEntriesQuery;
 
-        if (lastSync == null) {
+        if (lastSync == null || now.difference(syncTime).inDays > 1) {
           // there has not been a sync before and we are grabbing data for first time
+          // OR hasnt been synced in a day
           // must query all from server
           cacheEntriesQuery = await sharedEntriesCollectionRef
             .get();
@@ -584,19 +588,17 @@ class Users {
             .get();
 
         }
-        
-        prefs.setString('lastSync', now.toString());
 
         // add docs from cache query
         List<DocumentSnapshot> virtueEntries = [];
         for(var docSnapshot in cacheEntriesQuery.docs) {
-          print('HERES A DOC SNAPSHOT FROM CACHE $docSnapshot');
+          print('HERES A DOC SNAPSHOT FROM CACHE ${docSnapshot.id}');
           virtueEntries.add(docSnapshot);
         }
 
         // add docs from server query, will do nothing if empty 
         for(var docSnapshot in serverEntriesQuery!.docs) {
-          print('HERES A DOC SNAPSHOT FROM SERVER $docSnapshot');
+          print('HERES A DOC SNAPSHOT FROM SERVER ${docSnapshot.id}');
           virtueEntries.add(docSnapshot);
         }
 
@@ -635,7 +637,12 @@ class Users {
   Stream<Map<String, dynamic>> getNewNearbyEntries(
       bool shareLocation, String communityName, DateTime? lastRefresh) async* {
 
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    DateTime now = DateTime.now();
     lastRefresh = lastRefresh ?? DateTime.fromMillisecondsSinceEpoch(0);
+
+    // update cached sync time 
+    prefs.setString('lastSync', now.toString()); 
 
     String communityLookup = communityName.replaceAll(' ', '');
     final communityData = await _getCommunitySnapshot(communityName);
