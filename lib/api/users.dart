@@ -16,6 +16,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:virtuetracker/api/noti_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -522,9 +523,17 @@ class Users {
       bool shareLocation, String communityName) async* {
 
     // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
-
     const GeoPoint NORTH = GeoPoint(71.5, 0);
     const GeoPoint SOUTH = GeoPoint(12.5, 0);
+
+    // initialize shared preferences for accessing cached data (last db sync time)
+    // check for documents in cache before looking in server
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('lastSync', DateTime.now().toString());
+    String? lastSync = prefs.getString('lastSync');
+    final DateTime now = DateTime.now();
+    DateTime syncTime = lastSync != null ? DateTime.parse(lastSync) : now;
+    final DateTime expiredTime = now.subtract(const Duration(days: 30));
 
     print('trying to access $communityName');
     String communityLookup = communityName.replaceAll(' ', '');
@@ -558,15 +567,41 @@ class Users {
         // start with an empty list for the heat map list
         virtueLocationsMap[virtue['quadrantName']] = [];
 
-        // Query the points within the radius once
-        final virtueEntriesQuery = await sharedEntriesCollectionRef
-          .where('userLocation.geopoint', isLessThanOrEqualTo: NORTH)
-          .where('userLocation.geopoint', isGreaterThanOrEqualTo: SOUTH)
-          .get();
+        QuerySnapshot cacheEntriesQuery; 
+        QuerySnapshot? serverEntriesQuery;
 
+        if (lastSync == null) {
+          // there has not been a sync before and we are grabbing data for first time
+          // must query all from server
+          cacheEntriesQuery = await sharedEntriesCollectionRef
+            .get();
+
+        } else {
+          // query from cache, except for dates older than 30 days as these expire
+          cacheEntriesQuery = await sharedEntriesCollectionRef
+            .where('dateEntried', isGreaterThan: Timestamp.fromDate(expiredTime))
+            .get(const GetOptions(source: Source.cache));
+
+          // query from server for docs entried after last sync
+          serverEntriesQuery = await sharedEntriesCollectionRef
+            .where('dateEntried', isGreaterThan: Timestamp.fromDate(syncTime))
+            .get();
+
+        }
+        
+
+        // add docs from cache query
         List<DocumentSnapshot> virtueEntries = [];
-        for(var docSnapshot in virtueEntriesQuery.docs) {
+        for(var docSnapshot in cacheEntriesQuery.docs) {
           virtueEntries.add(docSnapshot);
+        }
+
+        // add docs from server query if not returned empty 
+        if (serverEntriesQuery?.docs != null) {
+          print('WE GOT SOMETHING FROM THE SERVER');
+          for(var docSnapshot in serverEntriesQuery!.docs) {
+            virtueEntries.add(docSnapshot);
+          }
         }
 
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
