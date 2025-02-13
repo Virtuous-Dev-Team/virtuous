@@ -522,15 +522,11 @@ class Users {
   Stream<Map<String, dynamic>> getNearbyEntries(
       bool shareLocation, String communityName) async* {
 
-    // North American Bounds (Cant query by longtiude so using north south to limit whats grabbed)
-    const GeoPoint NORTH = GeoPoint(71.5, 0);
-    const GeoPoint SOUTH = GeoPoint(12.5, 0);
-
     // initialize shared preferences for accessing cached data (last db sync time)
     // check for documents in cache before looking in server
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('lastSync', DateTime.now().toString());
     String? lastSync = prefs.getString('lastSync');
+    print('HERE IS THE LAST SYNC TIME: $lastSync');
     final DateTime now = DateTime.now();
     DateTime syncTime = lastSync != null ? DateTime.parse(lastSync) : now;
     final DateTime expiredTime = now.subtract(const Duration(days: 30));
@@ -589,19 +585,19 @@ class Users {
 
         }
         
+        prefs.setString('lastSync', now.toString());
 
         // add docs from cache query
         List<DocumentSnapshot> virtueEntries = [];
         for(var docSnapshot in cacheEntriesQuery.docs) {
+          print('HERES A DOC SNAPSHOT FROM CACHE $docSnapshot');
           virtueEntries.add(docSnapshot);
         }
 
-        // add docs from server query if not returned empty 
-        if (serverEntriesQuery?.docs != null) {
-          print('WE GOT SOMETHING FROM THE SERVER');
-          for(var docSnapshot in serverEntriesQuery!.docs) {
-            virtueEntries.add(docSnapshot);
-          }
+        // add docs from server query, will do nothing if empty 
+        for(var docSnapshot in serverEntriesQuery!.docs) {
+          print('HERES A DOC SNAPSHOT FROM SERVER $docSnapshot');
+          virtueEntries.add(docSnapshot);
         }
 
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
