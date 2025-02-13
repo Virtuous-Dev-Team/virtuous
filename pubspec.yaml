@@ -46,6 +46,7 @@ dependencies:
   flutter_markdown: ^0.6.19
   firebase_messaging: ^14.7.10
   flutter_timezone: ^1.0.8
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -71,3 +72,4 @@ flutter:
     - assets/images/blank_map.png
     - assets/markdown/privacy_policy.md
     - assets/markdown/terms_of_service.md
+    - assets/icons/

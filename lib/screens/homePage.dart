@@ -19,6 +19,7 @@ import 'package:virtuetracker/widgets/appBarWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:virtuetracker/App_Configuration/appConfig.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // Color palette
 const Color appBarColor = Color(0xFFC4DFD3);
@@ -28,6 +29,26 @@ const Color bottomNavBarColor = Color(0xFFA6A1CC);
 const Color iconColor = Color(0xFF000000);
 const Color textColor = Colors.white;
 String? globalCommunityName;
+
+final List<String> icons = [
+  'assets/icons/alone.svg',
+  'assets/icons/commute.svg',
+  'assets/icons/coworkers.svg',
+  'assets/icons/drive.svg',
+  'assets/icons/eat.svg',
+  'assets/icons/email.svg',
+  'assets/icons/exercise.svg',
+  'assets/icons/family.svg',
+  'assets/icons/friends.svg',
+  'assets/icons/home.svg',
+  'assets/icons/meeting.svg',
+  'assets/icons/other.svg',
+  'assets/icons/outdoors.svg',
+  'assets/icons/pet.svg',
+  'assets/icons/school.svg',
+  'assets/icons/tv.svg',
+  'assets/icons/work.svg',
+];
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -270,7 +291,7 @@ class RecentEntryWidget extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 80,
+        //height: 100,
         padding: EdgeInsets.all(10),
         margin: EdgeInsets.only(bottom: 15),
         decoration: BoxDecoration(
@@ -279,45 +300,136 @@ class RecentEntryWidget extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: Wrap(
-          direction: Axis.horizontal,
-          runAlignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 20,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: 55,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: entryColor,
-              ),
-              child: SizedBox(
-                width: 55, // Optional, ensures a fixed box size
-                child: Text(""),
-              ),
+            Wrap(
+              direction: Axis.horizontal,
+              runAlignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 20,
+              children: [
+                Container(
+                  height: 55,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    color: entryColor,
+                  ),
+                  child: SizedBox(
+                    width: 55, // Optional, ensures a fixed box size
+                    child: Text(""),
+                  ),
+                ),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
+                  child: Text(
+                    quadrantName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                    ),
+                  ),
+                ),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
+                  child: Text(
+                    dateEntried,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.tinos(
+                      textStyle: TextStyle(color: Colors.black, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
             ),
             Container(
-              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
-              child: Text(
-                quadrantName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
+              width: double.infinity,
+              //height: 100,
+              // pill-shaped container
+              padding: EdgeInsets.all(10),
+              margin: EdgeInsets.only(bottom: 5), //15
+              decoration: ShapeDecoration(
+                shape: StadiumBorder(
+                  side: BorderSide(
+                    color: Color.fromRGBO(156, 152, 197, 1.0),
+                    width: 1,
+                  ),
                 ),
               ),
-            ),
-            Container(
-              constraints: BoxConstraints(maxWidth: 150), // Limit width if needed
-              child: Text(
-                dateEntried,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.tinos(
-                  textStyle: TextStyle(color: Colors.black, fontSize: 16),
-                ),
+              // box-shaped container
+              // BoxDecoration(
+              //   borderRadius: BorderRadius.all(Radius.circular(5)), // BorderRadius.all(Radius.circular(5))
+              //   color: Color.fromRGBO(156, 152, 197, 1.0),
+              //   border: Border.all(
+              //     width: 1,
+              //   ),
+              // ),
+              child: Row(
+                children: [
+                  // might need another wrap widget
+                  // Wrap(
+                  //   direction: Axis.horizontal,
+                  //   runAlignment: WrapAlignment.center,
+                  //   crossAxisAlignment: WrapCrossAlignment.center,
+                  //   spacing: 5,
+                  //   children: [
+
+                  //   ],
+                  // ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(
+                            icons.length, 
+                            (index) => Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,border: Border.all(
+                                    color: Color.fromRGBO(156, 152, 197, 1.0),
+                                    width: 2,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                //margin: EdgeInsets.symmetric(horizontal: 5),
+                                padding: EdgeInsets.all(4),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    icons.reversed.toList()[index], // ex: 'assets/icons/drive.svg',
+                                    width: 30,
+                                    height: 30,
+                                    colorFilter: ColorFilter.mode(
+                                      Color.fromRGBO(156, 152, 197, 1.0),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                  // Flutter Work Icon
+                                  // Icon(
+                                  //   Icons.work,
+                                  //   color: Color.fromRGBO(156, 152, 197, 1.0),
+                                  //   size: 24,
+                                  // ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ),
+                    ),
+                  ),
+                  
+                ],
               ),
             ),
+
           ],
         ),
       ),
