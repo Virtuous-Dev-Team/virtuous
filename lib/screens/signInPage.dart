@@ -81,6 +81,7 @@ class SignInPage extends ConsumerWidget {
 
   void showToasty(msg, bool success, BuildContext context) {
     print('calling toast widget in sign in page');
+    print(msg);
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       ToastNotificationWidget().successOrError(
         context,
@@ -101,7 +102,14 @@ class SignInPage extends ConsumerWidget {
                 //     AsyncLoading();
                 dynamic errorType = error;
                 if (errorType['Function'] == 'signIn') {
-                  showToasty(errorType['msg'], false, context);
+                  print("printing msg");
+                  print(errorType['msg']);
+                  String errorMessage = errorType['msg'];
+                  print(errorMessage);
+                  showToasty(errorMessages[errorMessage], false, context);
+                }
+                else {
+
                 }
               });
             });
@@ -413,4 +421,14 @@ class SignInPage extends ConsumerWidget {
       ),
     );
   }
+
+  Map<String, String> errorMessages = {
+    'Unable to establish connection on channel.': 'Please ensure all fields are filled.',
+    'The supplied auth credential is incorrect, malformed or has expired.': 'Email or password is incorrect. Please try again.',
+    'A network error (such as timeout, interrupted connection or unreachable host) has occurred.': 'Connection failed. Please try again.',
+    'The email address is badly formatted.': 'Please supply a valid email address.',
+    'default': 'An unexpected error occurred. Please try again.',
+  };
+
+
 }

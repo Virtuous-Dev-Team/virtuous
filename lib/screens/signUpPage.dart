@@ -122,7 +122,9 @@ class SignUpPage extends ConsumerWidget {
           },
           data: (response) {
             Future.delayed(Duration.zero, () {
-              GoRouter.of(context).go(response);
+              if (response != null) {
+                GoRouter.of(context).go(response);
+              }
             });
           },
         );

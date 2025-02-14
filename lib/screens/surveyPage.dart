@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:colours/colours.dart';
 import 'package:flutter/material.dart';
@@ -238,7 +240,7 @@ class SurveyPageState extends State<SurveyPage> {
             height: 25,
           ),
           Text(
-            'What is your current career?',
+            'What is your role in the $currentCommunity community?',
             style: GoogleFonts.tinos(
               textStyle: TextStyle(fontSize: 16,),
             ),
@@ -277,7 +279,7 @@ class SurveyPageState extends State<SurveyPage> {
             height: 20,
           ),
           Text(
-            'How long have you been in this career?',
+            'How long have you been in the $currentCommunity community?',
             style: GoogleFonts.tinos(
               textStyle: TextStyle(fontSize: 16,),
             ),
@@ -769,11 +771,8 @@ class SurveyPageState extends State<SurveyPage> {
                           print(notificationTime.text);
                           print(userLocation.toString());
 
-                          if (careerPosition.text == "" ||
-                              careerLength.text == "" ||
-                              currentCommunity.isEmpty ||
-                              reasons.text == "") {
-                            print('Fields missing');
+                          if (currentCommunity.isEmpty){
+                            print('Community missing');
                             return;
                           } else {
                             DateTime usableTime = DateTime(1); // default, as DateTime cannot be null
