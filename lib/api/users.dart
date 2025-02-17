@@ -17,6 +17,7 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:virtuetracker/api/noti_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:virtuetracker/controllers/userControllers.dart';
 
 class Users {
   // Instance of Users collection from database
@@ -522,6 +523,8 @@ class Users {
   Stream<Map<String, dynamic>> getNearbyEntries(
       bool shareLocation, String communityName) async* {
 
+    final db = FirebaseFirestore.instance;
+
     // initialize shared preferences for accessing cached data (last db sync time)
     // check for documents in cache before looking in server
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -539,6 +542,35 @@ class Users {
     final communityData = await _getCommunitySnapshot(communityName);
     if (communityData == null) return;
 
+    QuerySnapshot mainEntriesQuery;
+    QuerySnapshot? onlyServerEntriesQuery;
+
+    if (lastSync == null || now.difference(syncTime).inDays > 1) {
+      // there has not been a sync before and we are grabbing data for first time
+      // OR hasnt been synced in a day
+      // must query all from server
+      mainEntriesQuery = await db
+        .collectionGroup('sharedEntries') 
+        .where('communityName', isEqualTo: communityLookup)
+        .get();
+
+    } else {
+      // query from cache, except for dates older than 30 days as these expire
+      mainEntriesQuery = await db
+        .collectionGroup('sharedEntries')
+        .where('dateEntried', isGreaterThan: Timestamp.fromDate(expiredTime))
+        .where('communityName', isEqualTo: communityLookup)
+        .get(const GetOptions(source: Source.cache));
+
+      // query from server for docs entried after last sync
+      onlyServerEntriesQuery = await db
+        .collectionGroup('sharedEntries')
+        .where('dateEntried', isGreaterThan: Timestamp.fromDate(syncTime))
+        .where('communityName', isEqualTo: communityLookup)
+        .get();
+
+    }
+
       // Build a map associating each array of virtue entries with its name
       final Map<String, Map<String, dynamic>> virtueEntriesMap = {};
       final Map<String, List<Map<String, dynamic>>> virtueLocationsMap = {};
@@ -546,14 +578,14 @@ class Users {
       // Search for matching entries for each virtue
 
       for (final virtue in communityData['quadrantInformation']) {
-        final sharedEntriesCollectionRef = FirebaseFirestore.instance
-          .collection('CommunitiesDemo')
-          .doc(communityLookup)
-          .collection('Virtues')
-          .doc(virtue['quadrantName'])
-          .collection('sharedEntries');
+        // final sharedEntriesCollectionRef = FirebaseFirestore.instance
+        //   .collection('CommunitiesDemo')
+        //   .doc(communityLookup)
+        //   .collection('Virtues')
+        //   .doc(virtue['quadrantName'])
+        //   .collection('sharedEntries');
 
-        print('Accessing shared entries for Virtue: ${virtue['quadrantName']}');
+        print('Populating maps with virtue: ${virtue['quadrantName']}');
 
         // Get color data for the virtue
         var virtueColor = virtue['quadrantColor'];
@@ -564,51 +596,92 @@ class Users {
         };
 
         // start with an empty list for the heat map list
-        virtueLocationsMap[virtue['quadrantName']] = [];
-
-        QuerySnapshot cacheEntriesQuery; 
-        QuerySnapshot? serverEntriesQuery;
-
-        if (lastSync == null || now.difference(syncTime).inDays > 1) {
-          // there has not been a sync before and we are grabbing data for first time
-          // OR hasnt been synced in a day
-          // must query all from server
-          cacheEntriesQuery = await sharedEntriesCollectionRef
-            .get();
-
-        } else {
-          // query from cache, except for dates older than 30 days as these expire
-          cacheEntriesQuery = await sharedEntriesCollectionRef
-            .where('dateEntried', isGreaterThan: Timestamp.fromDate(expiredTime))
-            .get(const GetOptions(source: Source.cache));
-
-          // query from server for docs entried after last sync
-          serverEntriesQuery = await sharedEntriesCollectionRef
-            .where('dateEntried', isGreaterThan: Timestamp.fromDate(syncTime))
-            .get();
-
-        }
+        virtueLocationsMap[virtue['quadrantName']] = []; 
 
         // add docs from cache query
-        List<DocumentSnapshot> virtueEntries = [];
-        for(var docSnapshot in cacheEntriesQuery.docs) {
-          print('HERES A DOC SNAPSHOT FROM CACHE ${docSnapshot.id}');
-          virtueEntries.add(docSnapshot);
-        }
+        // List<DocumentSnapshot> virtueEntries = [];
+        // for(var docSnapshot in cacheEntriesQuery.docs) {
+        //   print('HERES A DOC SNAPSHOT FROM CACHE ${docSnapshot.id}');
+        //   virtueEntries.add(docSnapshot);
 
-        // add docs from server query, will do nothing if empty 
-        for(var docSnapshot in serverEntriesQuery!.docs) {
-          print('HERES A DOC SNAPSHOT FROM SERVER ${docSnapshot.id}');
-          virtueEntries.add(docSnapshot);
-        }
+        //   // UNCOMMENT TO UPDATE DOCS WITH COMMUNITYNAME AND VIRTUENAME
+        //   final updateRef = FirebaseFirestore.instance
+        //     .collection('CommunitiesDemo')
+        //     .doc(communityLookup)
+        //     .collection('Virtues')
+        //     .doc(virte['quadrantName'])
+        //     .collection('sharedEntries')
+        //     .doc(docSnapshot.id);
+          
+        //   await updateRef.set({
+        //     'communityName': communityLookup,
+        //     'virtueName': virtue['quadrantName']
+        //   }, SetOptions(merge: true));
+          
+        // }
 
-        print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
-        virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
+        // // add docs from server query, will do nothing if empty 
+        // for(var docSnapshot in serverEntriesQuery!.docs) {
+        //   print('HERES A DOC SNAPSHOT FROM SERVER ${docSnapshot.id}');
+        //   virtueEntries.add(docSnapshot);
+        // }
 
-        virtueLocationsMap[virtue['quadrantName']] = _processVirtueLocations(
-            virtueEntries, virtue['quadrantColor']);
+        // print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
+        // virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
+
+        // virtueLocationsMap[virtue['quadrantName']] = _processVirtueLocations(
+        //     virtueEntries, virtue['quadrantColor']);
 
       }
+
+
+      // AFTER FOR LOOP THROUGH VIRTUES
+      
+      // loop through snapshots and add to the entries and locations maps
+      // TODO: replace process virtue locations function with all this stuff?
+      for (var docSnapshot in mainEntriesQuery.docs) {
+        final String docVirtue = docSnapshot['virtueName'];
+        print('processing entry for virtue: $docVirtue');
+
+        // update virtue entries map for each entry
+        virtueEntriesMap.update(docVirtue,
+          (innerMap) {
+            innerMap.update('entries', (entryDocsList) {
+             entryDocsList.add(docSnapshot);
+             return entryDocsList;
+            });
+            return innerMap;
+          });
+        
+        print('HERE IS THE FIRST MAP entries list: ${virtueEntriesMap[docVirtue]?['entries']}');
+        
+        // update locations map for each entry
+        final entryLocation = docSnapshot['userLocation'];
+        GeoPoint entryGeopoint = entryLocation['geopoint'];
+
+        DateTime? dateEntered = docSnapshot['dateEntried'] is Timestamp
+          ? (docSnapshot['dateEntried'] as Timestamp).toDate()
+          : null;
+
+        virtueLocationsMap.update(docVirtue, 
+          (locationsList) {
+            locationsList.add({
+              'latitude': entryGeopoint.latitude,
+              'longitude': entryGeopoint.longitude,
+              'color': virtueEntriesMap[docVirtue]?['color'],
+              'dateEntried': dateEntered
+            });
+            return locationsList;
+        });
+      }
+
+      // do same for server entries if applicable
+      // if (onlyServerEntriesQuery != null) {
+      //   for (var docSnapshot in onlyServerEntriesQuery.docs) {
+
+      //   }
+      // }
+      
 
       if (shareLocation) {
         // Get current position to return it
@@ -637,12 +710,7 @@ class Users {
   Stream<Map<String, dynamic>> getNewNearbyEntries(
       bool shareLocation, String communityName, DateTime? lastRefresh) async* {
 
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    DateTime now = DateTime.now();
     lastRefresh = lastRefresh ?? DateTime.fromMillisecondsSinceEpoch(0);
-
-    // update cached sync time 
-    prefs.setString('lastSync', now.toString()); 
 
     String communityLookup = communityName.replaceAll(' ', '');
     final communityData = await _getCommunitySnapshot(communityName);

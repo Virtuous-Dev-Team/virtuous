@@ -51,19 +51,23 @@ class CommunityShared {
 
       print('Location changed from ($realLat, $realLong) to ($randomLat, $randomLong)');
 
+
+      // Expire date for Google Cloud TTL policies
       final DateTime now = DateTime.now();
       final DateTime date = DateTime(now.year, now.month, now.day);
       DateTime expireDate = date.add(const Duration(days: 30));
-      print("HERE IS AN EXPIRATION DATE: $expireDate");
+
+      String communityLookup = communityName.replaceAll(' ', '');
 
       // double realLong = updatedLocation.getLong
       final sharedEntry = {
         "dateEntried": FieldValue.serverTimestamp(),
         "expireDate" : expireDate,
         "userLocation": randomizedLocation.data,
+        "communityName": communityLookup,
+        "virtueName": virtueUsed
       };
 
-      String communityLookup = communityName.replaceAll(' ', '');
       final communityRef = FirebaseFirestore.instance
         .collection('CommunitiesDemo')
         .doc(communityLookup);
