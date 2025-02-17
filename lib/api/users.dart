@@ -498,7 +498,9 @@ class Users {
         
         // convert firebase timestamp to DateTime if noti stored
         late DateTime conversion;
-        if (userInfo['notificationPreferences']['notificationTime'] == "\"\"") {
+        
+        if (userInfo['notificationPreferences']['notificationTime'] == "\"\"" || 
+          userInfo['notificationPreferences']['notificationTime'] == "") {
           // checking for old accounts with empty noti value (truly despicable i know)
           conversion = DateTime(1);
         } else {
@@ -569,25 +571,28 @@ class Users {
         QuerySnapshot cacheEntriesQuery; 
         QuerySnapshot? serverEntriesQuery;
 
-        if (lastSync == null || now.difference(syncTime).inDays > 1) {
+        // if (lastSync == null || now.difference(syncTime).inDays > 1) {
           // there has not been a sync before and we are grabbing data for first time
           // OR hasnt been synced in a day
           // must query all from server
+          print('WE ARE DOING A SERVER QUERY FOR EVERYTHING');
           cacheEntriesQuery = await sharedEntriesCollectionRef
             .get();
 
-        } else {
-          // query from cache, except for dates older than 30 days as these expire
-          cacheEntriesQuery = await sharedEntriesCollectionRef
-            .where('dateEntried', isGreaterThan: Timestamp.fromDate(expiredTime))
-            .get(const GetOptions(source: Source.cache));
+        // } else {
+        //   print('WE ARE DOING A SERVER QUERY FOR SOME THINGS');
 
-          // query from server for docs entried after last sync
-          serverEntriesQuery = await sharedEntriesCollectionRef
-            .where('dateEntried', isGreaterThan: Timestamp.fromDate(syncTime))
-            .get();
+        //   // query from cache, except for dates older than 30 days as these expire
+        //   cacheEntriesQuery = await sharedEntriesCollectionRef
+        //     .where('dateEntried', isGreaterThan: Timestamp.fromDate(expiredTime))
+        //     .get(const GetOptions(source: Source.cache));
 
-        }
+        //   // query from server for docs entried after last sync
+        //   serverEntriesQuery = await sharedEntriesCollectionRef
+        //     .where('dateEntried', isGreaterThan: Timestamp.fromDate(syncTime))
+        //     .get();
+
+        // }
 
         // add docs from cache query
         List<DocumentSnapshot> virtueEntries = [];
@@ -597,11 +602,13 @@ class Users {
         }
 
         // add docs from server query, will do nothing if empty 
-        for(var docSnapshot in serverEntriesQuery!.docs) {
-          print('HERES A DOC SNAPSHOT FROM SERVER ${docSnapshot.id}');
-          virtueEntries.add(docSnapshot);
+        if (serverEntriesQuery != null) {
+          for(var docSnapshot in serverEntriesQuery!.docs) {
+            print('HERES A DOC SNAPSHOT FROM SERVER ${docSnapshot.id}');
+            virtueEntries.add(docSnapshot);
+          }
         }
-
+        
         print('Fetched relevant entries for Virtue: ${virtue['quadrantName']}');
         virtueEntriesMap[virtue['quadrantName']]?['entries'] = virtueEntries;
 
