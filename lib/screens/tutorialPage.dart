@@ -101,7 +101,7 @@ class _TutorialPageState extends State<TutorialPage> {
                         title: 'Getting Started',
                         content:
                             'Welcome to Virtuous! This is the home page. Let’s have you practice adding an entry. '
-                            'Select the “Reflect” button below to add a virtue entry to your account. '
+                            'Select the “Reflect” button below to create a practice virtue entry. '
                             'This page also shows your last dozen of entries.',
                         backgroundColor: Color(0xFFFFEEDB),
                       ),

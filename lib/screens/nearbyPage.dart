@@ -73,6 +73,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Map<String, List<Map<String, dynamic>>> cachedMarkers = {};
   List<Marker> markers = [];
   List<CustomMarker> customMarkers = [];
+  DateTime? lastRefresh;
 
   // map center point for viewing
   //static final _defaultCenter = LatLng(51.509364, -0.128928);
@@ -261,57 +262,37 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(width: 30),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Text('Maximum Distance'),
-                                  // SizedBox(
-                                  //   height: 5,
-                                  // ),
-                                  // SizedBox(
-                                  //   height: 30,
-                                  //   width: 190,
-                                  //   child: DropdownButtonFormField<String>(
-                                  //     decoration: InputDecoration(
-                                  //       border: OutlineInputBorder(
-                                  //           borderSide:
-                                  //               BorderSide()), // Remove the border from the dropdown field
-                                  //       contentPadding: EdgeInsets.only(
-                                  //           left: 10), // Remove content padding
-                                  //     ),
-                                  //     value: '10km',
-                                  //     iconSize:
-                                  //         24, // Set the size of the dropdown icon
-                                  //     onChanged: (String? newValue) async {
-                                  //       String num =
-                                  //           newValue!.replaceAll('km', '');
-                                  //       double newRadius = double.parse(num);
-                                  //       print('radius in onchange: $newRadius');
-                                  //       setState(() {
-                                  //         radius = newRadius;
-                                  //         markers = buildVirtueMarkers(cachedMarkers);
-                                  //       });
-                                  //     },
-                                  //     items: <String>[
-                                  //       '10km',
-                                  //       '50km',
-                                  //       '250km',
-                                  //       '1000km',
-                                  //     ].map((String value) {
-                                  //       return DropdownMenuItem<String>(
-                                  //         value: value,
-                                  //         child: Text(value),
-                                  //       );
-                                  //     }).toList(),
-                                  //   ),
-                                  // ),
-                                ],
+                      ),
+                              SizedBox(width: 3),
+                              IconButton(
+                                icon: Icon(Icons.refresh, color: Colors.black),
+                                iconSize: 36,
+                                onPressed: () {
+                                  try {
+                                    if (lastRefresh == null) {
+                                      setState(() {
+                                        cachedVirtueEntriesMap = null; // Clear cache
+                                        cachedMarkers = {};
+                                        markers = [];
+                                      });
+                                      prefetchNearbyEntries();
+                                    }
+                                    // if data has been refreshed before
+                                    else {
+                                      refreshNearbyEntries();
+                                    }
+                                    setState(() {
+                                      lastRefresh = DateTime.now();
+                                    });
+                                  } catch (error) {
+                                  print("Error fetching recent entries: $error");
+                                  }
+
+                                },
+                                tooltip: "Refresh Data",
                               ),
-                            ),
+                            //SizedBox(width: 30),
+
                           ],
                         ),
                       ),
@@ -332,7 +313,7 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
   Future<void> prefetchNearbyEntries() async {
     try {
       final data = await usesAPI
-          .getNearbyEntries(shareLocation, communityName, timeFrame)
+          .getNearbyEntries(shareLocation, communityName)
           .first;
       final keyDoc = await FirebaseFirestore.instance
           .collection('Keys')
@@ -361,6 +342,62 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
       print("Error getting data from API: $e");
     }
   }
+
+  // get the new entries from the api
+  Future<void> refreshNearbyEntries() async {
+    try {
+      final data = await usesAPI
+          .getNewNearbyEntries(shareLocation, communityName, lastRefresh)
+          .first;
+      final keyDoc = await FirebaseFirestore.instance
+          .collection('Keys')
+          .doc('StadiaKey')
+          .get();
+
+      final newVirtueEntries = (data['chartEntries'] as Map<String, dynamic>?)?.map(
+            (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      );
+
+      // add to cached data
+      if (newVirtueEntries != null) {
+        newVirtueEntries.forEach((virtue, newEntries) {
+          if (cachedVirtueEntriesMap!.containsKey(virtue)) {
+            cachedVirtueEntriesMap?[virtue]?['entries'].addAll(newEntries['entries']);
+          } else {
+            cachedVirtueEntriesMap?[virtue] = newEntries;
+          }
+        });
+      }
+
+      final newMarkers = data['mapEntries'] as Map<String, List<Map<String, dynamic>>>?;
+      if (newMarkers != null) {
+        newMarkers.forEach((virtue, newLocations) {
+          if (cachedMarkers.containsKey(virtue)) {
+            cachedMarkers[virtue]?.addAll(newLocations);
+          } else {
+            cachedMarkers[virtue] = newLocations;
+          }
+        });
+      }
+
+      // Cache user location
+      LatLng? newUserLocation  = data['userLocation'] != null
+          ? LatLng(data['userLocation'].latitude, data['userLocation'].longitude)
+          : const LatLng(28.6283, -81.2095);
+
+      setState(() {
+        savedUserLocation = newUserLocation;
+        //_currentCenter = newUserLocation; // I think it not moving is good, but it could also move
+        cachedMarkers = data['mapEntries'];
+        customMarkers = buildCustomVirtueMarkers(cachedMarkers);
+        mapKey = keyDoc.data()!['key'];
+      });
+    } catch (e) {
+      print("Error getting data from API: $e");
+    }
+  }
+
+
 
   // make the nearby bar chart
   Widget renderNearbyBarChart() {

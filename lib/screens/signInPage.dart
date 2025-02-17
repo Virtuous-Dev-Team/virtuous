@@ -270,54 +270,76 @@ class SignInPage extends ConsumerWidget {
               ),
               SizedBox(height: 50),
 
-              // or continue with
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 25),
-              //   child: Row(
-              //     children: [
-              //       Expanded(
-              //         child: Divider(
-              //           thickness: 0.5,
-              //           color: Colors.black,
-              //         ),
-              //       ),
-              //       Padding(
-              //         padding: const EdgeInsets.symmetric(horizontal: 10),
-              //         child: Text(
-              //           'Or continue with',
-              //           style: TextStyle(color: Colors.black),
-              //         ),
-              //       ),
-              //       Expanded(
-              //         child: Divider(
-              //           thickness: 0.5,
-              //           color: Colors.black,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+               //or continue with
+               const Padding(
+                 padding: EdgeInsets.symmetric(horizontal: 25),
+                 child: Row(
+                   children: [
+                     Expanded(
+                       child: Divider(
+                         thickness: 0.5,
+                         color: Colors.black,
+                       ),
+                     ),
+                     Padding(
+                       padding: EdgeInsets.symmetric(horizontal: 10),
+                       child: Text(
+                         'Or continue with',
+                         style: TextStyle(color: Colors.black),
+                       ),
+                     ),
+                     Expanded(
+                       child: Divider(
+                         thickness: 0.5,
+                         color: Colors.black,
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
 
-              // SizedBox(height: 15),
+               SizedBox(height: 15),
 
               // // Sign In Buttons
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     // Google Button
-              //     GestureDetector(
-              //         onTap: () => Auth().signInWithGoogle(),
-              //         child: Container(
-              //           padding: EdgeInsets.all(20),
-              //           decoration: BoxDecoration(
-              //             border: Border.all(color: Colors.black),
-              //             borderRadius: BorderRadius.circular(16),
-              //           ),
-              //           child: Image.asset(
-              //             "assets/images/googleLogo.png",
-              //             height: 20,
-              //           ),
-              //         )),
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+                   // Google Button
+                   GestureDetector(
+                       onTap: () async {
+                        try {
+                          final result = await Auth().signInWithGoogle();
+                           if (result != null && result.user != null) {
+                             // Navigate to HomePage or desired route after successful sign-in
+                             GoRouter.of(context).go('/home');  // Adjust this route based on your routing setup
+                           } else {
+                             // Show error toast if sign-in fails
+                             ToastNotificationWidget().successOrError(
+                             context,
+                               'Google Sign-In failed or was canceled.',
+                             false,
+                             );
+                           }
+                         } catch (e) {
+                           print('Google Sign-In Error: $e');
+                           ToastNotificationWidget().successOrError(
+                           context,
+                           'An unexpected error occurred.',
+                           false,
+                           );
+                         }
+                       },
+          child: Container(
+                         padding: EdgeInsets.all(20),
+                         decoration: BoxDecoration(
+                           border: Border.all(color: Colors.black),
+                           borderRadius: BorderRadius.circular(16),
+                         ),
+                         child: Image.asset(
+                           "assets/images/googleLogo.png",
+                           height: 20,
+                         ),
+                       )),
 
               //     SizedBox(width: 45),
 
@@ -360,8 +382,8 @@ class SignInPage extends ConsumerWidget {
               //         ),
               //       ),
               //     ),
-              //   ],
-              // ),
+                 ],
+               ),
 
               // dont have an account?
 
