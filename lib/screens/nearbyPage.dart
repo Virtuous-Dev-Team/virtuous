@@ -542,6 +542,14 @@ class _NearbyPageState extends ConsumerState<NearbyPage> {
                     dataLabelSettings: DataLabelSettings(isVisible: false),
                     radius:
                         '400%', //adjust this to make the pie chart bigger or smaller
+                    onPointTap: (pointInteractionDetails) {
+                      
+                      setState(() {
+                        _mapController.move(position, _currentZoom);
+                        print("REED THIS IS GETTING TAPPED");
+                      });
+                      
+                    },
                   )
                 ],
               ),
