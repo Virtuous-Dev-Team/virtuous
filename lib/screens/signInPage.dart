@@ -316,18 +316,9 @@ class SignInPage extends ConsumerWidget {
                    GestureDetector(
                        onTap: () async {
                         try {
-                          final result = await Auth().signInWithGoogle();
-                           if (result != null && result.user != null) {
-                             // Navigate to HomePage or desired route after successful sign-in
-                             GoRouter.of(context).go('/home');  // Adjust this route based on your routing setup
-                           } else {
-                             // Show error toast if sign-in fails
-                             ToastNotificationWidget().successOrError(
-                             context,
-                               'Google Sign-In failed or was canceled.',
-                             false,
-                             );
-                           }
+                          final authController = ref.read(authControllerProvider.notifier);
+                          await authController.signInWithGoogle();
+                          ref.invalidate(authControllerProvider);
                          } catch (e) {
                            print('Google Sign-In Error: $e');
                            ToastNotificationWidget().successOrError(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:virtuetracker/api/auth.dart';
 
@@ -73,6 +74,56 @@ class AuthController extends _$AuthController {
       state = AsyncError(error, StackTrace.current);
     }
   }
+
+
+  Future<void> signInWithGoogle() async {
+    try {
+      final authRepository = ref.read(authRepositoryProvider);
+
+      state = const AsyncLoading();
+      final result = await AsyncValue.guard(() => authRepository.signInWithGoogle());
+      print('THIS IS THE RESULT UR LOOKING FOR ! $result');
+
+
+      if (result.hasError) {
+        print("Google sign-in failed: ${result.error}");
+        final error = {'Function': 'signInWithGoogle', 'msg': result.error};
+        state = AsyncError(error, StackTrace.current);
+        return;
+      }
+
+      final UserCredential? userCredential = result.value;
+
+      if (userCredential?.user != null) {
+        final isNewUser = await ref.read(usersRepositoryProvider).getUserInfo();
+
+        if (userCredential!.user!.uid == 'QDhAkgB0HuSDq2wkyM8OVgrQQKh1'){
+          // go to dev setting if developer
+          print('go to dev settings page');
+          state = AsyncData('/DevSettingsPage');
+        }
+        else if (isNewUser['Success']) {
+          print('go to home page');
+          state = AsyncData('/home');
+        } else {
+          print('User has no record in Users collection so go to survey page');
+          state = AsyncData('/survey');
+        }
+
+        // print(
+        //     "returning list from recen entries controller ${result.value['response']}");
+      } else {
+        print("failed Google sign in $userCredential");
+        final error = {'Function': 'signIn', 'msg': userCredential};
+        state = AsyncError(error, StackTrace.current);
+      }
+    } catch (error) {
+      state = AsyncError(error, StackTrace.current);
+    }
+  }
+
+
+
 
   Future<void> signOut() async {
     try {

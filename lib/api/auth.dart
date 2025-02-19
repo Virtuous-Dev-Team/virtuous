@@ -109,7 +109,7 @@ class Auth {
     }
   }
 
-  // --- google sign in ---, couldn't test due to computer
+  // --- google sign in ---
   Future<dynamic?> signInWithGoogle() async {
     // Trigger the authentication flow
 

@@ -30,6 +30,8 @@ class EditProfilePage extends ConsumerStatefulWidget {
   _EditProfilePageState createState() => _EditProfilePageState();
 }
 
+bool isToastShown = false;
+
 class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   TextEditingController newProfileName = TextEditingController();
   TextEditingController newEmail = TextEditingController();
@@ -38,6 +40,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late String currentCommunity;
   bool newListExist = false;
   bool isToastShown = false; // don't show two toasts for one action
+  bool updatedEmail = false;
 
   @override
   void initState() {
@@ -77,10 +80,15 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               if (response != null && response['Function'] == "updateProfile") {
                 // check if the toast is shown
                 if(!isToastShown) {
-                  showToasty(response['msg'], true, context);
-                  setState(() {
+                  if (updatedEmail) {
+                    showToasty('Check your email to confirm your new email and complete the process', true, context);
                     isToastShown = true;
-                  });
+                  }
+                  else {
+                    showToasty(response['msg'], true, context);
+                    isToastShown = true;
+                  }
+
                 }
                 // TODO: should we clear them?
                 //newProfileName.clear();
@@ -99,9 +107,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                     .read(statsControllerProvider.notifier)
                     .getAllStats(currentCommunity);
 
-                setState(() {
-                  isToastShown = false;
-                });
+                isToastShown = false;
 
                 //GoRouter.of(context).pop();
                 // newProfileName.
@@ -392,7 +398,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                                 newCareerLength.text.isEmpty) {
                               return;
                             }
+                            final user = FirebaseAuth.instance.currentUser;
                             final userInfo = ref.read(userInfoProviderr);
+                            if (newEmail.text != user?.email) {
+                              updatedEmail = true;
+                            }
                             final quadrantUsedData = userInfo.quadrantUsedData;
                             final newListExistInProfile =
                                 quadrantUsedData[currentCommunity];
@@ -461,13 +471,19 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
 void showToasty(msg, bool success, BuildContext context) {
   print('calling toast widget in sign in page');
-  WidgetsBinding.instance?.addPostFrameCallback((_) {
-    ToastNotificationWidget().successOrError(
-      context,
-      msg,
-      success,
-    );
-  });
+  if (!isToastShown) {
+    isToastShown = true;
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ToastNotificationWidget().successOrError(
+        context,
+        msg,
+        success,
+      );
+    });
+    Future.delayed(Duration(seconds: 2), () {
+      isToastShown = false;
+    });
+  }
 }
 
 String? validateEmail(String? email) {

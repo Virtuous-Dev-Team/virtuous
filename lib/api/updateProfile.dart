@@ -25,7 +25,7 @@ class UpdateProfile {
         return {'Success': false, 'Error': "User not found"};
       }
 
-      if (newEmail.isNotEmpty) {
+      if (newEmail.isNotEmpty && newEmail != user.email) {
         await user.verifyBeforeUpdateEmail(newEmail);
       }
       if (newProfileName.isNotEmpty) {
